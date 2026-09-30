@@ -2292,6 +2292,7 @@ ul, ol {
         <a href="{% url 'admin_dashboard' %}#pickups-section" class="app-nav-link {% if request.resolver_match.url_name == 'admin_pickup_update' or request.GET.section == 'pickups' %}active{% endif %}">Pickup Requests</a>
         <a href="{% url 'admin_dashboard' %}#hotspots-section" class="app-nav-link {% if request.GET.section == 'hotspots' %}active{% endif %}">Hotspots</a>
         <a href="{% url 'admin_dashboard' %}#analytics-section" class="app-nav-link {% if request.GET.section == 'analytics' %}active{% endif %}">Analytics</a>
+        <a href="{% url 'admin_ai' %}" class="app-nav-link {% if request.resolver_match.url_name == 'admin_ai' %}active{% endif %}">🤖 Control AI</a>
         <a href="{% url 'api_playground' %}" class="app-nav-link {% if request.resolver_match.url_name == 'api_playground' %}active{% endif %}">Visualizer</a>
         <a href="{% url 'awareness' %}" class="app-nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a>
 
@@ -2345,6 +2346,9 @@ ul, ol {
     </div>
 
     <div style="display: flex; gap: 10px;">
+      <a href="{% url 'admin_ai' %}" class="btn btn-primary btn-sm">
+        🤖 Control AI
+      </a>
       <a href="{% url 'citizen_dashboard' %}" class="btn btn-outline btn-sm">
         Citizen View
       </a>

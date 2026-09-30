@@ -32,6 +32,7 @@ urlpatterns = [
 
     # Municipal Admin Portal & Actions
     path('admin-portal/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('admin-portal/ai/', views.admin_ai_view, name='admin_ai'),
     path('admin-portal/complaint/<str:complaint_id>/', views.admin_complaint_update_view, name='admin_complaint_update'),
     path('admin-portal/pickup/<str:pickup_id>/', views.admin_pickup_update_view, name='admin_pickup_update'),
 
@@ -40,6 +41,7 @@ urlpatterns = [
     path('ai/', views.ai_view, name='ai'),
     path('ai/map/', views.ai_map_fragment_view, name='ai_map_fragment'),
     path('api/ai/chat/', views.api_ai_chat_view, name='api_ai_chat'),
+    path('api/admin-ai/chat/', views.api_admin_ai_chat_view, name='api_admin_ai_chat'),
     path('api/ai/photo/', views.api_ai_photo_view, name='api_ai_photo'),
     path('api/health/', views.api_health_view, name='api_health'),
     path('api/complaints/', views.api_complaint_list_create_view, name='api_complaint_list_create'),

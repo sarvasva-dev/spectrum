@@ -1371,3 +1371,57 @@ def api_ai_chat_view(request):
         })
 
     return JsonResponse(result)
+
+
+from . import admin_ai_assistant
+
+
+@ensure_csrf_cookie
+@login_required
+def admin_ai_view(request):
+    """Renders the standalone CleanLoop Admin AI Control Room page."""
+    if not (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'role', '') == 'ADMIN'):
+        messages.error(request, "Access restricted to municipal administrators.")
+        return redirect('login')
+    return render(request, 'admin/admin_ai.html', {
+        'page_title': 'Municipal Control AI Assistant',
+        'meta_description': 'CleanLoop Municipal Control AI for real-time dispatch, city analytics, and crew scheduling.',
+    })
+
+
+@ensure_csrf_cookie
+@login_required
+def api_admin_ai_chat_view(request):
+    """
+    POST /api/admin-ai/chat/
+    Body: {"message": str, "state": dict}
+    """
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'POST required.'}, status=405)
+
+    if not (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'role', '') == 'ADMIN'):
+        return JsonResponse({'ok': False, 'error': 'Unauthorized access.'}, status=403)
+
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+    except (json.JSONDecodeError, UnicodeDecodeError, ValueError):
+        return JsonResponse({'ok': False, 'error': 'Invalid JSON body.'}, status=400)
+
+    message = body.get('message', '')
+    state = body.get('state') or {}
+    if not isinstance(message, str) or not isinstance(state, dict):
+        return JsonResponse({'ok': False, 'error': 'Invalid payload shape.'}, status=400)
+
+    try:
+        result = admin_ai_assistant.run_admin_ai_chat(request, message, state)
+    except Exception:
+        logger.exception('Admin AI chat error')
+        return JsonResponse({
+            'ok': True,
+            'message': 'Control AI assistance is temporarily offline.',
+            'intent': 'ADMIN_MAIN', 'step': 'START',
+            'actions': ['📊 City Overview', '🚨 Active Hotspots', '⚠️ Pending Complaints', '🚛 Pickup Requests'],
+            'state': {}, 'provider_available': False,
+        })
+
+    return JsonResponse(result)
