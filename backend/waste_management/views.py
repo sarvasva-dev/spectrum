@@ -1567,3 +1567,277 @@ def api_demo_admin_action_view(request):
             })
 
     return JsonResponse({'ok': False, 'error': 'Invalid status or target ID'}, status=400)
+
+
+def api_demo_auto_login_view(request):
+    """
+    GET /api/demo/auto-login/?role=citizen|admin
+    Automatically authenticates demo user session without prompting for credentials.
+    """
+    from django.contrib.auth import login, get_user_model
+    User = get_user_model()
+    role = request.GET.get('role', 'citizen')
+
+    if role == 'admin':
+        admin_user = User.objects.filter(email='admin@gmail.com').first()
+        if not admin_user:
+            admin_user = User.objects.filter(is_superuser=True).first()
+        if not admin_user:
+            admin_user = User.objects.create_superuser(
+                username='demo_admin',
+                email='admin@gmail.com',
+                password='demo1234'
+            )
+            admin_user.first_name = 'Officer'
+            admin_user.last_name = 'Municipal'
+            admin_user.save()
+            profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+            profile.role = 'ADMIN'
+            profile.save()
+
+        login(request, admin_user, backend='django.contrib.auth.backends.ModelBackend')
+        return JsonResponse({
+            'ok': True,
+            'role': 'admin',
+            'user': {
+                'username': admin_user.username,
+                'name': admin_user.get_full_name() or admin_user.username,
+                'email': admin_user.email,
+            }
+        })
+    else:
+        citizen_user = User.objects.filter(username='democitizen').first()
+        if not citizen_user:
+            citizen_user = User.objects.filter(email='citizen@cleanloop.com').first()
+        if not citizen_user:
+            citizen_user = User.objects.create_user(
+                username='democitizen',
+                email='citizen@cleanloop.com',
+                password='demo1234'
+            )
+            citizen_user.first_name = 'Rahul'
+            citizen_user.last_name = 'Sharma'
+            citizen_user.save()
+            profile, _ = UserProfile.objects.get_or_create(user=citizen_user)
+            profile.role = 'CITIZEN'
+            profile.phone = '9876543210'
+            profile.address = 'Sector 18 Market, Kanpur'
+            profile.save()
+
+        login(request, citizen_user, backend='django.contrib.auth.backends.ModelBackend')
+        return JsonResponse({
+            'ok': True,
+            'role': 'citizen',
+            'user': {
+                'username': citizen_user.username,
+                'name': citizen_user.get_full_name() or citizen_user.username,
+                'email': citizen_user.email,
+            }
+        })
+
+
+def api_demo_citizen_start_view(request):
+    """
+    POST /api/demo/citizen-start/
+    Ensures demo citizen exists, logs them in, and idempotently creates 1 real Complaint (PENDING)
+    and 1 real PickupRequest (REQUESTED) in SQLite database.
+    """
+    from django.contrib.auth import login, get_user_model
+    User = get_user_model()
+
+    citizen_user = User.objects.filter(username='democitizen').first()
+    if not citizen_user:
+        citizen_user = User.objects.filter(email='citizen@cleanloop.com').first()
+    if not citizen_user:
+        citizen_user = User.objects.create_user(
+            username='democitizen',
+            email='citizen@cleanloop.com',
+            password='demo1234'
+        )
+        citizen_user.first_name = 'Rahul'
+        citizen_user.last_name = 'Sharma'
+        citizen_user.save()
+        profile, _ = UserProfile.objects.get_or_create(user=citizen_user)
+        profile.role = 'CITIZEN'
+        profile.phone = '9876543210'
+        profile.address = 'Spectrum Demo Location'
+        profile.save()
+
+    login(request, citizen_user, backend='django.contrib.auth.backends.ModelBackend')
+
+    complaint = Complaint.objects.filter(user=citizen_user, location='Spectrum Demo Location').order_by('-created_at').first()
+    if not complaint or complaint.status == 'RESOLVED':
+        seq = Complaint.objects.count() + 1001
+        c_id = f"WM-2026-{seq:04d}"
+        complaint = Complaint.objects.create(
+            complaint_id=c_id,
+            user=citizen_user,
+            issue_type='GARBAGE_ON_ROAD',
+            description='Demo waste complaint for Spectrum presentation.',
+            location='Spectrum Demo Location',
+            landmark='Spectrum Demo Point',
+            priority='HIGH',
+            status='PENDING',
+        )
+        ComplaintUpdate.objects.create(
+            complaint=complaint,
+            status='PENDING',
+            note='Demo complaint registered and queued for municipal dispatch.',
+            updated_by=citizen_user,
+        )
+
+    pickup = PickupRequest.objects.filter(user=citizen_user, pickup_address='Spectrum Demo Location').order_by('-created_at').first()
+    if not pickup or pickup.status == 'COMPLETED':
+        seq_p = PickupRequest.objects.count() + 1001
+        p_id = f"PK-2026-{seq_p:04d}"
+        pickup = PickupRequest.objects.create(
+            pickup_id=p_id,
+            user=citizen_user,
+            waste_category='EWASTE',
+            quantity='2 demo bags',
+            pickup_address='Spectrum Demo Location',
+            preferred_date=timezone.now().date(),
+            preferred_time='Morning (08:00 AM - 11:00 AM)',
+            status='REQUESTED',
+        )
+
+    return JsonResponse({
+        'ok': True,
+        'message': 'Demo citizen session started and requests submitted to database.',
+        'user': {
+            'username': citizen_user.username,
+            'name': citizen_user.get_full_name() or citizen_user.username,
+            'email': citizen_user.email,
+        },
+        'complaint': {
+            'id': complaint.complaint_id,
+            'issue': complaint.get_issue_type_display(),
+            'description': complaint.description,
+            'location': complaint.location,
+            'status': complaint.get_status_display(),
+            'priority': complaint.get_priority_display(),
+            'date': complaint.created_at.strftime('%d %b %Y'),
+        },
+        'pickup': {
+            'id': pickup.pickup_id,
+            'category': pickup.get_waste_category_display(),
+            'quantity': pickup.quantity,
+            'address': pickup.pickup_address,
+            'status': pickup.get_status_display(),
+            'date': pickup.preferred_date.strftime('%d %b %Y') if pickup.preferred_date else '',
+        }
+    })
+
+
+def api_demo_admin_process_view(request):
+    """
+    POST /api/demo/admin-process/
+    Authenticates admin user and processes the latest demo complaint (PENDING -> RESOLVED with timeline)
+    and pickup (REQUESTED -> COMPLETED).
+    """
+    from django.contrib.auth import login, get_user_model
+    User = get_user_model()
+
+    admin_user = User.objects.filter(email='admin@gmail.com').first()
+    if not admin_user:
+        admin_user = User.objects.filter(is_superuser=True).first()
+    if not admin_user:
+        admin_user = User.objects.create_superuser(
+            username='demo_admin',
+            email='admin@gmail.com',
+            password='demo1234'
+        )
+        admin_user.first_name = 'Officer'
+        admin_user.last_name = 'Municipal'
+        admin_user.save()
+
+    login(request, admin_user, backend='django.contrib.auth.backends.ModelBackend')
+
+    complaint = Complaint.objects.filter(location='Spectrum Demo Location').order_by('-created_at').first()
+    if not complaint:
+        complaint = Complaint.objects.order_by('-created_at').first()
+
+    pickup = PickupRequest.objects.filter(pickup_address='Spectrum Demo Location').order_by('-created_at').first()
+    if not pickup:
+        pickup = PickupRequest.objects.order_by('-created_at').first()
+
+    if complaint and complaint.status != 'RESOLVED':
+        complaint.assigned_crew = 'Rapid Response Crew #4'
+        complaint.status = 'ASSIGNED'
+        complaint.save()
+        ComplaintUpdate.objects.create(
+            complaint=complaint,
+            status='ASSIGNED',
+            note='Dispatched Rapid Response Crew #4 to Spectrum Demo Location.',
+            updated_by=admin_user,
+        )
+
+        complaint.status = 'IN_PROGRESS'
+        complaint.save()
+        ComplaintUpdate.objects.create(
+            complaint=complaint,
+            status='IN_PROGRESS',
+            note='Sanitation crew arrived on site and commenced cleanup.',
+            updated_by=admin_user,
+        )
+
+        complaint.status = 'RESOLVED'
+        complaint.resolved_at = timezone.now()
+        complaint.save()
+        ComplaintUpdate.objects.create(
+            complaint=complaint,
+            status='RESOLVED',
+            note='Site cleared, waste removed and verified by municipal AI camera.',
+            updated_by=admin_user,
+        )
+
+    if pickup and pickup.status != 'COMPLETED':
+        pickup.status = 'COMPLETED'
+        pickup.notes = 'E-Waste collected by EV Eco-Van #12.'
+        pickup.save()
+
+    timeline = []
+    if complaint:
+        for u in complaint.timeline_updates.all()[:6]:
+            timeline.append({
+                'status': u.status.replace('_', ' ').title(),
+                'note': u.note,
+                'date': u.created_at.strftime('%d %b %Y %H:%M')
+            })
+
+    return JsonResponse({
+        'ok': True,
+        'message': 'Demo requests processed successfully in database.',
+        'complaint': {
+            'id': complaint.complaint_id if complaint else 'WM-2026-0001',
+            'status': complaint.get_status_display() if complaint else 'Resolved',
+            'issue': complaint.get_issue_type_display() if complaint else 'Garbage on Road',
+            'timeline': timeline,
+        },
+        'pickup': {
+            'id': pickup.pickup_id if pickup else 'PK-2026-0001',
+            'status': pickup.get_status_display() if pickup else 'Completed',
+            'category': pickup.get_waste_category_display() if pickup else 'E-Waste',
+        }
+    })
+
+
+def api_demo_reset_view(request):
+    """
+    POST /api/demo/reset/
+    Safely resets ONLY demo citizen complaints, updates, and pickups.
+    """
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+
+    citizen_user = User.objects.filter(username='democitizen').first()
+    if citizen_user:
+        Complaint.objects.filter(user=citizen_user).delete()
+        PickupRequest.objects.filter(user=citizen_user).delete()
+
+    Complaint.objects.filter(location='Spectrum Demo Location').delete()
+    PickupRequest.objects.filter(pickup_address='Spectrum Demo Location').delete()
+
+    return JsonResponse({'ok': True, 'message': 'Demo data reset successfully.'})
+
+

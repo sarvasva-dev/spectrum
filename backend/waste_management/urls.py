@@ -40,7 +40,11 @@ urlpatterns = [
     path('democitizenai/', views.democitizenai_view, name='democitizenai'),
     path('demoadmin/', views.demoadmin_view, name='demoadmin'),
     path('api/demo/citizen-sync/', views.api_demo_citizen_sync_view, name='api_demo_citizen_sync'),
+    path('api/demo/citizen-start/', views.api_demo_citizen_start_view, name='api_demo_citizen_start'),
     path('api/demo/admin-action/', views.api_demo_admin_action_view, name='api_demo_admin_action'),
+    path('api/demo/admin-process/', views.api_demo_admin_process_view, name='api_demo_admin_process'),
+    path('api/demo/auto-login/', views.api_demo_auto_login_view, name='api_demo_auto_login'),
+    path('api/demo/reset/', views.api_demo_reset_view, name='api_demo_reset'),
 
     # API Playground & REST Endpoints
     path('visual/', views.api_playground_view, name='api_playground'),

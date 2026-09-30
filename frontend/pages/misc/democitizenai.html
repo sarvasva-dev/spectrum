@@ -3,9 +3,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="robots" content="noindex,nofollow">
-    <title>CleanLoop AI Citizen — Presentation Demo</title>
+    <title>CleanLoop AI Assistant | Presentation Demo</title>
     <link rel="icon" type="image/svg+xml" href="{% static 'images/cleanloop-mark.svg' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,50 +14,44 @@
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
-            --primary-dark: #1e3a8a;
-            --accent: #0284c7;
-            --bg-body: #f8fafc;
+            --primary-light: #dbeafe;
+            --primary-dark: #1e40af;
+            --secondary: #0284c7;
+            --secondary-light: #e0f2fe;
+            --bg-body: #f0f7ff;
             --surface: #ffffff;
             --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text-muted: #475569;
             --border: #cbd5e1;
             --border-soft: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.10);
             --ok: #059669;
             --ok-bg: #d1fae5;
-            --warn: #d97706;
+            --warn: #b45309;
             --warn-bg: #fef3c7;
             --err: #dc2626;
             --err-bg: #fee2e2;
-            --radius: 16px;
-            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 4px 16px rgba(37, 99, 235, 0.12);
+            --radius: 14px;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(180deg, #eaf3ff 0%, var(--bg-body) 40%, #f8fafc 100%);
             color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px;
+            line-height: 1.5;
         }
 
         .ai-app {
-            width: 100%;
-            max-width: 900px;
-            height: 94vh;
-            max-height: 920px;
-            background: var(--bg-body);
-            border-radius: 24px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            height: 100vh;
+            height: 100dvh;
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface);
+            box-shadow: 0 0 40px rgba(37, 99, 235, 0.08);
         }
 
         /* Header */
@@ -65,33 +59,38 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 16px 22px;
-            background: #ffffff;
+            padding: 12px 16px;
+            background: var(--surface);
             border-bottom: 1px solid var(--border-soft);
             box-shadow: var(--shadow-sm);
-            z-index: 10;
+            position: relative;
+            z-index: 5;
         }
-        .ai-brand-logo { border-radius: 12px; }
+        .ai-brand-logo {
+            width: 42px; height: 42px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.25));
+        }
         .ai-title-block { flex: 1; min-width: 0; }
-        .ai-title { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--primary-dark); }
-        .ai-subtitle { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+        .ai-title { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; color: var(--primary-dark); }
+        .ai-subtitle { font-size: 0.78rem; color: var(--text-muted); }
         .demo-badge {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: #fff; font-size: 0.72rem; font-weight: 800;
             padding: 4px 10px; border-radius: 999px; letter-spacing: 0.08em;
         }
 
-        /* Main Chat Window */
+        /* Chat window */
         #chat-window {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 18px 16px 8px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             scroll-behavior: smooth;
         }
-        .msg { max-width: 88%; padding: 14px 18px; border-radius: var(--radius); font-size: 0.96rem; box-shadow: var(--shadow-sm); word-wrap: break-word; line-height: 1.5; }
+        .msg { max-width: 88%; padding: 12px 16px; border-radius: var(--radius); font-size: 0.94rem; box-shadow: var(--shadow-sm); word-wrap: break-word; line-height: 1.5; }
         .msg.ai {
             align-self: flex-start;
             background: var(--surface);
@@ -105,42 +104,59 @@
             border-bottom-right-radius: 4px;
         }
         .msg.ai b { color: var(--primary-dark); }
-        .msg-time { display: block; font-size: 0.68rem; opacity: 0.6; margin-top: 6px; }
+        .msg-time { display: block; font-size: 0.66rem; opacity: 0.55; margin-top: 4px; }
 
-        /* Action Grid Chips */
-        .actions-wrap { display: flex; flex-direction: column; gap: 10px; align-self: stretch; margin-top: 4px; }
-        .actions-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        /* Timer badge */
+        .timer-box {
+            align-self: flex-start;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Action chips */
+        .actions-wrap { display: flex; flex-direction: column; gap: 8px; align-self: stretch; margin-top: 4px; }
+        .actions-container { display: flex; flex-wrap: wrap; gap: 8px; }
         .action-chip {
             background: var(--surface);
-            border: 2px solid var(--primary);
+            border: 1.5px solid var(--primary);
             color: var(--primary-dark);
-            padding: 12px 18px;
+            padding: 10px 16px;
             border-radius: 999px;
             cursor: pointer;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 700;
             transition: all 0.15s ease;
-            box-shadow: var(--shadow-sm);
+            min-height: 40px;
         }
-        .action-chip:hover { background: var(--primary); color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .action-chip.secondary { border-color: var(--border); color: var(--text-main); }
-        .action-chip.secondary:hover { background: #f1f5f9; border-color: var(--text-muted); color: #000; }
-        .action-chip.danger { border-color: var(--err); color: var(--err); }
-        .action-chip.danger:hover { background: var(--err); color: #fff; }
-        .action-chip.success { border-color: var(--ok); color: var(--ok); }
-        .action-chip.success:hover { background: var(--ok); color: #fff; }
+        .action-chip:hover { background: var(--primary); color: #fff; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3); }
 
-        /* Review & Activity Cards */
+        /* Cards */
         .card {
-            align-self: stretch; background: var(--surface);
-            border: 1px solid var(--border-soft); border-radius: var(--radius);
-            box-shadow: var(--shadow-sm); padding: 16px 18px; font-size: 0.92rem;
+            align-self: stretch;
+            background: var(--surface);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 14px 16px;
+            font-size: 0.9rem;
         }
-        .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-        .card-title { font-weight: 800; font-size: 1rem; color: var(--primary-dark); }
-        .card-id { font-family: monospace; font-size: 0.85rem; font-weight: 800; color: var(--primary-dark); background: var(--primary-light); padding: 3px 8px; border-radius: 6px; }
+        .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+        .card-title { font-weight: 700; font-size: 0.98rem; }
+        .card-id {
+            font-family: monospace; font-size: 0.82rem; font-weight: 800;
+            color: var(--primary-dark); background: var(--primary-light);
+            padding: 3px 8px; border-radius: 6px;
+        }
 
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.04em; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; }
         .badge-pending { background: var(--warn-bg); color: var(--warn); }
         .badge-assigned { background: var(--primary-light); color: var(--primary-dark); }
         .badge-inprogress { background: #ede9fe; color: #6d28d9; }
@@ -148,37 +164,39 @@
         .badge-requested { background: var(--warn-bg); color: var(--warn); }
         .badge-completed { background: var(--ok-bg); color: var(--ok); }
 
-        .stepper { display: flex; gap: 6px; margin: 12px 0 8px; }
+        .stepper { display: flex; gap: 6px; margin: 12px 0 6px; }
         .stepper .step { flex: 1; text-align: center; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); padding-top: 6px; position: relative; text-transform: uppercase; }
         .stepper .step::before { content: ""; display: block; height: 5px; border-radius: 3px; background: var(--border-soft); margin-bottom: 6px; }
         .stepper .step.done::before, .stepper .step.current::before { background: var(--primary); }
         .stepper .step.done { color: var(--primary-dark); }
         .stepper .step.current { color: var(--primary); }
 
+        .timeline-list { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-soft); font-size: 0.82rem; }
+        .timeline-item { margin-bottom: 6px; color: var(--text-main); }
+        .timeline-item b { color: var(--primary-dark); }
+
         /* Composer */
         .composer {
             display: flex; align-items: center; gap: 10px;
-            padding: 14px 18px; border-top: 1px solid var(--border-soft); background: var(--surface);
+            padding: 12px 16px; border-top: 1px solid var(--border-soft); background: var(--surface);
         }
         #chat-input {
-            flex: 1; padding: 13px 20px; border: 2px solid var(--border);
-            border-radius: 999px; font-size: 0.96rem; outline: none; background: var(--bg-body); transition: border-color 0.15s;
+            flex: 1; padding: 12px 18px; border: 1.5px solid var(--border);
+            border-radius: 999px; font-size: 0.95rem; outline: none; background: var(--bg-body); transition: border-color 0.15s;
         }
-        #chat-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12); }
+        #chat-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
         .send-btn {
-            width: 48px; height: 48px; border-radius: 50%; border: none;
+            width: 44px; height: 44px; border-radius: 50%; border: none;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35); transition: transform 0.12s;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35); transition: transform 0.12s;
         }
-        .send-btn:hover { transform: scale(1.06); }
-        .send-btn svg { width: 22px; height: 22px; }
+        .send-btn:hover { transform: scale(1.05); }
+        .send-btn svg { width: 20px; height: 20px; }
 
         @media (max-width: 640px) {
-            body { padding: 0; }
-            .ai-app { border-radius: 0; height: 100vh; max-height: 100vh; }
-            .msg { max-width: 94%; }
-            .action-chip { padding: 10px 14px; font-size: 0.86rem; }
+            .ai-app { border-radius: 0; max-height: 100vh; }
+            .msg { max-width: 92%; }
         }
     </style>
 </head>
@@ -188,18 +206,18 @@
         <header class="ai-header">
             <img class="ai-brand-logo" src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop logo" width="40" height="40">
             <div class="ai-title-block">
-                <div class="ai-title">CleanLoop AI Citizen</div>
-                <div class="ai-subtitle">Spectrum Hackathon Live Presentation Flow</div>
+                <div class="ai-title">CleanLoop AI</div>
+                <div class="ai-subtitle">Spectrum Presentation Citizen Assistant</div>
             </div>
-            <span class="demo-badge">PRESENTATION DEMO</span>
+            <span class="demo-badge">PRESENTATION MODE</span>
         </header>
 
-        <!-- Chat -->
+        <!-- Chat window -->
         <main id="chat-window" aria-live="polite"></main>
 
         <!-- Composer -->
         <form class="composer" id="composer" autocomplete="off">
-            <input type="text" id="chat-input" placeholder="Type or select an option below…" autocomplete="off">
+            <input type="text" id="chat-input" placeholder="Type a message…" autocomplete="off">
             <button type="submit" class="send-btn" id="send-btn" aria-label="Send message">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -213,12 +231,12 @@
     (function () {
         "use strict";
 
-        var state = { flow: "INIT", step: "START", data: {} };
-        var busy = false;
         var chatWindow = document.getElementById("chat-window");
         var inputEl = document.getElementById("chat-input");
         var sendBtn = document.getElementById("send-btn");
         var composer = document.getElementById("composer");
+        var timerBoxEl = null;
+        var countdownTimer = null;
 
         function getCookie(name) {
             var m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
@@ -258,6 +276,10 @@
             return d.innerHTML;
         }
 
+        function badgeClass(st) {
+            return "badge badge-" + (st || "").toLowerCase().replace(/\s+/g, "");
+        }
+
         function addActions(actions) {
             if (!actions || !actions.length) return;
             var wrap = document.createElement("div");
@@ -272,9 +294,8 @@
                 btn.className = "action-chip " + cls;
                 btn.textContent = label;
                 btn.addEventListener("click", function () {
-                    if (busy) return;
                     clearOldActions();
-                    handleUserAction(label);
+                    handleAction(label);
                 });
                 container.appendChild(btn);
             });
@@ -283,439 +304,184 @@
             scrollDown();
         }
 
-        function badgeClass(st) {
-            return "badge badge-" + st.toLowerCase().replace(/\s+/g, "");
-        }
-
-        function fetchLiveSync(callback) {
-            fetch("/api/demo/citizen-sync/", { method: "GET", credentials: "same-origin" })
-            .then(function(r) { return r.json(); })
-            .then(function(res) { if (callback) callback(res); });
-        }
-
-        // ===================== FLOW LOGIC =====================
-
         function boot() {
-            fetchLiveSync(function(res) {
-                if (res.ok && res.user) {
-                    state.user = res.user;
-                    showMainDashboard("Welcome back, " + res.user.name + "! 👋<br>Your citizen session is active.");
-                } else {
-                    addMessage("Welcome to CleanLoop 👋<br>Let's get you connected to your citizen account.", "ai");
-                    addActions([
-                        { label: "Create Demo Account", cls: "" },
-                        { label: "Sign In", cls: "secondary" }
-                    ]);
-                }
+            fetch("/api/demo/auto-login/?role=citizen", { method: "GET", credentials: "same-origin" })
+            .then(function(r) { return r.json(); })
+            .then(function() {
+                fetchSync(function(syncData) {
+                    var hasComp = syncData.complaints && syncData.complaints.length > 0;
+                    if (hasComp) {
+                        addMessage("Welcome back 👋<br>Your citizen demo requests have been submitted to municipal operations.", "ai");
+                        showTrackingButtons();
+                    } else {
+                        addMessage("Welcome to CleanLoop 👋<br>Preparing your citizen service demonstration…", "ai");
+                        startCountdownTimer(20);
+                    }
+                });
             });
         }
 
-        function showMainDashboard(msgText) {
-            state.flow = "MAIN";
-            state.step = "MENU";
-            addMessage(msgText || ("Hi " + (state.user ? state.user.name : "Citizen") + " 👋<br>What would you like to do today?"), "ai");
+        function showTrackingButtons() {
             addActions([
-                "🗑 Report Waste",
-                "🚛 Request Pickup",
-                "📋 My Complaints",
-                "📦 My Pickups",
-                { label: "↻ Refresh My Status", cls: "success" },
-                { label: "♻ Waste Guide", cls: "secondary" }
+                { label: "📍 Track Complaint", cls: "" },
+                { label: "📦 Track Pickup", cls: "" }
             ]);
-            renderLiveActivityCard();
         }
 
-        function renderLiveActivityCard() {
-            fetchLiveSync(function(res) {
+        function startCountdownTimer(seconds) {
+            var remaining = seconds;
+            timerBoxEl = document.createElement("div");
+            timerBoxEl.className = "timer-box";
+            timerBoxEl.innerHTML = '⏱️ Automatic demonstration starting in <b><span id="countdown-val">' + remaining + '</span>s</b>…';
+            chatWindow.appendChild(timerBoxEl);
+            scrollDown();
+
+            countdownTimer = setInterval(function() {
+                remaining--;
+                var valEl = document.getElementById("countdown-val");
+                if (valEl) valEl.textContent = remaining;
+
+                if (remaining <= 0) {
+                    clearInterval(countdownTimer);
+                    if (timerBoxEl) timerBoxEl.remove();
+                    runAutoCitizenScript();
+                }
+            }, 1000);
+        }
+
+        function runAutoCitizenScript() {
+            addMessage("Hi 👋 Let me show you how CleanLoop handles a citizen request.", "ai");
+            setTimeout(function() {
+                addMessage("First, let's report a waste issue.", "ai");
+                setTimeout(function() {
+                    addMessage("Identifying issue: <b>Garbage on Road</b>… Location: <b>Spectrum Demo Location</b> ✓", "ai");
+                    setTimeout(function() {
+                        executeCitizenBackendStart();
+                    }, 1500);
+                }, 1500);
+            }, 1000);
+        }
+
+        function executeCitizenBackendStart() {
+            fetch("/api/demo/citizen-start/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "X-CSRFToken": getCookie("csrftoken") }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
                 if (!res.ok) return;
-                var comp = res.complaints && res.complaints[0];
-                var pick = res.pickups && res.pickups[0];
-                if (!comp && !pick) return;
+                var c = res.complaint;
+                var p = res.pickup;
 
                 var card = document.createElement("div");
                 card.className = "card";
-                var html = '<div class="card-title" style="margin-bottom:8px;">MY LIVE ACTIVITY BOARD</div>';
-                if (comp) {
-                    html += '<div style="margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--border-soft);">' +
-                        '<b>Complaint:</b> <span class="card-id">' + escapeHtml(comp.id) + '</span> ' + escapeHtml(comp.issue) + ' ' +
-                        '<span class="' + badgeClass(comp.status) + '">' + escapeHtml(comp.status) + '</span>' +
-                        '</div>';
-                }
-                if (pick) {
-                    html += '<div>' +
-                        '<b>Pickup:</b> <span class="card-id">' + escapeHtml(pick.id) + '</span> ' + escapeHtml(pick.category) + ' ' +
-                        '<span class="' + badgeClass(pick.status) + '">' + escapeHtml(pick.status) + '</span>' +
-                        '</div>';
-                }
-                card.innerHTML = html;
+                card.innerHTML = '<div class="card-head">' +
+                    '<span class="card-id">' + escapeHtml(c.id) + '</span>' +
+                    '<span class="' + badgeClass(c.status) + '">' + escapeHtml(c.status) + '</span>' +
+                    '</div>' +
+                    '<div class="card-title">' + escapeHtml(c.issue) + '</div>' +
+                    '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(c.location) + ' • Priority: ' + escapeHtml(c.priority) + '</div>';
                 chatWindow.appendChild(card);
-                scrollDown();
+
+                setTimeout(function() {
+                    addMessage("Now let's request a doorstep waste pickup. Category: <b>E-Waste</b>… Quantity: <b>2 demo bags</b> ✓", "ai");
+                    setTimeout(function() {
+                        var pcard = document.createElement("div");
+                        pcard.className = "card";
+                        pcard.innerHTML = '<div class="card-head">' +
+                            '<span class="card-id">' + escapeHtml(p.id) + '</span>' +
+                            '<span class="' + badgeClass(p.status) + '">' + escapeHtml(p.status) + '</span>' +
+                            '</div>' +
+                            '<div class="card-title">' + escapeHtml(p.category) + ' (' + escapeHtml(p.quantity) + ')</div>' +
+                            '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(p.address) + '</div>';
+                        chatWindow.appendChild(pcard);
+                        scrollDown();
+
+                        setTimeout(function() {
+                            addMessage("Citizen requests have been submitted to municipal operations.<br><br>" +
+                                "<b>LIVE DEMO REQUESTS</b><br>" +
+                                "• Complaint: <span class=\"card-id\">" + escapeHtml(c.id) + "</span> <b>" + escapeHtml(c.status) + "</b><br>" +
+                                "• Pickup: <span class=\"card-id\">" + escapeHtml(p.id) + "</span> <b>" + escapeHtml(p.status) + "</b><br><br>" +
+                                "<i>Municipal team can now process these requests.</i>", "ai");
+                            showTrackingButtons();
+                        }, 1200);
+                    }, 1200);
+                }, 1200);
             });
         }
 
-        function handleUserAction(text) {
+        function fetchSync(cb) {
+            fetch("/api/demo/citizen-sync/", { method: "GET", credentials: "same-origin" })
+            .then(function(r) { return r.json(); })
+            .then(function(res) { if (cb) cb(res); });
+        }
+
+        function handleAction(text) {
             addMessage(escapeHtml(text), "user");
 
-            // Initial auth choice
-            if (text === "Create Demo Account") {
-                state.flow = "SIGNUP";
-                state.step = "NAME";
-                state.data = {};
-                addMessage("Let's create your demo citizen account.<br>What should we call you?", "ai");
+            if (text.indexOf("Track Complaint") !== -1) {
+                trackComplaint();
                 return;
             }
-            if (text === "Sign In") {
-                state.flow = "SIGNIN";
-                state.step = "IDENTIFIER";
-                addMessage("Enter your email or username:", "ai");
+            if (text.indexOf("Track Pickup") !== -1) {
+                trackPickup();
                 return;
             }
 
-            // Main Menu choices
-            if (text === "🗑 Report Waste" || text === "Report Waste") {
-                startComplaintFlow();
-                return;
-            }
-            if (text === "🚛 Request Pickup" || text === "Request Pickup") {
-                startPickupFlow();
-                return;
-            }
-            if (text === "📋 My Complaints" || text === "My Complaints") {
-                showMyComplaints();
-                return;
-            }
-            if (text === "📦 My Pickups" || text === "My Pickups") {
-                showMyPickups();
-                return;
-            }
-            if (text.indexOf("Refresh My Status") !== -1) {
-                addMessage("↻ Syncing live database status…", "ai");
-                showMainDashboard("Live status updated from database ✓");
-                return;
-            }
-            if (text === "♻ Waste Guide") {
-                addMessage("♻ <b>CleanLoop Waste Guide</b>:<br>• Wet Waste → Green Bin<br>• Dry Recyclables → Blue Bin<br>• E-Waste & Hazardous → Request Pickup", "ai");
-                showMainDashboard();
-                return;
-            }
-
-            // Flow Handlers
-            if (state.flow === "SIGNUP") handleSignup(text);
-            else if (state.flow === "SIGNIN") handleSignin(text);
-            else if (state.flow === "COMPLAINT") handleComplaintFlow(text);
-            else if (state.flow === "PICKUP") handlePickupFlow(text);
-            else {
-                showMainDashboard("Here are the actions available:");
-            }
+            addMessage("Processing: " + escapeHtml(text), "ai");
+            showTrackingButtons();
         }
 
-        // ===================== SIGNUP & LOGIN =====================
-
-        function handleSignup(text) {
-            if (state.step === "NAME") {
-                state.data.name = text;
-                state.step = "EMAIL";
-                addMessage("Got it! What's your email?", "ai");
-            } else if (state.step === "EMAIL") {
-                state.data.email = text.toLowerCase().strip ? text.toLowerCase().strip() : text.toLowerCase();
-                state.step = "PHONE";
-                addMessage("What's your phone number?", "ai");
-            } else if (state.step === "PHONE") {
-                state.data.phone = text;
-                state.step = "ADDRESS";
-                addMessage("What's your residential address?", "ai");
-            } else if (state.step === "ADDRESS") {
-                state.data.address = text;
-                state.step = "PASSWORD";
-                addMessage("Create a password (min 6 chars):", "ai");
-                inputEl.type = "password";
-            } else if (state.step === "PASSWORD") {
-                inputEl.type = "text";
-                state.data.password = text;
-                submitSignup();
-            }
-        }
-
-        function submitSignup() {
-            busy = true;
-            fetch("/register/", {
-                method: "POST",
-                credentials: "same-origin",
-                headers: { "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": getCookie("csrftoken") },
-                body: new URLSearchParams({
-                    full_name: state.data.name,
-                    email: state.data.email,
-                    phone: state.data.phone,
-                    address: state.data.address,
-                    password: state.data.password,
-                    confirm_password: state.data.password
-                })
-            })
-            .then(function(r) {
-                busy = false;
-                if (r.redirected || r.status === 200) {
-                    state.user = { name: state.data.name, email: state.data.email };
-                    showMainDashboard("Account created & logged in successfully! 🎉");
-                } else {
-                    addMessage("Account creation issue — let me check if that email exists or sign you in.", "ai");
-                    addActions([{ label: "Continue with existing demo account", cls: "success" }]);
-                }
-            })
-            .catch(function() {
-                busy = false;
-                showMainDashboard("Signed in as demo citizen.");
-            });
-        }
-
-        function handleSignin(text) {
-            if (state.step === "IDENTIFIER") {
-                state.data.username = text;
-                state.step = "PASSWORD";
-                addMessage("Enter password:", "ai");
-                inputEl.type = "password";
-            } else if (state.step === "PASSWORD") {
-                inputEl.type = "text";
-                busy = true;
-                fetch("/login/", {
-                    method: "POST",
-                    credentials: "same-origin",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": getCookie("csrftoken") },
-                    body: new URLSearchParams({ username_or_email: state.data.username, password: text })
-                })
-                .then(function(r) {
-                    busy = false;
-                    state.user = { name: state.data.username };
-                    showMainDashboard("Logged in successfully! 👋");
-                })
-                .catch(function() {
-                    busy = false;
-                    showMainDashboard("Logged in successfully!");
-                });
-            }
-        }
-
-        // ===================== COMPLAINT FLOW =====================
-
-        function startComplaintFlow() {
-            state.flow = "COMPLAINT";
-            state.step = "ISSUE";
-            state.data = {};
-            addMessage("What type of waste issue would you like to report?", "ai");
-            addActions([
-                "Garbage on Road",
-                "Overflowing Bin",
-                "Illegal Dumping",
-                "Missed Collection",
-                "Improper Segregation"
-            ]);
-        }
-
-        function handleComplaintFlow(text) {
-            if (state.step === "ISSUE") {
-                state.data.issue = text;
-                state.step = "DESC";
-                addMessage("Tell us what happened (short description):", "ai");
-            } else if (state.step === "DESC") {
-                state.data.description = text;
-                state.step = "LOCATION";
-                addMessage("Where did this happen?", "ai");
-                addActions(["📍 Naubasta, Kanpur", "📍 Sector 18 Market", "📍 East Gate", "✏ Custom Address"]);
-            } else if (state.step === "LOCATION") {
-                state.data.location = text.replace("📍 ", "");
-                state.step = "LANDMARK";
-                addMessage("Any nearby landmark? (or type Skip):", "ai");
-                addActions(["Opposite Water Tank", "Near Central Park", "Skip"]);
-            } else if (state.step === "LANDMARK") {
-                state.data.landmark = text === "Skip" ? "" : text;
-                state.step = "REVIEW";
-                renderComplaintReview();
-            } else if (state.step === "REVIEW") {
-                if (text === "✅ CONFIRM COMPLAINT" || text.indexOf("CONFIRM") !== -1) {
-                    submitComplaint();
-                } else if (text === "Cancel") {
-                    showMainDashboard("Complaint creation cancelled.");
-                }
-            }
-        }
-
-        function renderComplaintReview() {
-            var card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = '<div class="card-title">COMPLAINT REVIEW</div>' +
-                '<div style="margin-top:8px;">' +
-                '• <b>Issue:</b> ' + escapeHtml(state.data.issue) + '<br>' +
-                '• <b>Description:</b> ' + escapeHtml(state.data.description) + '<br>' +
-                '• <b>Location:</b> ' + escapeHtml(state.data.location) + '<br>' +
-                '• <b>Landmark:</b> ' + escapeHtml(state.data.landmark || "—") + '<br>' +
-                '</div>';
-            chatWindow.appendChild(card);
-            scrollDown();
-            addMessage("Please confirm details to submit to municipality:", "ai");
-            addActions([{ label: "✅ CONFIRM COMPLAINT", cls: "success" }, { label: "Cancel", cls: "danger" }]);
-        }
-
-        function submitComplaint() {
-            busy = true;
-            fetch("/report/", {
-                method: "POST",
-                credentials: "same-origin",
-                headers: { "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": getCookie("csrftoken") },
-                body: new URLSearchParams({
-                    issue_type: state.data.issue.toUpperCase().replace(/\s+/g, "_"),
-                    description: state.data.description,
-                    location: state.data.location,
-                    landmark: state.data.landmark
-                })
-            })
-            .then(function() {
-                busy = false;
-                fetchLiveSync(function(res) {
-                    var latest = res.complaints && res.complaints[0];
-                    var idStr = latest ? latest.id : "WM-2026-0024";
-                    var priorityStr = latest ? latest.priority : "High";
-                    addMessage("✅ <b>Complaint Submitted Successfully 🎉</b><br>" +
-                        "Complaint ID: <span class=\"card-id\">" + idStr + "</span><br>" +
-                        "Status: <b>PENDING</b> • Priority: <b>" + priorityStr + "</b><br><br>" +
-                        "Your complaint is now waiting for municipal action.", "ai");
-                    showMainDashboard();
-                });
-            })
-            .catch(function() {
-                busy = false;
-                showMainDashboard("Complaint submitted successfully!");
-            });
-        }
-
-        // ===================== PICKUP FLOW =====================
-
-        function startPickupFlow() {
-            state.flow = "PICKUP";
-            state.step = "CATEGORY";
-            state.data = {};
-            addMessage("Which category of waste needs to be picked up?", "ai");
-            addActions(["E-Waste", "Plastic", "Paper", "Glass", "Organic", "General"]);
-        }
-
-        function handlePickupFlow(text) {
-            if (state.step === "CATEGORY") {
-                state.data.category = text;
-                state.step = "QUANTITY";
-                addMessage("Roughly how much waste is it? (e.g., 2 bags, 1 carton box):", "ai");
-                addActions(["1 carton box", "2 bags (~10 kg)", "Bulk E-Waste"]);
-            } else if (state.step === "QUANTITY") {
-                state.data.quantity = text;
-                state.step = "LOCATION";
-                addMessage("Where should we collect it from?", "ai");
-                addActions(["📍 Sector 15 Main Road", "📍 Flat 101, Noida", "✏ Custom Address"]);
-            } else if (state.step === "LOCATION") {
-                state.data.location = text.replace("📍 ", "");
-                state.step = "DATE";
-                addMessage("Which date should we come?", "ai");
-                addActions(["Today", "Tomorrow", "Next Monday"]);
-            } else if (state.step === "DATE") {
-                state.data.date = text;
-                state.step = "TIME";
-                addMessage("Which time slot works best?", "ai");
-                addActions(["Morning (08:00 AM - 11:00 AM)", "Midday (11:00 AM - 02:00 PM)", "Evening (02:00 PM - 05:00 PM)"]);
-            } else if (state.step === "TIME") {
-                state.data.time = text;
-                state.step = "REVIEW";
-                renderPickupReview();
-            } else if (state.step === "REVIEW") {
-                if (text === "✅ CONFIRM PICKUP" || text.indexOf("CONFIRM") !== -1) {
-                    submitPickup();
-                } else if (text === "Cancel") {
-                    showMainDashboard("Pickup request cancelled.");
-                }
-            }
-        }
-
-        function renderPickupReview() {
-            var card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = '<div class="card-title">PICKUP REVIEW</div>' +
-                '<div style="margin-top:8px;">' +
-                '• <b>Category:</b> ' + escapeHtml(state.data.category) + '<br>' +
-                '• <b>Quantity:</b> ' + escapeHtml(state.data.quantity) + '<br>' +
-                '• <b>Location:</b> ' + escapeHtml(state.data.location) + '<br>' +
-                '• <b>When:</b> ' + escapeHtml(state.data.date) + ' • ' + escapeHtml(state.data.time) + '<br>' +
-                '</div>';
-            chatWindow.appendChild(card);
-            scrollDown();
-            addMessage("Please confirm your doorstep pickup request:", "ai");
-            addActions([{ label: "✅ CONFIRM PICKUP", cls: "success" }, { label: "Cancel", cls: "danger" }]);
-        }
-
-        function submitPickup() {
-            busy = true;
-            fetch("/pickup/", {
-                method: "POST",
-                credentials: "same-origin",
-                headers: { "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": getCookie("csrftoken") },
-                body: new URLSearchParams({
-                    waste_category: state.data.category.toUpperCase().replace(/\s+/g, "_"),
-                    quantity: state.data.quantity,
-                    pickup_address: state.data.location,
-                    preferred_date: new Date().toISOString().split("T")[0],
-                    preferred_time: state.data.time
-                })
-            })
-            .then(function() {
-                busy = false;
-                fetchLiveSync(function(res) {
-                    var latest = res.pickups && res.pickups[0];
-                    var idStr = latest ? latest.id : "PK-2026-0018";
-                    addMessage("✅ <b>Pickup Request Created 🎉</b><br>" +
-                        "Pickup ID: <span class=\"card-id\">" + idStr + "</span><br>" +
-                        "Status: <b>REQUESTED</b>", "ai");
-                    showMainDashboard();
-                });
-            })
-            .catch(function() {
-                busy = false;
-                showMainDashboard("Pickup request created!");
-            });
-        }
-
-        // ===================== MY COMPLAINTS & PICKUPS =====================
-
-        function showMyComplaints() {
-            fetchLiveSync(function(res) {
+        function trackComplaint() {
+            fetchSync(function(res) {
                 if (!res.ok || !res.complaints || !res.complaints.length) {
-                    addMessage("You have no filed complaints yet.", "ai");
-                    showMainDashboard();
+                    addMessage("No complaints found.", "ai");
+                    showTrackingButtons();
                     return;
                 }
-                addMessage("📋 <b>Your Complaints Record</b>", "ai");
+
+                addMessage("📍 <b>Complaint Status Query — SQLite Database</b>", "ai");
                 res.complaints.forEach(function(c) {
                     var card = document.createElement("div");
                     card.className = "card";
-                    card.innerHTML = '<div class="card-head">' +
+                    var html = '<div class="card-head">' +
                         '<span class="card-id">' + escapeHtml(c.id) + '</span>' +
                         '<span class="' + badgeClass(c.status) + '">' + escapeHtml(c.status) + '</span>' +
                         '</div>' +
                         '<div class="card-title">' + escapeHtml(c.issue) + '</div>' +
-                        '<div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;">📅 ' + escapeHtml(c.date) + ' • 📍 ' + escapeHtml(c.location) + '</div>' +
+                        '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📅 ' + escapeHtml(c.date) + ' • 📍 ' + escapeHtml(c.location) + '</div>' +
                         '<div class="stepper">' +
                         (c.status_steps || []).map(function(s, i) {
                             return '<div class="step ' + (i < c.status_step ? 'done' : (i === c.status_step ? 'current' : '')) + '">' + s + '</div>';
                         }).join('') +
                         '</div>';
+
+                    if (c.timeline && c.timeline.length) {
+                        html += '<div class="timeline-list"><b>Audit Timeline Steps:</b>';
+                        c.timeline.forEach(function(t) {
+                            html += '<div class="timeline-item">• <b>' + escapeHtml(t.status) + ':</b> ' + escapeHtml(t.note) + '</div>';
+                        });
+                        html += '</div>';
+                    }
+
+                    card.innerHTML = html;
                     chatWindow.appendChild(card);
                 });
                 scrollDown();
-                addActions(["🗑 Report Waste", "↻ Refresh My Status"]);
+                showTrackingButtons();
             });
         }
 
-        function showMyPickups() {
-            fetchLiveSync(function(res) {
+        function trackPickup() {
+            fetchSync(function(res) {
                 if (!res.ok || !res.pickups || !res.pickups.length) {
-                    addMessage("You have no pickup requests yet.", "ai");
-                    showMainDashboard();
+                    addMessage("No pickups found.", "ai");
+                    showTrackingButtons();
                     return;
                 }
-                addMessage("📦 <b>Your Pickup Requests Record</b>", "ai");
+
+                addMessage("📦 <b>Pickup Request Query — SQLite Database</b>", "ai");
                 res.pickups.forEach(function(p) {
                     var card = document.createElement("div");
                     card.className = "card";
@@ -724,7 +490,7 @@
                         '<span class="' + badgeClass(p.status) + '">' + escapeHtml(p.status) + '</span>' +
                         '</div>' +
                         '<div class="card-title">' + escapeHtml(p.category) + ' (' + escapeHtml(p.quantity) + ')</div>' +
-                        '<div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;">📅 ' + escapeHtml(p.date) + ' • 📍 ' + escapeHtml(p.address) + '</div>' +
+                        '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📅 ' + escapeHtml(p.date) + ' • 📍 ' + escapeHtml(p.address) + '</div>' +
                         '<div class="stepper">' +
                         (p.status_steps || []).map(function(s, i) {
                             return '<div class="step ' + (i < p.status_step ? 'done' : (i === p.status_step ? 'current' : '')) + '">' + s + '</div>';
@@ -733,18 +499,17 @@
                     chatWindow.appendChild(card);
                 });
                 scrollDown();
-                addActions(["🚛 Request Pickup", "↻ Refresh My Status"]);
+                showTrackingButtons();
             });
         }
 
-        // ===================== LISTENERS =====================
         composer.addEventListener("submit", function (e) {
             e.preventDefault();
             var text = inputEl.value.trim();
-            if (!text || busy) return;
+            if (!text) return;
             inputEl.value = "";
             clearOldActions();
-            handleUserAction(text);
+            handleAction(text);
         });
 
         boot();
