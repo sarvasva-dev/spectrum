@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /admin-dashboard/
+Disallow: /login/
+Disallow: /register/
+
+Sitemap: https://cleanloop.sarthakml.in/sitemap.xml
