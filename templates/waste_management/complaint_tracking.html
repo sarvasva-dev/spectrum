@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Complaint Tracking - Smart Waste Management{% endblock %}
+
+{% block content %}
+<div>
+  <!-- Header & Filters -->
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    <div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+        My Waste Complaints
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Track resolution workflows from submission to crew cleanup.
+      </p>
+    </div>
+    <div>
+      <a href="{% url 'report_waste' %}" class="btn btn-primary">
+        <span>+</span> Report New Issue
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+    <a href="{% url 'complaint_tracking' %}" class="btn btn-sm {% if not selected_status %}btn-primary{% else %}btn-outline{% endif %}">
+      All Complaints
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=PENDING" class="btn btn-sm {% if selected_status == 'PENDING' %}btn-primary{% else %}btn-outline{% endif %}">
+      Pending
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=ASSIGNED" class="btn btn-sm {% if selected_status == 'ASSIGNED' %}btn-primary{% else %}btn-outline{% endif %}">
+      Assigned
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=IN_PROGRESS" class="btn btn-sm {% if selected_status == 'IN_PROGRESS' %}btn-primary{% else %}btn-outline{% endif %}">
+      In Progress
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=RESOLVED" class="btn btn-sm {% if selected_status == 'RESOLVED' %}btn-primary{% else %}btn-outline{% endif %}">
+      Resolved
+    </a>
+  </div>
+
+  <!-- Complaint List -->
+  {% if complaints %}
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      {% for complaint in complaints %}
+        <div class="card" style="padding: 20px 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <span style="font-size: 1.15rem; font-weight: 800; color: var(--primary);">
+                  {{ complaint.complaint_id }}
+                </span>
+                <span class="badge badge-priority-{{ complaint.priority|lower }}">
+                  {{ complaint.get_priority_display }} Priority
+                </span>
+                <span class="badge badge-{{ complaint.status|lower }}">
+                  {{ complaint.get_status_display }}
+                </span>
+              </div>
+              <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+                {{ complaint.get_issue_type_display }}
+              </h3>
+            </div>
+
+            <div style="text-align: right;">
+              <span style="font-size: 0.85rem; color: var(--text-muted);">
+                Reported on {{ complaint.created_at|date:"M d, Y • h:i A" }}
+              </span>
+            </div>
+          </div>
+
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 14px; line-height: 1.5;">
+            {{ complaint.description|truncatewords:35 }}
+          </p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border-color); font-size: 0.88rem; color: var(--text-muted);">
+            <div>
+              📍 <strong>Location:</strong> {{ complaint.location }}
+              {% if complaint.landmark %} • <em>Near {{ complaint.landmark }}</em>{% endif %}
+            </div>
+            <div>
+              <a href="{% url 'complaint_detail' complaint.complaint_id %}" class="btn btn-outline-primary btn-sm">
+                View Full Tracking Timeline →
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <h3>No complaints found</h3>
+      <p>
+        {% if selected_status %}
+          No complaints match the filter "<strong>{{ selected_status }}</strong>".
+        {% else %}
+          You haven't submitted any complaints yet. Notice waste or an overflowing bin?
+        {% endif %}
+      </p>
+      <a href="{% url 'report_waste' %}" class="btn btn-primary">File a Waste Report</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

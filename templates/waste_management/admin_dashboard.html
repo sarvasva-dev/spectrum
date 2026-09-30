@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+
+{% block title %}Municipal Admin Dashboard - Smart Waste Management{% endblock %}
+
+{% block content %}
+<div>
+  <!-- Admin Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    <div>
+      <div style="display: inline-flex; align-items: center; gap: 6px; background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 800; margin-bottom: 8px;">
+        🛡️ MUNICIPAL CONTROL ROOM
+      </div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+        Administrator Operations Dashboard
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Centralized municipal monitoring, crew dispatch, hotspot analytics, and pickup scheduling.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <a href="/admin/" target="_blank" class="btn btn-outline btn-sm">
+        Django Admin ↗
+      </a>
+      <a href="{% url 'citizen_dashboard' %}" class="btn btn-outline btn-sm">
+        Citizen View
+      </a>
+    </div>
+  </div>
+
+  <!-- Top Statistics Metrics (Requirement #12) -->
+  <div class="stats-grid">
+    <!-- Total Users -->
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ total_users }}</div>
+        <div class="stat-label">Total Citizens</div>
+      </div>
+    </div>
+
+    <!-- Total Complaints -->
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ total_complaints }}</div>
+        <div class="stat-label">Total Complaints</div>
+      </div>
+    </div>
+
+    <!-- Pending Complaints -->
+    <div class="stat-card">
+      <div class="stat-icon amber">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ pending_complaints }}</div>
+        <div class="stat-label">Pending / Active</div>
+      </div>
+    </div>
+
+    <!-- Resolved Complaints -->
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ resolved_complaints }}</div>
+        <div class="stat-label">Resolved Issues</div>
+      </div>
+    </div>
+
+    <!-- Pickup Requests -->
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ total_pickups }}</div>
+        <div class="stat-label">Pickup Requests</div>
+      </div>
+    </div>
+
+    <!-- Completed Pickups -->
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"></path></svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ completed_pickups }}</div>
+        <div class="stat-label">Completed Pickups</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: WASTE HOTSPOTS & ANALYTICS (Requirement #13) -->
+  <div style="margin: 32px 0;">
+    <div style="margin-bottom: 16px;">
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+        <span>🔥</span> Waste Hotspots & Predictive Analytics
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Identifies repeated chronic garbage dumping locations from citizen reports to deploy permanent bins and surveillance.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px;">
+      <!-- Hotspots Aggregation Table -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Identified Waste Hotspots (By Frequency)</h3>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Real-time SQLite Aggregation</span>
+        </div>
+
+        {% if hotspots %}
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Location Name</th>
+                  <th>Total Reports</th>
+                  <th>Activity Level</th>
+                  <th>Municipal Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for spot in hotspots %}
+                  <tr>
+                    <td>
+                      <strong>📍 {{ spot.location }}</strong>
+                    </td>
+                    <td>
+                      <span style="font-weight: 800; font-size: 1.05rem;">{{ spot.count }}</span> reports
+                    </td>
+                    <td>
+                      <span class="badge {{ spot.badge_class }}">
+                        {{ spot.activity_level }}
+                      </span>
+                    </td>
+                    <td>
+                      {% if spot.count >= 3 %}
+                        <span style="color: #991b1b; font-size: 0.82rem; font-weight: 700;">Deploy Extra Bin / Patrol</span>
+                      {% elif spot.count >= 2 %}
+                        <span style="color: #92400e; font-size: 0.82rem; font-weight: 600;">Schedule Daily Clearance</span>
+                      {% else %}
+                        <span style="color: #0369a1; font-size: 0.82rem;">Standard Monitoring</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state" style="padding: 24px;">
+            <p>No hotspots identified yet. Submit complaints to generate hotspot intelligence.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Complaints By Waste Type Distribution -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Complaints by Issue Category</h3>
+        </div>
+
+        {% if issue_type_stats %}
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            {% for item in issue_type_stats %}
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 4px;">
+                  <strong>{{ item.label }}</strong>
+                  <span style="color: var(--text-muted);">{{ item.count }} reports ({{ item.percentage }}%)</span>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar" style="width: {{ item.percentage }}%;"></div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state" style="padding: 24px;">
+            <p>No complaints logged to analyze categories yet.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: COMPLAINT MANAGEMENT TABLE (Requirement #12) -->
+  <div class="card" style="margin-bottom: 36px;">
+    <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h3 class="card-title">Complaint Management Center</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
+          Filter, reassign priority, dispatch crews, and record completion notes.
+        </p>
+      </div>
+
+      <!-- Search & Filters -->
+      <form method="GET" action="{% url 'admin_dashboard' %}" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <input 
+          type="text" 
+          name="c_search" 
+          value="{{ complaint_search }}" 
+          placeholder="Search ID, location, citizen..." 
+          class="form-control" 
+          style="width: 220px; padding: 6px 12px; font-size: 0.85rem;"
+        >
+        <select name="c_status" class="form-select" style="width: 140px; padding: 6px 10px; font-size: 0.85rem;">
+          <option value="">All Statuses</option>
+          <option value="PENDING" {% if selected_c_status == 'PENDING' %}selected{% endif %}>Pending</option>
+          <option value="ASSIGNED" {% if selected_c_status == 'ASSIGNED' %}selected{% endif %}>Assigned</option>
+          <option value="IN_PROGRESS" {% if selected_c_status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+          <option value="RESOLVED" {% if selected_c_status == 'RESOLVED' %}selected{% endif %}>Resolved</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        {% if complaint_search or selected_c_status %}
+          <a href="{% url 'admin_dashboard' %}" class="btn btn-outline btn-sm">Reset</a>
+        {% endif %}
+      </form>
+    </div>
+
+    {% if complaints %}
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Complaint ID</th>
+              <th>Reporting Citizen</th>
+              <th>Issue Type</th>
+              <th>Location</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Assigned Crew</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in complaints %}
+              <tr>
+                <td><strong>{{ c.complaint_id }}</strong></td>
+                <td>
+                  <div>{{ c.user.get_full_name|default:c.user.username }}</div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">{{ c.user.email }}</div>
+                </td>
+                <td>{{ c.get_issue_type_display }}</td>
+                <td>{{ c.location }}</td>
+                <td>
+                  <span class="badge badge-priority-{{ c.priority|lower }}">
+                    {{ c.get_priority_display }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge badge-{{ c.status|lower }}">
+                    {{ c.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  {{ c.assigned_crew|default:"— Not Assigned —" }}
+                </td>
+                <td style="font-size: 0.82rem; white-space: nowrap;">
+                  {{ c.created_at|date:"M d, Y" }}
+                </td>
+                <td>
+                  <a href="{% url 'admin_complaint_update' c.complaint_id %}" class="btn btn-outline-primary btn-sm">
+                    Manage / Resolve →
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <p>No complaints match the filter criteria.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- SECTION: PICKUP REQUEST MANAGEMENT TABLE (Requirement #12) -->
+  <div class="card">
+    <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h3 class="card-title">Doorstep Pickup Logistics Management</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
+          Assign collection trucks, track scheduled dates, and mark completed.
+        </p>
+      </div>
+
+      <!-- Filter Pickups -->
+      <form method="GET" action="{% url 'admin_dashboard' %}" style="display: flex; gap: 8px;">
+        <select name="p_status" class="form-select" style="width: 150px; padding: 6px 10px; font-size: 0.85rem;">
+          <option value="">All Pickups</option>
+          <option value="REQUESTED" {% if selected_p_status == 'REQUESTED' %}selected{% endif %}>Requested</option>
+          <option value="ASSIGNED" {% if selected_p_status == 'ASSIGNED' %}selected{% endif %}>Assigned</option>
+          <option value="PICKED_UP" {% if selected_p_status == 'PICKED_UP' %}selected{% endif %}>Picked Up</option>
+          <option value="COMPLETED" {% if selected_p_status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+        </select>
+        <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+      </form>
+    </div>
+
+    {% if pickups %}
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Pickup ID</th>
+              <th>Citizen</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Address</th>
+              <th>Scheduled Slot</th>
+              <th>Assigned Vehicle</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in pickups %}
+              <tr>
+                <td><strong style="color: var(--secondary);">{{ p.pickup_id }}</strong></td>
+                <td>
+                  <div>{{ p.user.get_full_name|default:p.user.username }}</div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">{{ p.user.profile.phone|default:p.user.email }}</div>
+                </td>
+                <td>{{ p.get_waste_category_display }}</td>
+                <td>{{ p.quantity }}</td>
+                <td style="max-width: 200px;">{{ p.pickup_address|truncatewords:6 }}</td>
+                <td style="font-size: 0.82rem;">
+                  <strong>{{ p.preferred_date|date:"M d, Y" }}</strong><br>
+                  {{ p.preferred_time }}
+                </td>
+                <td>{{ p.assigned_vehicle|default:"— Unassigned —" }}</td>
+                <td>
+                  <span class="badge badge-{{ p.status|lower }}">
+                    {{ p.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  <a href="{% url 'admin_pickup_update' p.pickup_id %}" class="btn btn-outline btn-sm">
+                    Assign / Update →
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <p>No pickup requests found.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

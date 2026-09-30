@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Server Error (500) - Smart Waste Management{% endblock %}
+
+{% block content %}
+<div class="empty-state" style="max-width: 580px; margin: 60px auto; padding: 48px 30px;">
+  <div class="empty-state-icon" style="background: #fee2e2; color: #dc2626;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  </div>
+  <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;">500 - Server Error</h1>
+  <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
+    An unexpected server issue occurred. Our engineering support team has been notified. Please try refreshing in a moment.
+  </p>
+  <div style="display: flex; gap: 12px; justify-content: center;">
+    <a href="{% url 'landing' %}" class="btn btn-primary">Return to Homepage</a>
+  </div>
+</div>
+{% endblock %}

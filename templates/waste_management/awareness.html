@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}Waste Segregation & Awareness Guide - Smart Waste{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+
+  <!-- Header Banner -->
+  <div style="text-align: center; margin-bottom: 32px;">
+    <div style="display: inline-flex; align-items: center; gap: 6px; background: #d1fae5; color: #065f46; padding: 5px 14px; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 700; margin-bottom: 12px;">
+      📚 CITIZEN AWARENESS
+    </div>
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main);">Master Proper Waste Segregation</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 680px; margin: 8px auto 0;">
+      Up to 80% of urban waste can be recycled or composted if segregated correctly at the source. Understand your bins and protect your community.
+    </p>
+  </div>
+
+  <!-- Interactive Quick Item Lookup -->
+  <div class="card" style="margin-bottom: 36px; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <span style="font-size: 1.4rem;">🔍</span>
+      <div>
+        <h3 style="font-size: 1.15rem; font-weight: 700;">Instant Segregation Finder</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Not sure which bin an item belongs to? Type the item name below:</p>
+      </div>
+    </div>
+    <input 
+      type="text" 
+      id="wasteSearchInput" 
+      class="form-control" 
+      placeholder="e.g. banana peel, milk packet, battery, glass bottle, pizza box..." 
+      style="font-size: 1rem; padding: 12px 16px; border-radius: var(--radius-md);"
+    >
+    <div id="wasteSearchResult" style="display: none;"></div>
+  </div>
+
+  <!-- Core Waste Segregation Bins Section -->
+  <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 18px; color: var(--text-main);">
+    The 3-Color Bin System
+  </h2>
+
+  <div class="segregation-grid">
+    <!-- Green Bin: Wet / Organic -->
+    <div class="bin-card green-bin">
+      <div class="bin-card-header">
+        <span style="font-size: 2rem;">🌿</span>
+        <div>
+          <span class="bin-pill green">Green Bin</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 4px;">Wet & Organic Waste</h3>
+        </div>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+        Biodegradable organic matter that decomposes into rich compost or biofuel.
+      </p>
+      <ul>
+        <li><strong>Kitchen Scraps:</strong> Vegetable and fruit peels</li>
+        <li><strong>Food Leftovers:</strong> Cooked food, bread, rice</li>
+        <li><strong>Organic Matter:</strong> Tea leaves, coffee grounds</li>
+        <li><strong>Garden Waste:</strong> Fallen leaves, flowers, twigs</li>
+        <li><strong>Eggshells</strong> & bones</li>
+      </ul>
+      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #a7f3d0; font-size: 0.82rem; color: #047857; font-weight: 600;">
+        💡 Tip: Never pack wet waste inside non-biodegradable polythene bags.
+      </div>
+    </div>
+
+    <!-- Blue Bin: Dry / Recyclable -->
+    <div class="bin-card blue-bin">
+      <div class="bin-card-header">
+        <span style="font-size: 2rem;">♻️</span>
+        <div>
+          <span class="bin-pill blue">Blue Bin</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 4px;">Dry & Recyclable Waste</h3>
+        </div>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+        Clean and dry materials that can be remanufactured into new products.
+      </p>
+      <ul>
+        <li><strong>Paper & Cardboard:</strong> Boxes, flyers, notebooks</li>
+        <li><strong>Plastics:</strong> Bottles, containers, clean wraps</li>
+        <li><strong>Metals:</strong> Beverage cans, foil, scrap metal</li>
+        <li><strong>Glass:</strong> Jars, beverage bottles (unbroken)</li>
+        <li><strong>Textiles:</strong> Old clean fabrics and rags</li>
+      </ul>
+      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #bae6fd; font-size: 0.82rem; color: #0369a1; font-weight: 600;">
+        💡 Tip: Rinse food residue off plastic & metal containers before binning.
+      </div>
+    </div>
+
+    <!-- Red / Black Bin: Hazardous & E-Waste -->
+    <div class="bin-card red-bin">
+      <div class="bin-card-header">
+        <span style="font-size: 2rem;">⚠️</span>
+        <div>
+          <span class="bin-pill red">Red / Black Bin</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 4px;">Domestic Hazardous & E-Waste</h3>
+        </div>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+        Toxic, chemical, or electronic items requiring specialized municipal handling.
+      </p>
+      <ul>
+        <li><strong>E-Waste:</strong> Phones, chargers, wires, circuits</li>
+        <li><strong>Batteries:</strong> Lithium-ion, alkaline, button cells</li>
+        <li><strong>Chemicals:</strong> Paints, solvents, insecticides</li>
+        <li><strong>Sanitary / Medical:</strong> Used bandages, expired meds</li>
+        <li><strong>Lighting:</strong> CFL bulbs, fluorescent tubes</li>
+      </ul>
+      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #fecaca; font-size: 0.82rem; color: #991b1b; font-weight: 600;">
+        💡 Tip: Request a doorstep E-Waste pickup rather than tossing in regular bins.
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Category Breakdown Cards -->
+  <div style="margin: 40px 0;">
+    <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
+      Material Category Guidelines
+    </h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
+      <!-- Plastic -->
+      <div class="card">
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #0284c7; display: flex; align-items: center; gap: 8px;">
+          <span>🧴</span> Plastic Management
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 8px 0 10px;">
+          Single-use plastic takes 400+ years to degrade. Squeeze PET bottles, remove non-recyclable foil sleeves, and bundle thin plastic pouches together.
+        </p>
+      </div>
+
+      <!-- Paper -->
+      <div class="card">
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #d97706; display: flex; align-items: center; gap: 8px;">
+          <span>📦</span> Paper & Cardboard
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 8px 0 10px;">
+          Flatten cardboard boxes to save space in collection vehicles. Soiled pizza boxes or wax-coated paper cannot be recycled and must go to general waste.
+        </p>
+      </div>
+
+      <!-- Glass -->
+      <div class="card">
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #059669; display: flex; align-items: center; gap: 8px;">
+          <span>🍾</span> Glass Disposal
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 8px 0 10px;">
+          Glass is 100% recyclable infinitely. Keep broken glass safely wrapped in thick paper to prevent injury to sanitation staff during handling.
+        </p>
+      </div>
+
+      <!-- Metal -->
+      <div class="card">
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 8px;">
+          <span>🔩</span> Metals & Scrap
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 8px 0 10px;">
+          Aluminum cans, steel tins, and copper wires have high scrap recovery value. Crush aluminum beverage cans to optimize storage volume.
+        </p>
+      </div>
+
+      <!-- E-Waste -->
+      <div class="card">
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #7c3aed; display: flex; align-items: center; gap: 8px;">
+          <span>⚡</span> E-Waste & Gadgets
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 8px 0 10px;">
+          Electronics contain valuable precious metals as well as hazardous lead and mercury. Always schedule an authorized doorstep pickup via our portal.
+        </p>
+      </div>
+
+      <!-- Hazardous -->
+      <div class="card">
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #dc2626; display: flex; align-items: center; gap: 8px;">
+          <span>☣️</span> Hazardous & Chemical Waste
+        </h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 8px 0 10px;">
+          Never pour paint, engine oil, or industrial pesticides down domestic sinks or drains. They poison groundwater and damage sewage processing plants.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Do's and Don'ts -->
+  <div style="margin: 40px 0;">
+    <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
+      Community Do's and Don'ts
+    </h2>
+
+    <div class="dos-donts-grid">
+      <!-- DO -->
+      <div class="dos-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #d1fae5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800;">✓</div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #065f46;">DO's for Responsible Living</h3>
+        </div>
+        <ul style="padding-left: 20px; color: var(--text-main); font-size: 0.92rem;">
+          <li style="margin-bottom: 10px;"><strong>Separate at source:</strong> Maintain separate wet and dry containers in your household or office.</li>
+          <li style="margin-bottom: 10px;"><strong>Rinse before disposal:</strong> Quick-rinse plastic milk pouches, food trays, and jars.</li>
+          <li style="margin-bottom: 10px;"><strong>Schedule bulk pickups:</strong> Use our portal to schedule pickups for old appliances and furniture.</li>
+          <li style="margin-bottom: 10px;"><strong>Report overflowing bins:</strong> Help your municipality detect hotspots early before pests multiply.</li>
+          <li style="margin-bottom: 10px;"><strong>Reuse cardboard & packaging:</strong> Support the circular economy by repurposing packing materials.</li>
+        </ul>
+      </div>
+
+      <!-- DONT -->
+      <div class="donts-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-weight: 800;">✕</div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #991b1b;">DON'Ts to Avoid Fines & Hazards</h3>
+        </div>
+        <ul style="padding-left: 20px; color: var(--text-main); font-size: 0.92rem;">
+          <li style="margin-bottom: 10px;"><strong>Don't dump garbage on roads:</strong> Street littering is a punishable offense and clogs storm drains.</li>
+          <li style="margin-bottom: 10px;"><strong>Don't mix batteries in regular trash:</strong> Heavy metals leak into soil and cause landfill fires.</li>
+          <li style="margin-bottom: 10px;"><strong>Don't burn plastics or dry leaves:</strong> Releases carcinogens (dioxins and furans) into our breathable air.</li>
+          <li style="margin-bottom: 10px;"><strong>Don't throw loose broken glass:</strong> Always wrap securely to protect sanitation workers.</li>
+          <li style="margin-bottom: 10px;"><strong>Don't flush non-biodegradable wipes:</strong> Wipes and hygiene products cause severe sewer blockages.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="card" style="text-align: center; padding: 32px; background: #ffffff;">
+    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">Notice a waste problem in your area right now?</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+      Report it to our central system and notify municipal response teams immediately.
+    </p>
+    <a href="{% url 'report_waste' %}" class="btn btn-primary btn-lg">File a Waste Report Now</a>
+  </div>
+
+</div>
+{% endblock %}

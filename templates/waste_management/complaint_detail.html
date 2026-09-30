@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Complaint {{ complaint.complaint_id }} - Tracking{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+
+  <!-- Back Link & Header -->
+  <div style="margin-bottom: 20px;">
+    <a href="{% url 'complaint_tracking' %}" style="font-size: 0.88rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+      ← Back to My Complaints
+    </a>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 12px;">
+          <span>{{ complaint.complaint_id }}</span>
+          <span class="badge badge-priority-{{ complaint.priority|lower }}">{{ complaint.get_priority_display }} Priority</span>
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+          {{ complaint.get_issue_type_display }} • Submitted on {{ complaint.created_at|date:"F d, Y at h:i A" }}
+        </p>
+      </div>
+
+      {% if user.is_staff or user.profile.is_admin_staff %}
+        <a href="{% url 'admin_complaint_update' complaint.complaint_id %}" class="btn btn-primary btn-sm">
+          ⚙️ Admin Edit Status
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Visual Workflow Timeline -->
+  <div class="card" style="padding: 28px; margin-bottom: 24px;">
+    <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">
+      Resolution Lifecycle
+    </h3>
+
+    <div class="timeline-workflow">
+      <!-- Step 1: PENDING -->
+      <div class="timeline-step {% if complaint.status == 'PENDING' %}current{% else %}completed{% endif %}">
+        <div class="timeline-circle">
+          {% if complaint.status == 'PENDING' %}1{% else %}✓{% endif %}
+        </div>
+        <div class="timeline-label">1. PENDING</div>
+      </div>
+
+      <!-- Step 2: ASSIGNED -->
+      <div class="timeline-step {% if complaint.status == 'ASSIGNED' %}current{% elif complaint.status == 'IN_PROGRESS' or complaint.status == 'RESOLVED' %}completed{% endif %}">
+        <div class="timeline-circle">
+          {% if complaint.status == 'IN_PROGRESS' or complaint.status == 'RESOLVED' %}✓{% else %}2{% endif %}
+        </div>
+        <div class="timeline-label">2. ASSIGNED</div>
+      </div>
+
+      <!-- Step 3: IN PROGRESS -->
+      <div class="timeline-step {% if complaint.status == 'IN_PROGRESS' %}current{% elif complaint.status == 'RESOLVED' %}completed{% endif %}">
+        <div class="timeline-circle">
+          {% if complaint.status == 'RESOLVED' %}✓{% else %}3{% endif %}
+        </div>
+        <div class="timeline-label">3. IN PROGRESS</div>
+      </div>
+
+      <!-- Step 4: RESOLVED -->
+      <div class="timeline-step {% if complaint.status == 'RESOLVED' %}completed current{% endif %}">
+        <div class="timeline-circle">
+          {% if complaint.status == 'RESOLVED' %}✓{% else %}4{% endif %}
+        </div>
+        <div class="timeline-label">4. RESOLVED</div>
+      </div>
+    </div>
+
+    <!-- Active Status Banner -->
+    <div style="background: var(--bg-alt); padding: 14px 18px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+      <div>
+        <strong style="color: var(--text-main);">Current Status:</strong>
+        <span class="badge badge-{{ complaint.status|lower }}" style="margin-left: 6px;">{{ complaint.get_status_display }}</span>
+      </div>
+      {% if complaint.assigned_crew %}
+        <div>
+          🚛 <strong>Assigned Team:</strong> <span style="color: var(--primary-dark); font-weight: 600;">{{ complaint.assigned_crew }}</span>
+        </div>
+      {% endif %}
+      {% if complaint.resolved_at %}
+        <div style="color: #065f46; font-size: 0.88rem; font-weight: 600;">
+          Resolved on {{ complaint.resolved_at|date:"M d, Y • h:i A" }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Complaint Details & Photo Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px;">
+    <!-- Details Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Report Details</h3>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.93rem;">
+        <div>
+          <span style="color: var(--text-muted); display: block; font-size: 0.82rem; font-weight: 600;">ISSUE CATEGORY</span>
+          <strong style="font-size: 1.05rem;">{{ complaint.get_issue_type_display }}</strong>
+        </div>
+
+        <div>
+          <span style="color: var(--text-muted); display: block; font-size: 0.82rem; font-weight: 600;">PRIMARY LOCATION</span>
+          <strong>{{ complaint.location }}</strong>
+          {% if complaint.landmark %}
+            <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
+              Landmark: {{ complaint.landmark }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <span style="color: var(--text-muted); display: block; font-size: 0.82rem; font-weight: 600;">CITIZEN DESCRIPTION</span>
+          <p style="margin-top: 4px; line-height: 1.5; color: var(--text-secondary);">
+            {{ complaint.description }}
+          </p>
+        </div>
+
+        {% if complaint.admin_notes %}
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 12px;">
+            <span style="color: #047857; display: block; font-size: 0.82rem; font-weight: 700;">MUNICIPAL DISPATCH NOTE</span>
+            <p style="margin-top: 4px; font-size: 0.9rem; color: #065f46;">
+              {{ complaint.admin_notes }}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Attached Photo / Location Context Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Attached Evidence Photo</h3>
+      </div>
+
+      {% if complaint.image %}
+        <div style="text-align: center;">
+          <img 
+            src="{{ complaint.image.url }}" 
+            alt="Complaint site photo" 
+            style="max-width: 100%; max-height: 280px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-color);"
+          >
+          <div style="margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);">
+            Uploaded during complaint submission
+          </div>
+        </div>
+      {% else %}
+        <div class="empty-state" style="padding: 36px 16px;">
+          <div class="empty-state-icon" style="background: var(--bg-alt); color: var(--text-muted);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <h3 style="font-size: 1rem;">No Photo Attached</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 0;">The citizen did not provide an image for this report.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Activity & Timeline Audit Logs -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Status History & Updates Log</h3>
+    </div>
+
+    {% if updates %}
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        {% for update in updates %}
+          <div style="display: flex; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color);">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">
+              ✓
+            </div>
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="badge badge-{{ update.status|lower }}">{{ update.status }}</span>
+                <span style="font-size: 0.82rem; color: var(--text-muted);">{{ update.created_at|date:"M d, Y • h:i A" }}</span>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 0;">
+                {{ update.note|default:"Status updated." }}
+              </p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color: var(--text-muted); font-size: 0.9rem;">No updates logged yet.</p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

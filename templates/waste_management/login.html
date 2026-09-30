@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Smart Waste Management{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: #d1fae5; color: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+      </div>
+      <h1>Welcome Back</h1>
+      <p>Sign in with your email or username to access your dashboard.</p>
+    </div>
+
+    <!-- Quick Demo Access Banner -->
+    <div style="background: #f8fafc; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 20px; font-size: 0.85rem; color: var(--text-muted);">
+      <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">🚀 Demo Credentials:</div>
+      <div><strong>Citizen:</strong> citizen@smartwaste.org / <code>demo1234</code></div>
+      <div><strong>Admin:</strong> admin@smartwaste.org / <code>admin1234</code></div>
+    </div>
+
+    <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" style="margin-bottom: 16px;">
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.username_or_email.id_for_label }}">Email or Username</label>
+        {{ form.username_or_email }}
+        {% if form.username_or_email.errors %}
+          <div class="field-error">{{ form.username_or_email.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        {% if form.password.errors %}
+          <div class="field-error">{{ form.password.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px; font-size: 1rem;">
+        Sign In
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-muted);">
+      Don't have an account yet? <a href="{% url 'register' %}" style="font-weight: 600;">Register as citizen</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

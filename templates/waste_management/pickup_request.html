@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Schedule Doorstep Waste Pickup - Smart Waste{% endblock %}
+
+{% block content %}
+<div style="max-width: 760px; margin: 0 auto;">
+
+  <!-- Form Header -->
+  <div style="margin-bottom: 24px;">
+    <a href="{% url 'citizen_dashboard' %}" style="font-size: 0.88rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+      ← Back to Dashboard
+    </a>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+      Schedule Doorstep Waste Pickup
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Schedule a dedicated collection vehicle for bulk recyclables, e-waste, or segregated scrap.
+    </p>
+  </div>
+
+  <div class="card" style="padding: 32px;">
+    <form method="POST" action="{% url 'pickup_request' %}" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Waste Category -->
+      <div class="form-group">
+        <label class="form-label" for="{{ form.waste_category.id_for_label }}">
+          Waste Category *
+        </label>
+        {{ form.waste_category }}
+        {% if form.waste_category.errors %}
+          <div class="field-error">{{ form.waste_category.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Smart Disposal Suggestion / Tip Box (managed by main.js) -->
+      <div id="categoryGuidanceBox" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 0.9rem; color: #065f46;">
+        <span style="font-weight: 700;">💡 Segregation Guidance:</span>
+        <div id="categoryGuidanceText" style="margin-top: 4px;"></div>
+      </div>
+
+      <!-- Quantity / Weight Estimate -->
+      <div class="form-group">
+        <label class="form-label" for="{{ form.quantity.id_for_label }}">
+          Approximate Quantity / Volume *
+        </label>
+        {{ form.quantity }}
+        <div class="form-text">Helps dispatch allocate the correct vehicle capacity.</div>
+        {% if form.quantity.errors %}
+          <div class="field-error">{{ form.quantity.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Pickup Address -->
+      <div class="form-group">
+        <label class="form-label" for="{{ form.pickup_address.id_for_label }}">
+          Pickup Address & Apartment / Unit *
+        </label>
+        {{ form.pickup_address }}
+        <div class="form-text">Full doorstep pickup address including society name or building number.</div>
+        {% if form.pickup_address.errors %}
+          <div class="field-error">{{ form.pickup_address.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Preferred Date & Time Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label class="form-label" for="{{ form.preferred_date.id_for_label }}">
+            Preferred Collection Date *
+          </label>
+          {{ form.preferred_date }}
+          {% if form.preferred_date.errors %}
+            <div class="field-error">{{ form.preferred_date.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.preferred_time.id_for_label }}">
+            Preferred Time Slot *
+          </label>
+          {{ form.preferred_time }}
+          {% if form.preferred_time.errors %}
+            <div class="field-error">{{ form.preferred_time.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Notes / Instructions -->
+      <div class="form-group">
+        <label class="form-label" for="{{ form.notes.id_for_label }}">
+          Additional Instructions (Optional)
+        </label>
+        {{ form.notes }}
+        <div class="form-text">e.g. Call before arrival, leave with security guard, bulky item on 3rd floor.</div>
+        {% if form.notes.errors %}
+          <div class="field-error">{{ form.notes.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Buttons -->
+      <div style="display: flex; gap: 14px; align-items: center; margin-top: 10px;">
+        <button type="submit" class="btn btn-secondary btn-lg" style="flex: 1;">
+          Confirm & Schedule Pickup
+        </button>
+        <a href="{% url 'citizen_dashboard' %}" class="btn btn-outline btn-lg">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

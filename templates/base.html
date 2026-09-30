@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Smart Waste Management System{% endblock %}</title>
+  <meta name="description" content="Centralized smart waste reporting, pickup scheduling, hotspot tracking, and segregation platform for clean communities.">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="{% url 'landing' %}" class="brand-logo">
+        <div class="brand-icon">
+          <!-- Recycling Leaf SVG Icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/>
+            <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/>
+            <path d="m14 16-3 3 3 3"/>
+            <path d="M8.294 4.5h7.412a1.83 1.83 0 0 1 1.57.882 1.785 1.785 0 0 1 .004 1.784L14.7 11.5"/>
+            <path d="m3 9 3-3-3-3"/>
+          </svg>
+        </div>
+        <span>Smart<span class="highlight">Waste</span></span>
+      </a>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Navigation Links -->
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
+          <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
+          <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
+            <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
+            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
+              <li><a href="{% url 'admin_dashboard' %}" class="nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}" style="color: #dc2626; font-weight: 700;">Admin Portal</a></li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- Right Hand User Actions -->
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 500;">
+            Hi, <strong>{{ user.first_name|default:user.username }}</strong>
+          </span>
+          <a href="{% url 'logout' %}" class="btn btn-outline btn-sm">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-outline btn-sm">Login</a>
+          <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Flash / Success / Error Messages -->
+      {% if messages %}
+        <div class="alert-messages">
+          {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+              <span>{{ message }}</span>
+              <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; cursor:pointer; font-weight:bold; color:inherit;">✕</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <strong style="color: var(--text-main); font-size: 1rem;">SmartWaste Management Platform</strong>
+        <p style="margin-top: 4px; font-size: 0.85rem;">Spectrum Hackathon 2026 • Cleaner Cities, College Campuses & Communities</p>
+      </div>
+      <div style="display: flex; gap: 18px; font-size: 0.88rem;">
+        <a href="{% url 'landing' %}">Home</a>
+        <a href="{% url 'report_waste' %}">Report Issue</a>
+        <a href="{% url 'pickup_request' %}">Doorstep Pickup</a>
+        <a href="{% url 'awareness' %}">Segregation Guide</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
