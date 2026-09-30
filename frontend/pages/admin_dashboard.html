@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Municipal Admin Dashboard - Smart Waste Management{% endblock %}
 
@@ -106,6 +107,20 @@
       <p style="color: var(--text-muted); font-size: 0.9rem;">
         Identifies repeated chronic garbage dumping locations from citizen reports to deploy permanent bins and surveillance.
       </p>
+    </div>
+
+    <!-- Map Visualization -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h3 class="card-title">City Map - Active Complaints & Hotspots</h3>
+      </div>
+      <div 
+        class="folium-map-container"
+        data-readonly="true"
+        style="height: 400px; width: 100%; border-radius: var(--radius-md); z-index: 1;"
+      >
+        {{ map_html|safe }}
+      </div>
     </div>
 
     <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px;">
@@ -362,4 +377,16 @@
   </div>
 
 </div>
+{% endblock %}
+
+{% block extra_head %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- Map JS -->
+<script src="{% static 'js/map.js' %}"></script>
 {% endblock %}

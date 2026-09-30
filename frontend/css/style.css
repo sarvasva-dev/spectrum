@@ -5,44 +5,47 @@
    ========================================================================== */
 
 :root {
-  /* Color Palette */
-  --primary: #10b981;          /* Emerald Green - Eco / Waste focus */
-  --primary-hover: #059669;
-  --primary-light: #ecfdf5;
-  --primary-dark: #065f46;
+  /* Color Palette — LIGHT BLUE THEME (Blue Primary) */
+  --primary: #2563eb;          /* Royal Blue Primary */
+  --primary-hover: #1d4ed8;    /* Darker Blue on Hover */
+  --primary-light: #dbeafe;    /* Light Blue Accent / Cards */
+  --primary-dark: #1e40af;     /* Deep Navy Blue */
   
-  --secondary: #0284c7;        /* Ocean Blue - Recyclable / Fresh accent */
-  --secondary-light: #f0f9ff;
+  --secondary: #0284c7;        /* Ocean / Sky Blue */
+  --secondary-light: #e0f2fe;
   
-  --bg-body: #f8fafc;          /* Crisp light background */
+  --bg-body: #f8fafc;          /* Light blue-gray background */
+  --background: #f8fafc;
   --bg-card: #ffffff;          /* Pure white card surface */
-  --bg-alt: #f1f5f9;           /* Soft muted background */
+  --surface: #ffffff;
+  --bg-alt: #f1f5f9;           /* Soft muted section background */
   
-  --text-main: #0f172a;        /* Deep slate text */
-  --text-muted: #64748b;       /* Secondary neutral text */
+  --text-main: #0f172a;        /* Dark navy text */
+  --text: #0f172a;
+  --text-muted: #475569;       /* Secondary neutral text */
   --text-light: #94a3b8;
   
-  --border-color: #e2e8f0;     /* Subtle light borders */
-  --border-focus: #10b981;
+  --border-color: #cbd5e1;     /* Light blue-gray borders */
+  --border-focus: #2563eb;
   
   /* Status Colors */
   --status-pending: #f59e0b;       /* Amber */
   --status-pending-bg: #fef3c7;
-  --status-assigned: #3b82f6;      /* Blue */
+  --status-assigned: #2563eb;      /* Blue */
   --status-assigned-bg: #dbeafe;
-  --status-progress: #8b5cf6;      /* Purple */
+  --status-progress: #7c3aed;      /* Violet */
   --status-progress-bg: #ede9fe;
-  --status-resolved: #10b981;      /* Green */
+  --status-resolved: #059669;      /* Success Green */
   --status-resolved-bg: #d1fae5;
-  --status-danger: #ef4444;        /* Red / Critical Hotspot */
+  --status-danger: #dc2626;        /* Critical Red */
   --status-danger-bg: #fee2e2;
 
   /* Elevation Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
 
   /* Geometry */
   --radius-sm: 6px;

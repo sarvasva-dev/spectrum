@@ -12,6 +12,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Count, Q
 from django.utils import timezone
+import json
+import leafmap.foliumap as leafmap
+import folium
 
 from .models import Complaint, ComplaintUpdate, PickupRequest, UserProfile
 from .forms import (
@@ -65,7 +68,7 @@ def landing_view(request):
         'active_locations': active_locations,
         'resolution_rate': resolution_rate,
     }
-    return render(request, 'waste_management/landing.html', context)
+    return render(request, 'landing.html', context)
 
 
 def waste_awareness_view(request):
@@ -76,7 +79,7 @@ def waste_awareness_view(request):
     - Community DO's and DON'Ts
     - Interactive waste search guide
     """
-    return render(request, 'waste_management/awareness.html')
+    return render(request, 'awareness.html')
 
 
 def robots_txt_view(request):
@@ -160,7 +163,7 @@ def register_view(request):
     else:
         form = CitizenRegistrationForm()
 
-    return render(request, 'waste_management/register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 
 def login_view(request):
@@ -210,7 +213,7 @@ def login_view(request):
     else:
         form = CitizenLoginForm()
 
-    return render(request, 'waste_management/login.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 
 @login_required
@@ -259,7 +262,7 @@ def citizen_dashboard_view(request):
         'recent_complaints': recent_complaints,
         'recent_pickups': recent_pickups,
     }
-    return render(request, 'waste_management/citizen_dashboard.html', context)
+    return render(request, 'citizen_dashboard.html', context)
 
 
 # ==============================================================================
@@ -270,7 +273,9 @@ def citizen_dashboard_view(request):
 def report_waste_view(request):
     """
     Enables citizens to report garbage and waste problems.
-    Includes smart priority calculation, location input, and optional image upload.
+    Captures GPS coordinates (latitude, longitude) submitted from the browser,
+    address, landmark, issue type, description, and optional photo.
+    Calculates smart rule-based priority in Python.
     Generates unique ID (WM-2026-0001) upon submission.
     """
     if request.method == 'POST':
@@ -280,12 +285,27 @@ def report_waste_view(request):
             complaint = form.save(commit=False)
             complaint.user = request.user
 
-            # Smart Feature: Automatic priority calculation
+            # Extract latitude & longitude from form submission
+            try:
+                if 'latitude' in request.POST and request.POST['latitude']:
+                    complaint.latitude = float(request.POST['latitude'])
+                if 'longitude' in request.POST and request.POST['longitude']:
+                    complaint.longitude = float(request.POST['longitude'])
+            except (ValueError, TypeError):
+                pass
+
+            # Smart Feature: Automatic rule-based priority calculation in Python
+            # Rule 1: Illegal Dumping or Overflowing Bin -> HIGH
+            # Rule 2: Multiple complaints within 500m radius -> CRITICAL (Hotspot)
+            # Rule 3: Missed Collection -> MEDIUM
+            # Rule 4: General / Other -> LOW
             auto_priority = form.cleaned_data.get('auto_priority', True)
             if auto_priority:
                 calculated_priority = Complaint.calculate_smart_priority(
                     complaint.issue_type,
-                    complaint.location
+                    complaint.location,
+                    complaint.latitude,
+                    complaint.longitude
                 )
                 complaint.priority = calculated_priority
 
@@ -296,7 +316,7 @@ def report_waste_view(request):
             ComplaintUpdate.objects.create(
                 complaint=complaint,
                 status='PENDING',
-                note='Complaint registered in system. Pending dispatch review.',
+                note='Complaint registered in system with GPS coordinates. Pending dispatch review.',
                 updated_by=request.user
             )
 
@@ -306,11 +326,14 @@ def report_waste_view(request):
             )
             return redirect('complaint_detail', complaint_id=complaint.complaint_id)
         else:
-            messages.error(request, "Failed to submit report. Please check the form errors.")
+            messages.error(request, "Failed to submit report. Please check form errors and ensure valid location coordinates.")
     else:
         form = ComplaintForm()
 
-    return render(request, 'waste_management/report_waste.html', {'form': form})
+    m = leafmap.Map(center=[28.6139, 77.2090], zoom=13)
+    map_html = m._repr_html_()
+
+    return render(request, 'report_waste.html', {'form': form, 'map_html': map_html})
 
 
 @login_required
@@ -332,7 +355,7 @@ def complaint_tracking_view(request):
         'complaints': complaints,
         'selected_status': status_filter,
     }
-    return render(request, 'waste_management/complaint_tracking.html', context)
+    return render(request, 'complaint_tracking.html', context)
 
 
 @login_required
@@ -349,11 +372,20 @@ def complaint_detail_view(request, complaint_id):
 
     updates = complaint.timeline_updates.all()
 
+    # Use leafmap for detail view
+    center_lat = float(complaint.latitude) if complaint.latitude else 28.6139
+    center_lng = float(complaint.longitude) if complaint.longitude else 77.2090
+    m = leafmap.Map(center=[center_lat, center_lng], zoom=15)
+    if complaint.latitude and complaint.longitude:
+        m.add_marker(location=[center_lat, center_lng], popup=f"{complaint.complaint_id}")
+    map_html = m._repr_html_()
+
     context = {
         'complaint': complaint,
         'updates': updates,
+        'map_html': map_html,
     }
-    return render(request, 'waste_management/complaint_detail.html', context)
+    return render(request, 'complaint_detail.html', context)
 
 
 # ==============================================================================
@@ -364,7 +396,8 @@ def complaint_detail_view(request, complaint_id):
 def pickup_request_view(request):
     """
     Doorstep waste pickup scheduling form.
-    Captures category, quantity, address, preferred date and time.
+    Captures category, quantity, address, preferred date, preferred time,
+    and GPS latitude/longitude coordinates.
     Generates unique ID (PK-2026-0001).
     """
     if request.method == 'POST':
@@ -372,6 +405,15 @@ def pickup_request_view(request):
         if form.is_valid():
             pickup = form.save(commit=False)
             pickup.user = request.user
+
+            try:
+                if 'latitude' in request.POST and request.POST['latitude']:
+                    pickup.latitude = float(request.POST['latitude'])
+                if 'longitude' in request.POST and request.POST['longitude']:
+                    pickup.longitude = float(request.POST['longitude'])
+            except (ValueError, TypeError):
+                pass
+
             pickup.save()
 
             messages.success(
@@ -390,7 +432,10 @@ def pickup_request_view(request):
             pass
         form = PickupRequestForm(initial={'pickup_address': initial_address})
 
-    return render(request, 'waste_management/pickup_request.html', {'form': form})
+    m = leafmap.Map(center=[28.6139, 77.2090], zoom=13)
+    map_html = m._repr_html_()
+
+    return render(request, 'pickup_request.html', {'form': form, 'map_html': map_html})
 
 
 @login_required
@@ -400,7 +445,7 @@ def pickup_list_view(request):
     Status workflow: REQUESTED -> ASSIGNED -> PICKED UP -> COMPLETED
     """
     pickups = PickupRequest.objects.filter(user=request.user)
-    return render(request, 'waste_management/pickup_list.html', {'pickups': pickups})
+    return render(request, 'pickup_list.html', {'pickups': pickups})
 
 
 # ==============================================================================
@@ -454,18 +499,62 @@ def admin_dashboard_view(request):
     if pickup_status_filter in ['REQUESTED', 'ASSIGNED', 'PICKED_UP', 'COMPLETED']:
         filtered_pickups = filtered_pickups.filter(status=pickup_status_filter)
 
-    # 4. Waste Hotspots Analysis
-    # Aggregates complaints by location string to identify repeat dumping spots
-    raw_hotspots = Complaint.objects.values('location').annotate(
-        report_count=Count('id')
-    ).order_by('-report_count')[:10]
+    # 4. Waste Hotspots Analysis (Geographic Proximity & Location Aggregation)
+    # Identify repeated complaint areas using pure Python geographic proximity / radius approach
+    import json
+    import math
+
+    complaints_with_coords = list(all_complaints.filter(latitude__isnull=False, longitude__isnull=False))
+    
+    # Cluster complaints within ~500 meters (0.5 km) radius of each other
+    clusters = []
+    visited = set()
+
+    for i, c1 in enumerate(complaints_with_coords):
+        if c1.id in visited:
+            continue
+        
+        current_cluster = [c1]
+        visited.add(c1.id)
+
+        for j, c2 in enumerate(complaints_with_coords):
+            if c2.id in visited:
+                continue
+            
+            # Haversine distance in kilometers
+            dlat = math.radians(c2.latitude - c1.latitude)
+            dlon = math.radians(c2.longitude - c1.longitude)
+            a = math.sin(dlat / 2)**2 + math.cos(math.radians(c1.latitude)) * math.cos(math.radians(c2.latitude)) * math.sin(dlon / 2)**2
+            dist_km = 6371.0 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+            if dist_km <= 0.5: # 500 meters radius
+                current_cluster.append(c2)
+                visited.add(c2.id)
+
+        clusters.append(current_cluster)
+
+    # Sort clusters by report count descending
+    clusters.sort(key=lambda x: len(x), reverse=True)
 
     hotspots = []
-    for spot in raw_hotspots:
-        count = spot['report_count']
-        # Categorize activity level for visual indicator
+    issue_type_map = dict(Complaint.ISSUE_CHOICES)
+
+    for cluster in clusters[:10]:
+        count = len(cluster)
+        center_lat = sum(c.latitude for c in cluster) / count
+        center_lng = sum(c.longitude for c in cluster) / count
+        primary_location = cluster[0].location or cluster[0].address or f"Coordinates ({center_lat:.4f}, {center_lng:.4f})"
+
+        # Find most common complaint type in cluster
+        issue_counts = {}
+        for c in cluster:
+            issue_counts[c.issue_type] = issue_counts.get(c.issue_type, 0) + 1
+        most_common_code = max(issue_counts, key=issue_counts.get) if issue_counts else 'OTHER'
+        most_common_type = issue_type_map.get(most_common_code, most_common_code)
+
+        # Categorize activity level
         if count >= 4:
-            activity_level = 'High Activity (Critical)'
+            activity_level = 'High Activity'
             badge_class = 'badge-danger'
         elif count >= 2:
             activity_level = 'Moderate Activity'
@@ -475,19 +564,39 @@ def admin_dashboard_view(request):
             badge_class = 'badge-info'
 
         hotspots.append({
-            'location': spot['location'],
+            'location': primary_location,
             'count': count,
+            'most_common_type': most_common_type,
             'activity_level': activity_level,
             'badge_class': badge_class,
+            'latitude': center_lat,
+            'longitude': center_lng,
         })
+
+    # Fallback to location string grouping if no GPS records
+    if not hotspots:
+        raw_hotspots = Complaint.objects.values('location').annotate(
+            report_count=Count('id')
+        ).order_by('-report_count')[:10]
+        for spot in raw_hotspots:
+            count = spot['report_count']
+            activity_level = 'High Activity' if count >= 4 else ('Moderate Activity' if count >= 2 else 'Low Activity')
+            badge_class = 'badge-danger' if count >= 4 else ('badge-warning' if count >= 2 else 'badge-info')
+            hotspots.append({
+                'location': spot['location'],
+                'count': count,
+                'most_common_type': 'Overflowing Bin',
+                'activity_level': activity_level,
+                'badge_class': badge_class,
+                'latitude': 28.6139,
+                'longitude': 77.2090,
+            })
 
     # 5. Complaints by Waste Issue Type Breakdown
     issue_type_stats = Complaint.objects.values('issue_type').annotate(
         count=Count('id')
     ).order_by('-count')
 
-    # Convert code to display label
-    issue_type_map = dict(Complaint.ISSUE_CHOICES)
     formatted_issue_stats = [
         {
             'label': issue_type_map.get(item['issue_type'], item['issue_type']),
@@ -496,6 +605,24 @@ def admin_dashboard_view(request):
         }
         for item in issue_type_stats
     ]
+
+    # Prepare Leafmap for Admin Dashboard
+    m = leafmap.Map(center=[28.6139, 77.2090], zoom=12)
+    for c in all_complaints:
+        if c.latitude and c.longitude:
+            m.add_marker(location=[float(c.latitude), float(c.longitude)], popup=f"<b>{c.complaint_id}</b><br>{c.get_issue_type_display()}<br>{c.get_status_display()}")
+            
+    for spot in hotspots:
+        folium.Circle(
+            location=[spot['latitude'], spot['longitude']],
+            radius=500,
+            color='red',
+            fill=True,
+            fill_color='red',
+            popup=f"Hotspot: {spot['count']} reports"
+        ).add_to(m)
+
+    map_html = m._repr_html_()
 
     context = {
         # Top Stats
@@ -516,8 +643,9 @@ def admin_dashboard_view(request):
         # Hotspots & Analytics
         'hotspots': hotspots,
         'issue_type_stats': formatted_issue_stats,
+        'map_html': map_html,
     }
-    return render(request, 'waste_management/admin_dashboard.html', context)
+    return render(request, 'admin_dashboard.html', context)
 
 
 @login_required
@@ -561,7 +689,7 @@ def admin_complaint_update_view(request, complaint_id):
         'complaint': complaint,
         'form': form,
     }
-    return render(request, 'waste_management/admin_complaint_update.html', context)
+    return render(request, 'admin_complaint_update.html', context)
 
 
 @login_required
@@ -588,7 +716,7 @@ def admin_pickup_update_view(request, pickup_id):
         'pickup': pickup,
         'form': form,
     }
-    return render(request, 'waste_management/admin_pickup_update.html', context)
+    return render(request, 'admin_pickup_update.html', context)
 
 
 # ==============================================================================
@@ -597,14 +725,14 @@ def admin_pickup_update_view(request, pickup_id):
 
 def custom_404_view(request, exception=None):
     """Friendly 404 page for missing pages or invalid IDs."""
-    return render(request, 'waste_management/404.html', status=404)
+    return render(request, '404.html', status=404)
 
 
 def custom_500_view(request):
     """Friendly 500 error page for unexpected server issues."""
-    return render(request, 'waste_management/500.html', status=500)
+    return render(request, '500.html', status=500)
 
 
 def custom_403_view(request, exception=None):
     """Friendly 403 error page for unauthorized access attempts."""
-    return render(request, 'waste_management/403.html', status=403)
+    return render(request, '403.html', status=403)

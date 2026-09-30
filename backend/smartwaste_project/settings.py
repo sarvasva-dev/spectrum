@@ -6,8 +6,9 @@ SMART WASTE MANAGEMENT SYSTEM - SPECTRUM HACKATHON
 import os
 from pathlib import Path
 
-# Build paths inside the project: BASE_DIR is /home/ubuntu/spectrum
+# Build paths inside the project: BASE_DIR is backend/
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
 
 # Quick-start development settings - unsuitable for production
 # In production, SECRET_KEY is read from environment variable or falls back to secure default
@@ -66,7 +67,7 @@ ROOT_URLCONF = 'smartwaste_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [PROJECT_ROOT / 'frontend' / 'pages'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,7 +88,7 @@ WSGI_APPLICATION = 'smartwaste_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': PROJECT_ROOT / 'db.sqlite3',
     }
 }
 
@@ -109,14 +110,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = PROJECT_ROOT / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    PROJECT_ROOT / 'frontend',
 ]
 
 # Media files (for complaint image uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = PROJECT_ROOT / 'media'
 
 # Authentication URLs
 LOGIN_URL = 'login'

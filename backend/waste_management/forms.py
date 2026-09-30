@@ -148,7 +148,7 @@ class ComplaintForm(forms.ModelForm):
 
     class Meta:
         model = Complaint
-        fields = ['issue_type', 'description', 'location', 'landmark', 'priority', 'image']
+        fields = ['issue_type', 'description', 'location', 'landmark', 'priority', 'image', 'latitude', 'longitude']
         widgets = {
             'issue_type': forms.Select(attrs={'class': 'form-select', 'id': 'issue_type_select'}),
             'description': forms.Textarea(attrs={
@@ -158,6 +158,7 @@ class ComplaintForm(forms.ModelForm):
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-control',
+                'id': 'id_location',
                 'placeholder': 'e.g. Sector 4 Market, Near Central Library, Block B Road',
             }),
             'landmark': forms.TextInput(attrs={
@@ -166,6 +167,8 @@ class ComplaintForm(forms.ModelForm):
             }),
             'priority': forms.Select(attrs={'class': 'form-select', 'id': 'manual_priority_select'}),
             'image': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'latitude': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_latitude', 'step': 'any'}),
+            'longitude': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_longitude', 'step': 'any'}),
         }
 
     def clean_image(self):
@@ -200,7 +203,7 @@ class PickupRequestForm(forms.ModelForm):
 
     class Meta:
         model = PickupRequest
-        fields = ['waste_category', 'quantity', 'pickup_address', 'preferred_date', 'preferred_time', 'notes']
+        fields = ['waste_category', 'quantity', 'pickup_address', 'preferred_date', 'preferred_time', 'notes', 'latitude', 'longitude']
         widgets = {
             'waste_category': forms.Select(attrs={'class': 'form-select', 'id': 'pickup_category_select'}),
             'quantity': forms.TextInput(attrs={
@@ -221,6 +224,8 @@ class PickupRequestForm(forms.ModelForm):
                 'rows': 2,
                 'placeholder': 'Special notes, gate access instructions, or handling precautions',
             }),
+            'latitude': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_latitude', 'step': 'any'}),
+            'longitude': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_longitude', 'step': 'any'}),
         }
 
 

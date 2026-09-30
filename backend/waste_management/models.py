@@ -66,9 +66,14 @@ class Complaint(models.Model):
     # Detailed description from citizen
     description = models.TextField(help_text="Detailed description of the issue")
     
-    # Location string (used for hotspot aggregation)
+    # Address and Location details
+    address = models.CharField(max_length=255, blank=True, default='', help_text="Street address or location name")
     location = models.CharField(max_length=255, help_text="Location or area name, e.g., North Gate, Main Road")
     landmark = models.CharField(max_length=255, blank=True, help_text="Nearby landmark to assist sanitation crew")
+    
+    # GPS Coordinates stored in SQLite3
+    latitude = models.FloatField(default=28.6139, help_text="GPS Latitude coordinate")
+    longitude = models.FloatField(default=77.2090, help_text="GPS Longitude coordinate")
     
     # Optional image uploaded by citizen
     image = models.ImageField(upload_to='complaints/%Y/%m/', blank=True, null=True)
@@ -99,6 +104,11 @@ class Complaint(models.Model):
         Auto-generates sequential, human-friendly complaint ID if not already generated.
         Format: WM-YYYY-NNNN (e.g., WM-2026-0001).
         """
+        if not self.address and self.location:
+            self.address = self.location
+        elif not self.location and self.address:
+            self.location = self.address
+
         if not self.complaint_id:
             year = timezone.now().year
             prefix = f"WM-{year}-"
@@ -123,26 +133,41 @@ class Complaint(models.Model):
         super().save(*args, **kwargs)
 
     @staticmethod
-    def calculate_smart_priority(issue_type, location):
+    def calculate_smart_priority(issue_type, location, latitude=None, longitude=None):
         """
         Rule-based smart priority calculator:
-        - High priority if illegal dumping or overflowing bin
-        - Critical if location already has multiple active unresolved complaints (hotspot)
-        - Medium for missed collection or segregation
-        - Low for general issues
+        - HIGH / CRITICAL if illegal dumping, overflowing bin, or repeated complaints from nearby location radius
+        - MEDIUM for missed collection
+        - LOW for general / other issues
+        Explanation comments:
+        # Rule 1: Illegal dumping or overflowing bins represent immediate public health risks -> HIGH.
+        # Rule 2: Repeated complaints in same area / GPS radius indicate chronic hotspot -> CRITICAL.
+        # Rule 3: Missed collections represent routine operational delays -> MEDIUM.
+        # Rule 4: General or minor issues -> LOW.
         """
+        # Check geographic proximity hotspot count if coordinates provided
+        nearby_active_count = 0
+        if latitude is not None and longitude is not None and latitude != 0 and longitude != 0:
+            import math
+            active_complaints = Complaint.objects.filter(status__in=['PENDING', 'ASSIGNED', 'IN_PROGRESS'])
+            for comp in active_complaints:
+                if comp.latitude and comp.longitude:
+                    # Calculate Haversine distance in km
+                    dlat = math.radians(comp.latitude - latitude)
+                    dlon = math.radians(comp.longitude - longitude)
+                    a = math.sin(dlat / 2)**2 + math.cos(math.radians(latitude)) * math.cos(math.radians(comp.latitude)) * math.sin(dlon / 2)**2
+                    dist_km = 6371.0 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+                    if dist_km <= 0.5: # Within 500 meters
+                        nearby_active_count += 1
+
         cleaned_loc = location.strip().lower() if location else ""
-        
-        # Check active complaints in the same location
-        active_in_area = 0
-        if cleaned_loc:
-            active_in_area = Complaint.objects.filter(
+        if cleaned_loc and nearby_active_count == 0:
+            nearby_active_count = Complaint.objects.filter(
                 location__icontains=cleaned_loc,
                 status__in=['PENDING', 'ASSIGNED', 'IN_PROGRESS']
             ).count()
 
-        # Rules:
-        if active_in_area >= 2:
+        if nearby_active_count >= 2:
             return 'CRITICAL'
         elif issue_type in ['ILLEGAL_DUMPING', 'OVERFLOWING_BIN']:
             return 'HIGH'
@@ -206,6 +231,10 @@ class PickupRequest(models.Model):
     
     # Doorstep pickup address
     pickup_address = models.TextField(help_text="Complete address with flat/door number")
+    
+    # GPS Coordinates stored in SQLite3
+    latitude = models.FloatField(default=28.6139, help_text="GPS Latitude coordinate")
+    longitude = models.FloatField(default=77.2090, help_text="GPS Longitude coordinate")
     
     # Date & time preferences
     preferred_date = models.DateField(help_text="Preferred collection date")

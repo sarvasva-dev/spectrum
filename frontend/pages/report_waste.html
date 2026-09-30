@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Report Waste Issue — CleanLoop{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
 
 {% block content %}
 <div class="form-page-container">
@@ -56,6 +61,27 @@
         <div class="form-text">Specify the street, society gate, campus block, or market name.</div>
         {% if form.location.errors %}
           <div class="field-error">{{ form.location.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Map Container & Geolocation -->
+      <div class="form-group">
+        <label class="form-label">Pin Location on Map</label>
+        <div class="form-text" style="margin-bottom: 8px;">Click on the map or use the button below to get your current location.</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button type="button" id="btn-geolocate" class="btn btn-outline btn-sm">📍 Use My Current Location</button>
+        </div>
+        <div class="folium-map-container" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid var(--border-color); z-index: 1;">
+            {{ map_html|safe }}
+        </div>
+        
+        <!-- Hidden Lat/Lng Fields -->
+        <div style="display: none;">
+            {{ form.latitude }}
+            {{ form.longitude }}
+        </div>
+        {% if form.latitude.errors or form.longitude.errors %}
+          <div class="field-error">Please select a valid location on the map.</div>
         {% endif %}
       </div>
 
@@ -128,4 +154,9 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="{% static 'js/map.js' %}"></script>
 {% endblock %}
