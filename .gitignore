@@ -21,4 +21,4 @@ media/complaints/*
 
 # SQLite Database
 db.sqlite3
-backend/db.sqlite3
+backend/db.sqlite3staticfiles/
