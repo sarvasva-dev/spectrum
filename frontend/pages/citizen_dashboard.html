@@ -2175,13 +2175,51 @@ ul, ol {
       </div>
     </div>
 
-    <div class="stat-card">
-      <div class="stat-icon blue">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+    <div class="stat-card" style="border: 2px solid #3b82f6; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);">
+      <div class="stat-icon blue" style="background: #2563eb; color: #ffffff;">
+        🪙
       </div>
       <div>
-        <div class="stat-value">{{ total_pickups }}</div>
-        <div class="stat-label">Pickup Requests</div>
+        <div class="stat-value" style="color: #1d4ed8;">{{ clean_coins }}</div>
+        <div class="stat-label">CleanCoins Balance</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CleanCoins Incentive & Community Leaderboard -->
+  <div class="section-container" style="margin-top: 24px;">
+    <div class="two-col-grid">
+      <div class="card" style="padding: 24px; border: 1px solid #bfdbfe; background: #f8fafc;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e3a8a; margin: 0;">🪙 CleanCoins Citizen Rewards</h3>
+          <span class="badge badge-resolved" style="font-size: 0.8rem; padding: 4px 10px;">Active Balance: {{ clean_coins }} PTS</span>
+        </div>
+        <p style="font-size: 0.88rem; color: #475569; margin-bottom: 16px;">
+          Earn <strong>+50 CleanCoins</strong> for every verified waste report resolved by municipal sanitation teams. Redeem coins for municipal tax rebates, public transport passes, or eco-friendly store discounts!
+        </p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-primary btn-sm" onclick="alert('🎁 CleanCoins Rewards Store:\n- 100 Coins = 5% Municipal Tax Rebate Coupon\n- 200 Coins = Free City Bus Pass (1 Week)\n- 500 Coins = Eco-Store Voucher ₹250\n\nSubmit more verified reports to redeem!')">Redeem Rewards</button>
+          <a href="{% url 'report_waste' %}" class="btn btn-outline-primary btn-sm">Report & Earn +50 Coins</a>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 14px;">🏆 Community Champion Leaderboard</h3>
+        {% if leaderboard %}
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            {% for profile in leaderboard %}
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 6px; border-left: 4px solid {% if forloop.first %}#eab308{% elif forloop.counter == 2 %}#94a3b8{% elif forloop.counter == 3 %}#d97706{% else %}#2563eb{% endif %};">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <strong style="width: 20px; font-size: 0.9rem;">#{{ forloop.counter }}</strong>
+                  <span style="font-size: 0.9rem; font-weight: 600; color: #334155;">{{ profile.user.first_name|default:profile.user.username }}</span>
+                </div>
+                <span style="font-size: 0.85rem; font-weight: 700; color: #2563eb;">🪙 {{ profile.clean_coins }} Coins</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="font-size: 0.88rem; color: #64748b;">No leaderboard data available yet.</p>
+        {% endif %}
       </div>
     </div>
   </div>

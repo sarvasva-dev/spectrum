@@ -2208,17 +2208,33 @@ ul, ol {
         <div class="stat-label">Completed Pickups</div>
       </div>
     </div>
+
+    <!-- Ward Environmental Health Index (Game-Changer USP #2) -->
+    <div class="stat-card" style="border: 2px solid #2563eb; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);">
+      <div class="stat-icon blue" style="background: #2563eb; color: #ffffff; font-weight: 800;">
+        📊
+      </div>
+      <div>
+        <div class="stat-value" style="color: #1d4ed8;">{{ ehi_score }} / 100</div>
+        <div class="stat-label">Ward EHI Score (<span class="badge {{ ehi_color }}">{{ ehi_status }}</span>)</div>
+      </div>
+    </div>
   </div>
 
   <!-- SECTION: WASTE HOTSPOTS & ANALYTICS (Requirement #13) -->
   <div style="margin: 32px 0;">
-    <div style="margin-bottom: 16px;">
-      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
-        <span>🔥</span> Waste Hotspots & Predictive Analytics
-      </h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">
-        Identifies repeated chronic garbage dumping locations from citizen reports to deploy permanent bins and surveillance.
-      </p>
+    <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+          <span>🔥</span> Waste Hotspots & Predictive AI Route Dispatch
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Identifies chronic garbage hotspots and draws Nearest-Neighbor AI Driver Route (Blue Polyline) connecting active stops.
+        </p>
+      </div>
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; color: #1e40af;">
+        🚚 <strong>AI Driver Dispatch Route:</strong> {{ active_driver_stops }} Active Stops Blue Polyline Loaded
+      </div>
     </div>
 
     <!-- Map Visualization -->

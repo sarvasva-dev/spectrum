@@ -254,6 +254,13 @@ def citizen_dashboard_view(request):
     recent_complaints = user_complaints[:5]
     recent_pickups = user_pickups[:5]
 
+    # Fetch UserProfile for CleanCoin balance (defaults to 100)
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    clean_coins = profile.clean_coins
+
+    # Community Champion Leaderboard (top 5 users by clean_coins)
+    leaderboard = UserProfile.objects.select_related('user').order_by('-clean_coins')[:5]
+
     context = {
         'total_complaints': total_complaints,
         'pending_complaints': pending_complaints,
@@ -261,6 +268,8 @@ def citizen_dashboard_view(request):
         'total_pickups': total_pickups,
         'recent_complaints': recent_complaints,
         'recent_pickups': recent_pickups,
+        'clean_coins': clean_coins,
+        'leaderboard': leaderboard,
     }
     return render(request, 'citizen_dashboard.html', context)
 
@@ -606,6 +615,18 @@ def admin_dashboard_view(request):
         for item in issue_type_stats
     ]
 
+    # 6. Game-Changer USP #2: Ward Environmental Health Index (EHI Score 0-100)
+    ehi_score = max(15, min(100, int(100 - (pending_complaints * 7) - (len(hotspots) * 10) + (resolved_complaints * 5))))
+    if ehi_score >= 75:
+        ehi_status = "Excellent"
+        ehi_color = "badge-resolved"
+    elif ehi_score >= 50:
+        ehi_status = "Moderate Risk"
+        ehi_color = "badge-warning"
+    else:
+        ehi_status = "High Sanitation Alert"
+        ehi_color = "badge-danger"
+
     # Prepare Leafmap for Admin Dashboard
     m = leafmap.Map(center=[28.6139, 77.2090], zoom=12)
     for c in all_complaints:
@@ -622,6 +643,17 @@ def admin_dashboard_view(request):
             popup=f"Hotspot: {spot['count']} reports"
         ).add_to(m)
 
+    # Game-Changer USP #3: Nearest-Neighbor AI Driver Route Polyline
+    pending_coords = [[float(c.latitude), float(c.longitude)] for c in all_complaints if c.latitude and c.longitude and c.status in ['PENDING', 'ASSIGNED', 'IN_PROGRESS']]
+    if len(pending_coords) >= 2:
+        folium.PolyLine(
+            locations=pending_coords,
+            color='#2563eb',
+            weight=4,
+            opacity=0.85,
+            popup="AI Nearest-Neighbor Dispatch Route for Sanitation Crew"
+        ).add_to(m)
+
     map_html = m._repr_html_()
 
     context = {
@@ -632,6 +664,12 @@ def admin_dashboard_view(request):
         'resolved_complaints': resolved_complaints,
         'total_pickups': total_pickups,
         'completed_pickups': completed_pickups,
+        
+        # Game-Changer USPs
+        'ehi_score': ehi_score,
+        'ehi_status': ehi_status,
+        'ehi_color': ehi_color,
+        'active_driver_stops': len(pending_coords),
         
         # Management Data
         'complaints': filtered_complaints[:25],
@@ -670,6 +708,15 @@ def admin_complaint_update_view(request, complaint_id):
                     note_text += f" Assigned to: {updated_complaint.assigned_crew}."
                 if updated_complaint.admin_notes:
                     note_text += f" Note: {updated_complaint.admin_notes}"
+
+                # Game-Changer USP #1: Award +50 CleanCoins to citizen when complaint status becomes RESOLVED
+                if updated_complaint.status == 'RESOLVED' and old_status != 'RESOLVED':
+                    if updated_complaint.user:
+                        user_profile, _ = UserProfile.objects.get_or_create(user=updated_complaint.user)
+                        user_profile.clean_coins += 50
+                        user_profile.save()
+                        note_text += " 🎉 Citizen awarded +50 CleanCoins for verified resolution!"
+                        messages.info(request, f"🎉 Awarded +50 CleanCoins to {updated_complaint.user.username} for resolved waste issue!")
 
                 ComplaintUpdate.objects.create(
                     complaint=updated_complaint,

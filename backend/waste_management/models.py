@@ -16,6 +16,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(max_length=20, blank=True, help_text="Contact number for SMS/call verification")
     address = models.CharField(max_length=255, blank=True, help_text="Default residence or society address")
+    clean_coins = models.IntegerField(default=100, help_text="CleanCoins reward balance earned through verified reports")
     is_admin_staff = models.BooleanField(default=False, help_text="Designates if this citizen is an admin staff member")
     created_at = models.DateTimeField(auto_now_add=True)
 
