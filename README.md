@@ -1,4 +1,4 @@
-# Smart Waste Management System
+# CleanLoop — Smart Waste Management
 **Spectrum Hackathon 2026**
 
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-blue.svg)](https://www.python.org/)
@@ -22,9 +22,9 @@
 
 | Role | Username / Email | Password |
 |---|---|---|
-| **Municipal Admin** | `admin@smartwaste.org` | `admin1234` |
-| **Demo Citizen 1** | `citizen@smartwaste.org` | `demo1234` |
-| **Demo Citizen 2** | `arun@smartwaste.org` | `demo1234` |
+| **Municipal Admin** | `admin@cleanloop.sarthakml.in` | `admin1234` |
+| **Demo Citizen 1** | `citizen@cleanloop.sarthakml.in` | `demo1234` |
+| **Demo Citizen 2** | `arun@cleanloop.sarthakml.in` | `demo1234` |
 
 ---
 
@@ -49,6 +49,16 @@
    - Color-coded bin segregation guidelines (Green = Wet/Organic, Blue = Dry/Recyclable, Red/Black = Hazardous/E-Waste).
    - Practical Do's and Don'ts for community members.
    - Interactive search lookup for household waste items.
+
+4. **Community Recognition (Man of the Month)**:
+   - Identifies the citizen with the highest number of valid waste reports in the current month.
+   - Tied scores are resolved using registration dates.
+   - Fully gamifies participation to keep citizens engaged.
+
+5. **API / System Visualizer**:
+   - Dedicated dark-themed developer playground.
+   - Allows judges/developers to send live requests to backend endpoints.
+   - Visualizes JSON responses, status codes, and latency in real-time.
 
 ---
 

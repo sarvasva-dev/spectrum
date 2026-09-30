@@ -13,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from waste_management.models import UserProfile, Complaint, ComplaintUpdate, PickupRequest
 
 
-class SmartWasteTestCase(TestCase):
+class CleanLoopTestCase(TestCase):
     """Base test setup with standard citizen and administrator accounts."""
 
     def setUp(self):

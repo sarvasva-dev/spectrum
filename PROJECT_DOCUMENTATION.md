@@ -1,7 +1,7 @@
-# SmartWaste Project Documentation
+# CleanLoop Project Documentation
 
 ## Project Overview
-SmartWaste is a localized waste management platform built with Django, targeting cities, residential societies, and public spaces to solve the common issue of manual waste management which leads to overflowing garbage, illegal dumping, and poor segregation. It bridges the gap between citizens reporting issues and municipal bodies acting on them.
+CleanLoop is a localized waste management platform built with Django, targeting cities, residential societies, and public spaces to solve the common issue of manual waste management which leads to overflowing garbage, illegal dumping, and poor segregation. It bridges the gap between citizens reporting issues and municipal bodies acting on them.
 
 **Tagline:** "Smarter Waste Management for Cleaner Communities"
 
@@ -26,6 +26,10 @@ The codebase has been refactored into a clear separation of concerns:
 - **Report Waste:** Users can report illegal dumping or overflowing bins by submitting a photo and tagging the exact location on an interactive map.
 - **Schedule Pickup:** Users can book a doorstep waste pickup for bulk or specialized waste.
 - **Complaint Tracking:** Real-time timeline view of a complaint's status (Pending -> Assigned -> In Progress -> Resolved).
+- **Man of the Month:** A recognition feature incentivizing citizens to report valid waste issues, gamifying the participation process.
+
+### Developer & Technical Tools
+- **API Visualizer:** A dark-themed interactive playground located at `/visual/` to demonstrate live JSON API requests (like `/api/complaints/`) and network latencies.
 
 ### Municipal Admin Portal
 - **Dashboard:** Provides aggregate statistics (total reports, pending issues).

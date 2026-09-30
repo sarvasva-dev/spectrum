@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Doorstep Pickups — CleanLoop</title>
   
-  <meta name="description" content="SmartWaste is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
+  <meta name="description" content="CleanLoop is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="author" content="Spectrum Hackathon Team">
   <meta name="theme-color" content="#10B981">
@@ -22,19 +22,19 @@
 
   <!-- Open Graph / Facebook / LinkedIn -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="SmartWaste">
-  <meta property="og:title" content="SmartWaste — Centralized Waste Management System">
+  <meta property="og:site_name" content="CleanLoop">
+  <meta property="og:title" content="CleanLoop — Centralized Waste Management System">
   <meta property="og:description" content="Citizens can report waste issues, request pickups and track resolutions from one centralized platform.">
   <meta property="og:url" content="http://16.171.238.127{{ request.path }}">
   <meta property="og:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
 
   <!-- Twitter / X Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SmartWaste — Centralized Waste Management System">
+  <meta name="twitter:title" content="CleanLoop — Centralized Waste Management System">
   <meta name="twitter:description" content="Citizens can report waste issues, request pickups and track resolutions from one centralized platform.">
   <meta name="twitter:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
 
-  <!-- SmartWaste Core Stylesheet -->
+  <!-- CleanLoop Core Stylesheet -->
   <style>
 
 /* ==========================================================================
@@ -2046,10 +2046,10 @@ ul, ol {
   <!-- Navigation Bar -->
   <header class="navbar" role="banner">
     <div class="container nav-container">
-      <a href="{% url 'landing' %}" class="brand-logo" aria-label="SmartWaste Home">
-        <img src="{% static 'images/cleanloop-mark.svg' %}" alt="SmartWaste Mark" width="36" height="36" class="brand-mark-img">
+      <a href="{% url 'landing' %}" class="brand-logo" aria-label="CleanLoop Home">
+        <img src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop Mark" width="36" height="36" class="brand-mark-img">
         <div class="brand-text">
-          <span class="brand-name">Smart<span class="highlight">Waste</span></span>
+          <span class="brand-name">Clean<span class="highlight">Loop</span></span>
           <span class="brand-sub">WASTE MANAGEMENT SYSTEM</span>
         </div>
       </a>
@@ -2069,7 +2069,8 @@ ul, ol {
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
           <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
           
           {% if user.is_authenticated %}
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>

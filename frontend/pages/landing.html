@@ -22,19 +22,19 @@
 
   <!-- Open Graph / Facebook / LinkedIn -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="SmartWaste">
-  <meta property="og:title" content="SmartWaste — Centralized Waste Management System">
+  <meta property="og:site_name" content="CleanLoop">
+  <meta property="og:title" content="CleanLoop — Centralized Waste Management System">
   <meta property="og:description" content="Citizens can report waste issues, request pickups and track resolutions from one centralized platform.">
   <meta property="og:url" content="http://16.171.238.127{{ request.path }}">
   <meta property="og:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
 
   <!-- Twitter / X Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SmartWaste — Centralized Waste Management System">
+  <meta name="twitter:title" content="CleanLoop — Centralized Waste Management System">
   <meta name="twitter:description" content="Citizens can report waste issues, request pickups and track resolutions from one centralized platform.">
   <meta name="twitter:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
 
-  <!-- SmartWaste Core Stylesheet -->
+  <!-- CleanLoop Core Stylesheet -->
   <style>
 
 /* ==========================================================================
@@ -2046,10 +2046,10 @@ ul, ol {
   <!-- Navigation Bar -->
   <header class="navbar" role="banner">
     <div class="container nav-container">
-      <a href="{% url 'landing' %}" class="brand-logo" aria-label="SmartWaste Home">
-        <img src="{% static 'images/cleanloop-mark.svg' %}" alt="SmartWaste Mark" width="36" height="36" class="brand-mark-img">
+      <a href="{% url 'landing' %}" class="brand-logo" aria-label="CleanLoop Home">
+        <img src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop Mark" width="36" height="36" class="brand-mark-img">
         <div class="brand-text">
-          <span class="brand-name">Smart<span class="highlight">Waste</span></span>
+          <span class="brand-name">Clean<span class="highlight">Loop</span></span>
           <span class="brand-sub">WASTE MANAGEMENT SYSTEM</span>
         </div>
       </a>
@@ -2069,7 +2069,8 @@ ul, ol {
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
           <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
           
           {% if user.is_authenticated %}
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
@@ -2657,6 +2658,15 @@ ul, ol {
       <h3>Photo-based Issue Reporting</h3>
       <p>Secure client-side and server-side image upload with format validation ensuring clean operational evidence.</p>
     </div>
+    <!-- Feature 9 -->
+    <a href="{% url 'man_of_the_month' %}" class="feature-card" style="text-decoration: none; display: block; cursor: pointer;">
+      <div class="feature-icon amber">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+      </div>
+      <h3 style="color: var(--text-main);">Man of the Month</h3>
+      <p style="color: var(--text-muted);">Community Contributor of the Month recognition for citizens who actively help resolve waste issues.</p>
+    </a>
+
   </div>
 </section>
 

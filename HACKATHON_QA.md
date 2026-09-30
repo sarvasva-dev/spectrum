@@ -29,3 +29,9 @@ The UI adheres strictly to the **Blue Light Theme** requested.
 
 ## 5. What was avoided intentionally?
 Deployment configurations. The prompt strictly mandated `LOCAL DEVELOPMENT ONLY`. Therefore, there are no Dockerfiles, Nginx configurations, Gunicorn files, or systemd services. The focus was kept purely on creating a beautiful, functional, and logically sound Django application that boots instantly with `python manage.py runserver`.
+
+## 6. What is the API Visualizer (`/visual/`)?
+We built a dedicated dark-themed API Visualizer to demonstrate how frontend interactions translate into backend data operations. It provides a real-time, interactive environment to execute endpoints like `/api/complaints/` and view the JSON response payloads, status codes, and latency, making it an excellent technical showcase for the hackathon judges.
+
+## 7. What is the Man of the Month feature (`/man-of-the-month/`)?
+To gamify and incentivize community participation, CleanLoop includes a 'Man of the Month' (Community Contributor) feature. It dynamically queries the Django ORM to identify the citizen with the highest number of valid (non-rejected) waste reports in the current month. The backend includes sophisticated tie-breaking logic (falling back to earliest registration date) while ensuring admin/staff accounts are excluded from the competition.

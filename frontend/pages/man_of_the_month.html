@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanLoop Man of the Month | Community Recognition</title>
+    <meta name="description" content="Meet the CleanLoop community contributor recognised this month for actively reporting waste issues in their area.">
+    <link rel="canonical" href="https://cleanloop.sarthakml.in/man-of-the-month/">
+    
+    <!-- OpenGraph SEO -->
+    <meta property="og:title" content="CleanLoop Man of the Month | Community Recognition">
+    <meta property="og:description" content="Meet the CleanLoop community contributor recognised this month for actively reporting waste issues in their area.">
+    <meta property="og:url" content="https://cleanloop.sarthakml.in/man-of-the-month/">
+    <meta property="og:type" content="website">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font-family);
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 3rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: var(--muted);
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .recognition-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .month-badge {
+            display: inline-block;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .citizen-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text);
+            margin: 0 0 0.5rem;
+        }
+
+        .citizen-area {
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin: 0 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .stats {
+            background-color: var(--background);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.5rem;
+        }
+
+        .message {
+            font-style: italic;
+            color: var(--text);
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .no-data {
+            color: var(--muted);
+            font-size: 1.1rem;
+            padding: 2rem;
+        }
+
+        footer {
+            background-color: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--muted);
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+    </style>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "name": "CleanLoop Man of the Month | Community Recognition",
+      "description": "Meet the CleanLoop community contributor recognised this month for actively reporting waste issues in their area.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CleanLoop"
+      }
+    }
+    </script>
+</head>
+<body>
+    <header>
+        <a href="{% url 'landing' %}" class="brand-logo">
+            CleanLoop
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'awareness' %}">Awareness</a>
+            <a href="{% url 'api_playground' %}">Visualizer</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'citizen_dashboard' %}">Dashboard</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <h1>CleanLoop Man of the Month</h1>
+        <p class="subtitle">Recognising citizens who actively help their communities report and resolve waste issues.</p>
+
+        <div class="recognition-card">
+            <div class="month-badge">{{ month_name }}</div>
+            
+            {% if citizen %}
+                <div class="avatar">
+                    {{ citizen.display_name|make_list|first|upper }}
+                </div>
+                <h2 class="citizen-name">{{ citizen.display_name }}</h2>
+                <div class="citizen-area">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    {{ citizen.area }}
+                </div>
+
+                <div class="stats">
+                    <p class="stat-number">{{ citizen.count }}</p>
+                    <div class="stat-label">Valid Reports</div>
+                </div>
+
+                <p class="message">"Thank you for helping your community stay cleaner."</p>
+            {% else %}
+                <div class="no-data">
+                    <p>No valid reports recorded yet for this month.</p>
+                    <p>Start reporting to become the next Community Contributor!</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CleanLoop — Smart Waste Management. Spectrum Hackathon 2026 | Team Bug Busters</p>
+    </footer>
+</body>
+</html>
