@@ -2173,9 +2173,11 @@ ul, ol {
       <!-- Map Container & Geolocation -->
       <div class="form-group">
         <label class="form-label">Pin Location on Map</label>
-        <div class="form-text" style="margin-bottom: 8px;">Click on the map or use the button below to get your current location.</div>
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <button type="button" id="btn-geolocate" class="btn btn-outline btn-sm">📍 Use My Current Location</button>
+        <div class="form-text" style="margin-bottom: 8px;">Click on the map or use the controls below to select your exact location.</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+            <button type="button" id="btn-geolocate" class="btn btn-outline btn-sm">📍 USE MY CURRENT LOCATION</button>
+            <button type="button" id="btn-select-map" class="btn btn-outline btn-sm">🗺️ SELECT ON MAP</button>
+            <button type="button" id="btn-reset-location" class="btn btn-outline btn-sm">🔄 RESET LOCATION</button>
         </div>
         <div class="folium-map-container" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid var(--border-color); z-index: 1;">
             {{ map_html|safe }}
@@ -2546,7 +2548,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                // Geolocation button
+                // 1. Geolocation button
                 if (geoBtn) {
                     geoBtn.addEventListener('click', function() {
                         if ("geolocation" in navigator) {
@@ -2568,14 +2570,39 @@ document.addEventListener('DOMContentLoaded', function() {
                                     latInput.value = lat.toFixed(6);
                                     lngInput.value = lng.toFixed(6);
                                 }
-                                geoBtn.textContent = "📍 Use My Current Location";
+                                geoBtn.textContent = "📍 USE MY CURRENT LOCATION";
                             }, function(error) {
-                                alert("Could not get your location. Please check browser permissions.");
-                                geoBtn.textContent = "📍 Use My Current Location";
+                                alert("Could not get your location. Please check browser GPS permissions.");
+                                geoBtn.textContent = "📍 USE MY CURRENT LOCATION";
                             });
                         } else {
                             alert("Geolocation is not supported by your browser");
                         }
+                    });
+                }
+
+                // 2. Select on map button
+                const selectMapBtn = document.getElementById('btn-select-map');
+                if (selectMapBtn) {
+                    selectMapBtn.addEventListener('click', function() {
+                        container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        alert("Click anywhere directly on the interactive map below to place or move your location marker.");
+                    });
+                }
+
+                // 3. Reset location button
+                const resetLocBtn = document.getElementById('btn-reset-location');
+                if (resetLocBtn) {
+                    resetLocBtn.addEventListener('click', function() {
+                        if (marker) {
+                            mapObj.removeLayer(marker);
+                            marker = null;
+                        }
+                        if (latInput && lngInput) {
+                            latInput.value = "28.613900";
+                            lngInput.value = "77.209000";
+                        }
+                        mapObj.setView([28.6139, 77.2090], 13);
                     });
                 }
             }

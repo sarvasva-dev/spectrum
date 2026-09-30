@@ -25,7 +25,7 @@ The hotspot algorithm runs efficiently on the backend in `views.py`. When render
 The UI adheres strictly to the **Blue Light Theme** requested.
 - We utilize modern UI patterns: glass-morphism hints, rounded geometries (`--radius-lg: 16px`), and soft elevation shadows.
 - Distinct status colors (Amber for pending, Green for resolved) help municipal admins process information at a glance.
-- All templates extend from a unified `base.html` that handles the responsive navigation and footer.
+- All application pages are standalone HTML templates in `frontend/pages/` containing inline styles and scripts for 100% component independence and optimal rendering performance.
 
 ## 5. What was avoided intentionally?
 Deployment configurations. The prompt strictly mandated `LOCAL DEVELOPMENT ONLY`. Therefore, there are no Dockerfiles, Nginx configurations, Gunicorn files, or systemd services. The focus was kept purely on creating a beautiful, functional, and logically sound Django application that boots instantly with `python manage.py runserver`.
