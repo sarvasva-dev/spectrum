@@ -324,16 +324,8 @@
         }
 
         function boot() {
-            fetchSync(function(res) {
-                var hasRecords = res.ok && ((res.complaints && res.complaints.length > 0) || (res.pickups && res.pickups.length > 0));
-                if (hasRecords) {
-                    addMessage("Welcome back 👋<br>Your citizen demo requests have been submitted to municipal operations.<br><br><b>MY CLEANLOOP ACTIVITY</b>", "ai");
-                    showTrackingButtons();
-                } else {
-                    addMessage("Welcome to CleanLoop 👋<br>Preparing your citizen service demonstration…", "ai");
-                    start5SecTimer();
-                }
-            });
+            addMessage("Welcome to CleanLoop 👋<br>Preparing your citizen service demonstration…", "ai");
+            start5SecTimer();
         }
 
         function showTrackingButtons() {
