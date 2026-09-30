@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanLoop AI Assistant</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f0f9ff;
+            --white: #ffffff;
+            --text: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --border: #cbd5e1;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+        .container {
+            display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto;
+            background-color: var(--white); box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        header {
+            background-color: var(--primary); color: var(--white);
+            padding: 1rem; text-align: center; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        header a { color: var(--white); text-decoration: none; font-size: 0.9rem; }
+        #chat-window {
+            flex: 1; overflow-y: auto; padding: 1rem;
+            display: flex; flex-direction: column; gap: 1rem;
+        }
+        .message { max-width: 80%; padding: 0.8rem 1rem; border-radius: 1rem; line-height: 1.4; }
+        .message.ai { background-color: var(--bg); align-self: flex-start; border-bottom-left-radius: 0; }
+        .message.user { background-color: var(--primary); color: var(--white); align-self: flex-end; border-bottom-right-radius: 0; }
+        .actions-container {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;
+        }
+        .action-chip {
+            background-color: var(--white); border: 1px solid var(--primary); color: var(--primary);
+            padding: 0.5rem 1rem; border-radius: 2rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .action-chip:hover { background-color: var(--primary); color: var(--white); }
+        .composer {
+            padding: 1rem; border-top: 1px solid var(--border);
+            display: flex; gap: 0.5rem; background-color: var(--white);
+        }
+        .composer input {
+            flex: 1; padding: 0.8rem; border: 1px solid var(--border);
+            border-radius: 2rem; outline: none;
+        }
+        .composer button {
+            background-color: var(--primary); color: var(--white); border: none;
+            padding: 0 1.2rem; border-radius: 2rem; cursor: pointer; font-weight: bold;
+        }
+        .composer button:hover { background-color: var(--primary-hover); }
+        .typing { display: none; align-self: flex-start; color: var(--gray); font-size: 0.9rem; padding-left: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/">← Back</a>
+            <span>CleanLoop AI</span>
+            <a href="/dashboard/">Dashboard</a>
+        </header>
+        <div id="chat-window">
+            <div class="message ai">Initializing connection...</div>
+        </div>
+        <div class="typing" id="typing">AI is typing...</div>
+        <div class="composer">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let currentState = { intent: 'START', step: 'START', state_data: {} };
+        const chatWindow = document.getElementById('chat-window');
+        const inputEl = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingEl = document.getElementById('typing');
+
+        function addMessage(text, sender, requireSecure = false) {
+            const div = document.createElement('div');
+            div.className = 'message ' + sender;
+            div.innerHTML = text;
+            chatWindow.appendChild(div);
+            
+            if (requireSecure && sender === 'ai') {
+                inputEl.type = 'password';
+                inputEl.placeholder = 'Enter password securely...';
+            } else {
+                inputEl.type = 'text';
+                inputEl.placeholder = 'Type a message...';
+            }
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function addActions(actions) {
+            if (!actions || actions.length === 0) return;
+            const container = document.createElement('div');
+            container.className = 'actions-container';
+            actions.forEach(action => {
+                const btn = document.createElement('button');
+                btn.className = 'action-chip';
+                btn.textContent = action;
+                btn.onclick = () => {
+                    container.remove();
+                    sendMessage(action);
+                };
+                container.appendChild(btn);
+            });
+            chatWindow.appendChild(container);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function sendMessage(text) {
+            if (!text.trim()) return;
+            addMessage(inputEl.type === 'password' ? '********' : text, 'user');
+            inputEl.value = '';
+            
+            // Clear actions if they exist in the UI currently to prevent clicking old chips
+            const oldContainers = document.querySelectorAll('.actions-container');
+            oldContainers.forEach(c => c.style.display = 'none');
+
+            typingEl.style.display = 'block';
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            if (currentState.require_gps && text === 'USE MY CURRENT LOCATION') {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const coords = pos.coords.latitude + ',' + pos.coords.longitude;
+                        await sendApiRequest(coords);
+                    }, async () => {
+                        await sendApiRequest('0,0'); // fallback
+                    });
+                } else {
+                    await sendApiRequest('0,0');
+                }
+                return;
+            }
+
+            await sendApiRequest(text);
+        }
+
+        async function sendApiRequest(message) {
+            try {
+                const res = await fetch('/api/ai/chat/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message, state: currentState })
+                });
+                const data = await res.json();
+                typingEl.style.display = 'none';
+                
+                if (data.ok) {
+                    currentState = {
+                        intent: data.intent,
+                        step: data.step,
+                        state_data: data.state_data || currentState.state_data
+                    };
+                    if (data.require_gps) {
+                        currentState.require_gps = true;
+                    }
+                    addMessage(data.message, 'ai', data.require_secure_input);
+                    addActions(data.actions);
+                } else {
+                    addMessage('Error communicating with AI.', 'ai');
+                }
+            } catch (err) {
+                typingEl.style.display = 'none';
+                addMessage('Network error. Please try again.', 'ai');
+            }
+        }
+
+        sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
+        inputEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage(inputEl.value);
+        });
+
+        // Initialize chat
+        chatWindow.innerHTML = '';
+        sendApiRequest('');
+    </script>
+</body>
+</html>
