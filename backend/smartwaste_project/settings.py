@@ -23,6 +23,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('true', '1')
 # Allowed hosts for domain, EC2 public IP and local reverse proxy access
 ALLOWED_HOSTS = [
     'cleanloop.sarthakml.in',
+    'www.cleanloop.sarthakml.in',
     '16.171.238.127',
     'localhost',
     '127.0.0.1',
@@ -33,7 +34,9 @@ ALLOWED_HOSTS = [
 # CSRF trusted origins for web forms submitted from cleanloop domain & public IP
 CSRF_TRUSTED_ORIGINS = [
     'https://cleanloop.sarthakml.in',
+    'https://www.cleanloop.sarthakml.in',
     'http://cleanloop.sarthakml.in',
+    'http://www.cleanloop.sarthakml.in',
     'http://16.171.238.127',
     'http://localhost',
     'http://127.0.0.1',
