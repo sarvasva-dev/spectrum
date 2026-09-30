@@ -110,7 +110,7 @@ def _is_admin(user):
     if user.is_staff or user.is_superuser:
         return True
     try:
-        return user.profile.role == 'ADMIN'
+        return bool(user.profile.is_admin_staff)
     except Exception:
         return False
 
@@ -248,7 +248,7 @@ def _reply_help(request):
 
 
 def _city_summary():
-    total_citizens = UserProfile.objects.filter(role='CITIZEN').count()
+    total_citizens = UserProfile.objects.filter(is_admin_staff=False).count()
     total_complaints = Complaint.objects.count()
     pending_complaints = Complaint.objects.exclude(status='RESOLVED').count()
     resolved_complaints = Complaint.objects.filter(status='RESOLVED').count()

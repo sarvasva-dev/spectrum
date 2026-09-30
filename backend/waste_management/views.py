@@ -1380,7 +1380,7 @@ from . import admin_ai_assistant
 @login_required
 def admin_ai_view(request):
     """Renders the standalone CleanLoop Admin AI Control Room page."""
-    if not (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'role', '') == 'ADMIN'):
+    if not (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'is_admin_staff', False)):
         messages.error(request, "Access restricted to municipal administrators.")
         return redirect('login')
     return render(request, 'admin/admin_ai.html', {
@@ -1399,7 +1399,7 @@ def api_admin_ai_chat_view(request):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'POST required.'}, status=405)
 
-    if not (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'role', '') == 'ADMIN'):
+    if not (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'is_admin_staff', False)):
         return JsonResponse({'ok': False, 'error': 'Unauthorized access.'}, status=403)
 
     try:
