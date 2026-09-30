@@ -488,8 +488,28 @@
                 return;
             }
 
-            addMessage("Processing query: " + escapeHtml(text), "ai");
-            showTrackingButtons();
+            fetch("/api/ai/chat/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ message: text, state: {} })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res && res.message) {
+                    addMessage(res.message, "ai");
+                } else {
+                    addMessage("CleanLoop AI Assistant is active.", "ai");
+                }
+                showTrackingButtons();
+            })
+            .catch(function() {
+                addMessage("CleanLoop AI Assistant is active.", "ai");
+                showTrackingButtons();
+            });
         }
 
         function trackComplaint() {

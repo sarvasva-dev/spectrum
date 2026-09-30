@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 SARVAM_API_URL = "https://api.sarvam.ai/v1/chat/completions"
 SARVAM_MODEL = "sarvam-105b"
-LLM_TIMEOUT_SECONDS = 12
+LLM_TIMEOUT_SECONDS = 25
 
 ADMIN_MENU_ACTIONS = [
     "📊 City Overview",

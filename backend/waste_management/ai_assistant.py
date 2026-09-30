@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 SARVAM_API_URL = "https://api.sarvam.ai/v1/chat/completions"
 SARVAM_MODEL = "sarvam-105b"   # 'sarvam-m' is deprecated upstream
-LLM_TIMEOUT_SECONDS = 12
+LLM_TIMEOUT_SECONDS = 25
 
 MAIN_MENU_ACTIONS = [
     "🗑 Report Waste",

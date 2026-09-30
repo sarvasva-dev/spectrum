@@ -412,7 +412,27 @@
             if (!text) return;
             inputEl.value = "";
             addMessage(escapeHtml(text), "user");
-            addMessage("Command received: " + escapeHtml(text), "ai");
+
+            fetch("/api/admin-ai/chat/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ message: text, state: {} })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res && res.message) {
+                    addMessage(res.message, "ai");
+                } else {
+                    addMessage("Municipal Control AI Active.", "ai");
+                }
+            })
+            .catch(function() {
+                addMessage("Municipal Control AI Active.", "ai");
+            });
         });
 
         boot();
