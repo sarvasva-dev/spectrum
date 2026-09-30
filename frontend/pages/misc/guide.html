@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanLoop Guide | Smart Waste Management</title>
+    <meta name="description" content="Explore the CleanLoop guide to waste reporting, GPS location, pickup requests, complaint tracking, hotspot analytics, waste segregation and the CleanLoop system.">
+    <link rel="canonical" href="https://cleanloop.sarthakml.in/guide/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --text-dark: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            z-index: 1000;
+        }
+        
+        #progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Top Nav */
+        .guide-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .guide-topbar a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .guide-topbar a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Hero */
+        .hero {
+            background: var(--white);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            color: var(--text-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search */
+        .search-container {
+            margin: 2rem auto 0;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            gap: 3rem;
+            align-items: flex-start;
+        }
+
+        /* Table of Contents */
+        .toc {
+            flex: 0 0 250px;
+            position: sticky;
+            top: 100px;
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .toc h3 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: var(--text-body);
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.375rem 0.5rem;
+            border-radius: var(--radius-md);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .toc a:hover, .toc a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            scroll-margin-top: 100px; /* Crucial for hash navigation */
+        }
+
+        .section.hidden {
+            display: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .section-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .section h3 {
+            font-size: 1.125rem;
+            color: var(--text-dark);
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .section p {
+            margin-bottom: 1rem;
+        }
+
+        .section ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .section li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Cards/Callouts */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-bottom: 1rem;
+        }
+
+        .info-card h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .info-card p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: var(--bg-body);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .flow-step {
+            background: var(--white);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        
+        .flow-arrow {
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        /* Back to top */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        #back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .toc {
+                position: relative;
+                top: 0;
+                width: 100%;
+                max-height: 250px;
+                flex: none;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Highlight for search */
+        .highlight {
+            background-color: #fef08a;
+            padding: 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="guide-topbar">
+        <a href="/">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to CleanLoop
+        </a>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero">
+        <h1>CleanLoop Guide</h1>
+        <p>Everything you need to understand, use and explore CleanLoop.</p>
+        
+        <div class="search-container">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="guide-search" placeholder="Search this guide...">
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="layout">
+        
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <h3>Contents</h3>
+            <ul id="toc-list">
+                <li><a href="#overview">01 Overview</a></li>
+                <li><a href="#report-waste">02 Report Waste</a></li>
+                <li><a href="#gps-location">03 GPS & Location</a></li>
+                <li><a href="#pickup">04 Waste Pickup</a></li>
+                <li><a href="#tracking">05 Complaint Tracking</a></li>
+                <li><a href="#admin">06 Admin Operations</a></li>
+                <li><a href="#hotspots">07 Hotspot Analytics</a></li>
+                <li><a href="#segregation">08 Waste Segregation</a></li>
+                <li><a href="#man-of-the-month">09 Man of the Month</a></li>
+                <li><a href="#api-visualizer">10 API Visualizer</a></li>
+                <li><a href="#architecture">11 How the System Works</a></li>
+                <li><a href="#security">12 Security & Privacy</a></li>
+                <li><a href="#faq">13 FAQ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Content -->
+        <main class="content" id="guide-content">
+
+            <!-- 01 OVERVIEW -->
+            <section id="overview" class="section">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <h2>Overview</h2>
+                </div>
+                <p>CleanLoop is a modern, location-aware smart waste management platform designed to connect citizens, sanitation teams, and municipal administrators.</p>
+                
+                <p>The system exists to streamline waste reporting, ensure accountability, and provide administrators with actionable geographic insights.</p>
+                
+                <h3>Primary User Types</h3>
+                <ul>
+                    <li><strong>Citizens:</strong> Report waste, schedule pickups, track complaint status, and earn community recognition.</li>
+                    <li><strong>Municipal/Admin Staff:</strong> Manage complaints, dispatch crews, monitor geographic hotspots, and update system statuses.</li>
+                </ul>
+
+                <h3>High-Level Workflow</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">REPORT</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">COLLECT</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">RESOLVE</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">TRACK</div>
+                </div>
+            </section>
+
+            <!-- 02 REPORT WASTE -->
+            <section id="report-waste" class="section">
+                <div class="section-header">
+                    <span class="section-number">02</span>
+                    <h2>Report Waste</h2>
+                </div>
+                <p>Citizens can report uncollected waste or overflowing bins directly through their dashboard.</p>
+                
+                <h3>Submission Details</h3>
+                <p>When reporting, the system captures:</p>
+                <ul>
+                    <li><strong>Issue Category:</strong> Type of waste issue (e.g., Overflowing Bin, Littering, Hazard).</li>
+                    <li><strong>Description:</strong> Additional text details.</li>
+                    <li><strong>Location:</strong> Address, landmark, latitude, and longitude.</li>
+                    <li><strong>Image Upload:</strong> Visual proof of the issue.</li>
+                    <li><strong>Priority:</strong> Calculated automatically or assigned to prioritize critical areas.</li>
+                </ul>
+                
+                <p>Once submitted, the complaint is assigned a unique <strong>Complaint ID</strong> and enters the system as <code>PENDING</code>. It appears immediately on the Admin Portal for triage and assignment.</p>
+            </section>
+
+            <!-- 03 GPS & LOCATION -->
+            <section id="gps-location" class="section">
+                <div class="section-header">
+                    <span class="section-number">03</span>
+                    <h2>GPS & Location</h2>
+                </div>
+                <p>CleanLoop relies heavily on accurate geographic data to map reports and calculate hotspots.</p>
+                
+                <div class="info-card">
+                    <h4>Location Flow</h4>
+                    <p>Browser GPS (Geolocation API) &rarr; Coordinates &rarr; Frontend Map &rarr; Django Backend &rarr; SQLite Database</p>
+                </div>
+
+                <h3>How it Works</h3>
+                <ul>
+                    <li><strong>Browser Geolocation API:</strong> When a user clicks "Get Location," the browser requests permission. If granted, exact coordinates are captured.</li>
+                    <li><strong>Leafmap/Folium Integration:</strong> The application uses Leafmap and Folium to render interactive maps where users can place a marker.</li>
+                    <li><strong>Location Autofill:</strong> We use the Nominatim geocoding service to translate typed addresses into map coordinates (forward geocoding) automatically.</li>
+                    <li><strong>Manual Selection:</strong> If GPS is denied or unavailable, users can manually drop a pin on the map.</li>
+                </ul>
+            </section>
+
+            <!-- 04 WASTE PICKUP -->
+            <section id="pickup" class="section">
+                <div class="section-header">
+                    <span class="section-number">04</span>
+                    <h2>Waste Pickup</h2>
+                </div>
+                <p>Citizens can schedule dedicated pickups for large items or specific waste types that don't fit in standard bins.</p>
+                
+                <h3>Pickup Details</h3>
+                <ul>
+                    <li><strong>Waste Categories:</strong> Bulky waste, E-waste, Recyclables, etc.</li>
+                    <li><strong>Approximate Quantity:</strong> Small, Medium, Large.</li>
+                    <li><strong>Address & Notes:</strong> Specific pickup instructions.</li>
+                    <li><strong>Date & Time:</strong> Preferred scheduling window.</li>
+                </ul>
+
+                <h3>Pickup Lifecycle</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">REQUESTED</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">ASSIGNED</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">PICKED UP</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">COMPLETED</div>
+                </div>
+            </section>
+
+            <!-- 05 COMPLAINT TRACKING -->
+            <section id="tracking" class="section">
+                <div class="section-header">
+                    <span class="section-number">05</span>
+                    <h2>Complaint Tracking</h2>
+                </div>
+                <p>Transparency is key. Citizens can track the exact status of their submitted complaints in real-time.</p>
+                
+                <h3>Tracking Data</h3>
+                <p>The tracking dashboard displays the Complaint ID, current status, assigned priority, location, and the timeline of updates.</p>
+
+                <h3>Complaint Lifecycle</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">PENDING</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">ASSIGNED</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">IN PROGRESS</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">RESOLVED</div>
+                </div>
+            </section>
+
+            <!-- 06 ADMIN OPERATIONS -->
+            <section id="admin" class="section">
+                <div class="section-header">
+                    <span class="section-number">06</span>
+                    <h2>Admin Operations</h2>
+                </div>
+                <p>The Admin Portal is completely distinct from the citizen view. It is built for municipal staff to manage city-wide sanitation logistics.</p>
+                
+                <h3>Admin Responsibilities</h3>
+                <div class="card-grid">
+                    <div class="info-card">
+                        <h4>Complaint Management</h4>
+                        <p>Review incoming complaints, update statuses, and add resolution notes.</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Pickup Management</h4>
+                        <p>Dispatch vehicles, assign crews, and track pickup completions.</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Operational Overview</h4>
+                        <p>Monitor system metrics, active locations, and resolution rates.</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Hotspot Monitoring</h4>
+                        <p>Identify areas needing systemic infrastructure improvements.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 07 HOTSPOT ANALYTICS -->
+            <section id="hotspots" class="section">
+                <div class="section-header">
+                    <span class="section-number">07</span>
+                    <h2>Hotspot Analytics</h2>
+                </div>
+                <p>CleanLoop identifies <strong>potential hotspots</strong> by analyzing the geographic density of complaints.</p>
+                
+                <p><strong>How it works:</strong></p>
+                <ul>
+                    <li>The system evaluates the latitude and longitude of active and historical complaints.</li>
+                    <li>It calculates the geographic distance between these points.</li>
+                    <li>If multiple reports occur repeatedly within close proximity (a specific radius threshold), the system flags the area as a potential hotspot.</li>
+                    <li>This allows admins to deploy additional bins or schedule more frequent collection routes in those areas.</li>
+                </ul>
+            </section>
+
+            <!-- 08 WASTE SEGREGATION -->
+            <section id="segregation" class="section">
+                <div class="section-header">
+                    <span class="section-number">08</span>
+                    <h2>Waste Segregation</h2>
+                </div>
+                <p>Proper segregation at the source makes recycling possible and reduces landfill burden.</p>
+
+                <div class="card-grid">
+                    <div class="info-card" style="border-color: #22c55e; background: #f0fdf4;">
+                        <h4 style="color: #166534;">Wet / Organic (Green)</h4>
+                        <p>Food scraps, vegetable peels, leaves. <strong>DO:</strong> Compost. <strong>DON'T:</strong> Mix in plastic.</p>
+                    </div>
+                    <div class="info-card" style="border-color: #3b82f6; background: #eff6ff;">
+                        <h4 style="color: #1e40af;">Dry / Recyclable (Blue)</h4>
+                        <p>Paper, clean cardboard, plastic bottles, glass. <strong>DO:</strong> Rinse containers. <strong>DON'T:</strong> Include food waste.</p>
+                    </div>
+                    <div class="info-card" style="border-color: #ef4444; background: #fef2f2;">
+                        <h4 style="color: #991b1b;">Hazardous & E-waste (Red/Black)</h4>
+                        <p>Batteries, electronics, paint, chemicals. <strong>DO:</strong> Store safely. <strong>DON'T:</strong> Throw in normal trash.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 09 MAN OF THE MONTH -->
+            <section id="man-of-the-month" class="section">
+                <div class="section-header">
+                    <span class="section-number">09</span>
+                    <h2>Man of the Month</h2>
+                </div>
+                <p>CleanLoop features a community recognition system called "Man of the Month" to encourage civic participation.</p>
+                
+                <h3>Calculation Logic</h3>
+                <p>The system counts the number of valid, submitted complaints and completed actions per user for the current month. Users with the highest participation are highlighted.</p>
+
+                <div class="info-card">
+                    <h4>Privacy Focus</h4>
+                    <p>This is for community recognition, not shaming. We strictly display only first names and general areas. We <strong>do not expose</strong> emails, phone numbers, exact home addresses, or private complaint details.</p>
+                </div>
+                
+                <p><a href="/man-of-the-month/">View current Man of the Month &rarr;</a></p>
+            </section>
+
+            <!-- 10 API VISUALIZER -->
+            <section id="api-visualizer" class="section">
+                <div class="section-header">
+                    <span class="section-number">10</span>
+                    <h2>API Visualizer</h2>
+                </div>
+                <p>The API Visualizer is a technical showcase of CleanLoop's backend architecture running in real-time.</p>
+                
+                <h3>Flow</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Frontend</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">HTTP Request</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">Django</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">Business Logic</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">SQLite3</div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-step">JSON</div>
+                </div>
+
+                <p>Simultaneously, Django Channels (via ASGI) broadcasts live backend events over a WebSocket, allowing the Visualizer to render real-time charts and event logs as data flows through the application.</p>
+                
+                <p><a href="/visual/">Open API Visualizer &rarr;</a></p>
+            </section>
+
+            <!-- 11 HOW THE SYSTEM WORKS -->
+            <section id="architecture" class="section">
+                <div class="section-header">
+                    <span class="section-number">11</span>
+                    <h2>How the System Works</h2>
+                </div>
+                <p>CleanLoop is built on a robust, standard web architecture.</p>
+
+                <ul>
+                    <li><strong>Frontend:</strong> HTML, scoped CSS, and Vanilla JavaScript for maximum performance and zero bloat.</li>
+                    <li><strong>Mapping:</strong> Browser Geolocation API combined with Leafmap.</li>
+                    <li><strong>Backend:</strong> Django (Python) handles all business logic, routing, and form validation.</li>
+                    <li><strong>Database:</strong> SQLite3 is used as the relational database for persistent storage via the Django ORM.</li>
+                    <li><strong>Real-time:</strong> Django Channels and WebSockets enable the live API Visualizer.</li>
+                </ul>
+            </section>
+
+            <!-- 12 SECURITY & PRIVACY -->
+            <section id="security" class="section">
+                <div class="section-header">
+                    <span class="section-number">12</span>
+                    <h2>Security & Privacy</h2>
+                </div>
+                <p>CleanLoop implements standard web security practices to protect citizen data.</p>
+                
+                <ul>
+                    <li><strong>Authentication:</strong> Secure login and password hashing handled by Django's auth system.</li>
+                    <li><strong>Authorization:</strong> Strict isolation ensures citizens can only view and track their own reports, while admins have separate elevated access routes.</li>
+                    <li><strong>CSRF Protection:</strong> Cross-Site Request Forgery tokens are enforced on all form submissions.</li>
+                    <li><strong>Image Uploads:</strong> User-uploaded images are sandboxed in the media directory.</li>
+                </ul>
+            </section>
+
+            <!-- 13 FAQ -->
+            <section id="faq" class="section">
+                <div class="section-header">
+                    <span class="section-number">13</span>
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="info-card">
+                        <h4>Who can use CleanLoop?</h4>
+                        <p>Any registered citizen can report waste. Municipal staff use a separate admin portal.</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4>Can I use my GPS location?</h4>
+                        <p>Yes. If you grant browser permission, the system will accurately map your coordinates.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>What happens if GPS permission is denied?</h4>
+                        <p>You can still manually type your address or drop a pin on the interactive map.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>How do I track my complaint?</h4>
+                        <p>Log into your dashboard and navigate to "Track Complaints" to see real-time status updates.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Why SQLite3?</h4>
+                        <p>It provides a robust, file-based relational database perfect for the scale and portability requirements of this platform.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Back to top button -->
+    <button id="back-to-top" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Reading Progress Bar
+            const progressBar = document.getElementById('progress-bar');
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                progressBar.style.width = scrolled + '%';
+            });
+
+            // 2. Back to Top Button
+            const backToTop = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // 3. Search / Filter
+            const searchInput = document.getElementById('guide-search');
+            const sections = document.querySelectorAll('.section');
+            
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                
+                sections.forEach(section => {
+                    const text = section.innerText.toLowerCase();
+                    if (text.includes(term)) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            });
+
+            // 4. Highlight TOC based on scroll
+            const tocLinks = document.querySelectorAll('.toc a');
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+
+            // Handle direct hash on load
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -106,6 +106,14 @@ def waste_awareness_view(request):
     """
     return render(request, 'misc/awareness.html')
 
+def guide_view(request):
+    """
+    CleanLoop Guide / Knowledge Hub
+    Detailed explanations of all platform features.
+    """
+    return render(request, 'misc/guide.html')
+
+
 
 def robots_txt_view(request):
     """
@@ -117,6 +125,7 @@ def robots_txt_view(request):
         "Allow: /awareness/",
         "Allow: /visual/",
         "Allow: /man-of-the-month/",
+        "Allow: /guide/",
         "Disallow: /dashboard/",
         "Disallow: /tracking/",
         "Disallow: /pickup/",
@@ -136,6 +145,7 @@ def sitemap_xml_view(request):
     pages = [
         {'loc': f"{domain}/", 'changefreq': 'daily', 'priority': '1.0'},
         {'loc': f"{domain}/awareness/", 'changefreq': 'weekly', 'priority': '0.8'},
+        {'loc': f"{domain}/guide/", 'changefreq': 'weekly', 'priority': '0.85'},
         {'loc': f"{domain}/visual/", 'changefreq': 'monthly', 'priority': '0.7'},
         {'loc': f"{domain}/man-of-the-month/", 'changefreq': 'daily', 'priority': '0.9'},
     ]

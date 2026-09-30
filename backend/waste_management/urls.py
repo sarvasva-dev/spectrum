@@ -12,6 +12,7 @@ urlpatterns = [
     path('man-of-the-month/', views.man_of_the_month_view, name='man_of_the_month'),
     path('man-of-the-month/<slug:slug>/', views.man_of_the_month_view, name='man_of_the_month_slug'),
     path('', views.landing_view, name='landing'),
+    path('guide/', views.guide_view, name='guide'),
     path('awareness/', views.waste_awareness_view, name='awareness'),
     path('robots.txt', views.robots_txt_view, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml_view, name='sitemap_xml'),
