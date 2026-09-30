@@ -167,8 +167,10 @@ class SmartWasteTestCase(TestCase):
             'description': 'Municipal bin near bus stop has been overflowing for two days.',
             'location': 'Central Bus Stop, North Wing',
             'landmark': 'Platform 3',
-            'priority': 'LOW',  # Form manual default
-            'auto_priority': True
+            'priority': 'LOW',
+            'auto_priority': 'on',
+            'latitude': 28.6139,
+            'longitude': 77.2090
         }
         response = self.client.post(reverse('report_waste'), data, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -261,7 +263,9 @@ class SmartWasteTestCase(TestCase):
             'pickup_address': 'Flat 401, Green View Apartments',
             'preferred_date': pickup_date.strftime('%Y-%m-%d'),
             'preferred_time': 'Morning (08:00 AM - 11:00 AM)',
-            'notes': 'Call 15 mins prior'
+            'notes': 'Call 15 mins prior',
+            'latitude': 28.6139,
+            'longitude': 77.2090
         }
         response = self.client.post(reverse('pickup_request'), data, follow=True)
         self.assertEqual(response.status_code, 200)
