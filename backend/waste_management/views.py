@@ -103,6 +103,7 @@ def robots_txt_view(request):
         "Allow: /awareness/",
         "Allow: /login/",
         "Allow: /register/",
+        "Allow: /visual/",
         "Allow: /static/",
         "",
         "Sitemap: https://cleanloop.sarthakml.in/sitemap.xml",
@@ -121,6 +122,7 @@ def sitemap_xml_view(request):
         {'loc': f"{domain}/awareness/", 'changefreq': 'weekly', 'priority': '0.8'},
         {'loc': f"{domain}/login/", 'changefreq': 'monthly', 'priority': '0.5'},
         {'loc': f"{domain}/register/", 'changefreq': 'monthly', 'priority': '0.5'},
+        {'loc': f"{domain}/visual/", 'changefreq': 'monthly', 'priority': '0.7'},
     ]
     xml = [
         '<?xml version="1.0" encoding="UTF-8"?>',
