@@ -1,0 +1,1332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Playground & System Visualizer — SmartWaste</title>
+  
+  <meta name="description" content="Live REST API Playground and architecture inspector for SmartWaste management platform. Test endpoints, view JSON payloads, and inspect database interactions.">
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="alternate icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <!-- Dark Developer Theme Stylesheet -->
+  <style>
+/* ==========================================================================
+   SMARTWASTE API PLAYGROUND - DARK DEVELOPER TERMINAL THEME
+   100% Standalone CSS with Zero Framework Dependencies
+   ========================================================================== */
+
+:root {
+  --bg-dark: #05070f;
+  --bg-card: #0f172a;
+  --bg-input: #1e293b;
+  --bg-hover: #334155;
+  --border-color: #1e3a8a;
+  --border-glow: #3b82f6;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-code: #e2e8f0;
+
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --accent-cyan: #06b6d4;
+  --accent-purple: #a855f7;
+
+  --status-200: #10b981;
+  --status-200-bg: #064e3b;
+  --status-400: #f59e0b;
+  --status-400-bg: #78350f;
+  --status-500: #ef4444;
+  --status-500-bg: #7f1d1d;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Fira Code", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.5;
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-cyan);
+}
+
+.container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px 0 60px;
+}
+
+/* Navbar Header */
+.dev-navbar {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo-badge {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+}
+
+.brand-text-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-main-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand-main-name .highlight {
+  color: var(--primary);
+}
+
+.brand-sub-tag {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.health-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background-color: #064e3b;
+  color: #34d399;
+  border: 1px solid #059669;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #34d399;
+  box-shadow: 0 0 8px #34d399;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.nav-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Architecture Flow Visualizer Header */
+.arch-flow-panel {
+  background: linear-gradient(180deg, #0f172a 0%, #0a0e1a 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.arch-flow-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.page-heading {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.page-subheading {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.flow-diagram-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background-color: #05070f;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+}
+
+.flow-step-node {
+  background-color: var(--bg-card);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px 18px;
+  text-align: center;
+  flex: 1;
+  min-width: 130px;
+  transition: all 0.3s ease;
+}
+
+.flow-step-node.active-node {
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.node-icon {
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+
+.node-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #ffffff;
+}
+
+.node-subtitle {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--accent-cyan);
+  margin-top: 2px;
+}
+
+.flow-arrow {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+/* Preset Cards Grid (CRUD Visualizer) */
+.presets-heading {
+  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.preset-card {
+  background-color: var(--bg-card);
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preset-card:hover {
+  border-color: var(--primary);
+  background-color: #1e293b;
+  transform: translateY(-2px);
+}
+
+.preset-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.method-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.method-get { background-color: #064e3b; color: #34d399; }
+.method-post { background-color: #1e3a8a; color: #60a5fa; }
+.method-patch { background-color: #581c87; color: #c084fc; }
+.method-delete { background-color: #7f1d1d; color: #fca5a5; }
+
+.preset-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.preset-endpoint {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Request/Response Inspector Split Grid */
+.inspector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 992px) {
+  .inspector-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.input-flex-row {
+  display: flex;
+  gap: 10px;
+}
+
+.select-control, .input-control {
+  background-color: var(--bg-input);
+  border: 1px solid #334155;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.select-control:focus, .input-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.select-control {
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.input-control {
+  flex: 1;
+}
+
+.code-textarea {
+  width: 100%;
+  height: 200px;
+  background-color: #05070f;
+  border: 1px solid #334155;
+  color: var(--text-code);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  padding: 12px 14px;
+  border-radius: 8px;
+  outline: none;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.code-textarea:focus {
+  border-color: var(--primary);
+}
+
+.headers-box {
+  background-color: #05070f;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.btn-dev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-dev-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+}
+
+.btn-dev-primary:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: translateY(-1px);
+}
+
+.btn-dev-outline {
+  background-color: transparent;
+  border-color: #334155;
+  color: var(--text-muted);
+}
+
+.btn-dev-outline:hover {
+  background-color: var(--bg-input);
+  color: #ffffff;
+  border-color: #475569;
+}
+
+/* Response Section Components */
+.response-meta-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.res-badge {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.res-200 { background-color: var(--status-200-bg); color: #34d399; border: 1px solid #059669; }
+.res-400 { background-color: var(--status-400-bg); color: #fbbf24; border: 1px solid #d97706; }
+.res-500 { background-color: var(--status-500-bg); color: #fca5a5; border: 1px solid #dc2626; }
+
+.res-time {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent-cyan);
+}
+
+.json-viewer-box {
+  background-color: #05070f;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--text-code);
+  overflow-x: auto;
+  min-height: 250px;
+  max-height: 420px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Pretty JSON Colors */
+.json-key { color: #38bdf8; font-weight: 600; }
+.json-string { color: #34d399; }
+.json-number { color: #fbbf24; }
+.json-boolean { color: #c084fc; font-weight: 700; }
+.json-null { color: #f43f5e; font-weight: 700; }
+
+/* Request History Table Panel */
+.history-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.history-table th {
+  background-color: #05070f;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.history-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #1e293b;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.history-table tr:hover td {
+  background-color: var(--bg-input);
+}
+
+/* Database & Catalog Section Grids */
+.db-schema-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.db-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.db-table-card {
+  background-color: #05070f;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.db-table-name {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--accent-cyan);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.db-field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.db-field-type {
+  color: #a855f7;
+  font-size: 0.72rem;
+}
+
+/* Footer */
+.dev-footer {
+  background-color: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  padding: 32px 0;
+  margin-top: auto;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.footer-tech-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.tech-pill {
+  background-color: #05070f;
+  border: 1px solid #334155;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--accent-cyan);
+}
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="dev-navbar" role="banner">
+    <div class="container nav-container">
+      <div class="brand-title">
+        <span class="brand-logo-badge">DEV</span>
+        <div class="brand-text-stack">
+          <span class="brand-main-name">Smart<span class="highlight">Waste</span> API Visualizer</span>
+          <span class="brand-sub-tag">LIVE DJANGO BACKEND INSPECTOR</span>
+        </div>
+      </div>
+
+      <div class="nav-actions-row">
+        <div id="healthBadge" class="health-status-indicator">
+          <span class="status-dot"></span>
+          <span id="healthText">CHECKING API...</span>
+        </div>
+        <a href="{% url 'landing' %}" class="btn-dev btn-dev-outline">← Back to Main App</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Top Architecture Flow Diagram -->
+      <section class="arch-flow-panel">
+        <div class="arch-flow-title-bar">
+          <div>
+            <h1 class="page-heading">SmartWaste System Architecture Inspector</h1>
+            <p class="page-subheading">Watch real HTTP requests flow from browser ➔ Django Views ➔ Smart Priority Engine ➔ SQLite3 database ➔ JSON Response</p>
+          </div>
+        </div>
+
+        <div class="flow-diagram-container">
+          <div class="flow-step-node" id="nodeClient">
+            <div class="node-icon">🌐</div>
+            <div class="node-title">CLIENT</div>
+            <div class="node-subtitle">Browser / fetch()</div>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step-node" id="nodeRequest">
+            <div class="node-icon">⚡</div>
+            <div class="node-title">HTTP REQUEST</div>
+            <div class="node-subtitle">JSON Payload</div>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step-node" id="nodeDjango">
+            <div class="node-icon">🐍</div>
+            <div class="node-title">DJANGO BACKEND</div>
+            <div class="node-subtitle">urls.py & views.py</div>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step-node" id="nodeLogic">
+            <div class="node-icon">⚙️</div>
+            <div class="node-title">SMART LOGIC</div>
+            <div class="node-subtitle">Priority Engine</div>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step-node" id="nodeDb">
+            <div class="node-icon">💾</div>
+            <div class="node-title">SQLITE3 DB</div>
+            <div class="node-subtitle">OR Models</div>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step-node" id="nodeResponse">
+            <div class="node-icon">📦</div>
+            <div class="node-title">RESPONSE</div>
+            <div class="node-subtitle">JSON Output</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preset Action Cards (1-Click CRUD Visualizer) -->
+      <section>
+        <div class="presets-heading">
+          <span>⚡ HACKATHON DEMO PRESETS (1-CLICK TEST)</span>
+        </div>
+
+        <div class="presets-grid">
+          <div class="preset-card" onclick="loadPreset('health')">
+            <div class="preset-header">
+              <span class="method-badge method-get">GET</span>
+              <span style="font-size: 0.8rem;">🟢</span>
+            </div>
+            <div class="preset-name">Health Check</div>
+            <div class="preset-endpoint">/api/health/</div>
+          </div>
+
+          <div class="preset-card" onclick="loadPreset('list')">
+            <div class="preset-header">
+              <span class="method-badge method-get">GET</span>
+              <span style="font-size: 0.8rem;">🔵</span>
+            </div>
+            <div class="preset-name">List Complaints</div>
+            <div class="preset-endpoint">/api/complaints/</div>
+          </div>
+
+          <div class="preset-card" onclick="loadPreset('detail')">
+            <div class="preset-header">
+              <span class="method-badge method-get">GET</span>
+              <span style="font-size: 0.8rem;">🟣</span>
+            </div>
+            <div class="preset-name">Get Detail</div>
+            <div class="preset-endpoint">/api/complaints/{{ sample_complaint_id }}/</div>
+          </div>
+
+          <div class="preset-card" onclick="loadPreset('create')">
+            <div class="preset-header">
+              <span class="method-badge method-post">POST</span>
+              <span style="font-size: 0.8rem;">⚡</span>
+            </div>
+            <div class="preset-name">Create Report</div>
+            <div class="preset-endpoint">/api/complaints/</div>
+          </div>
+
+          <div class="preset-card" onclick="loadPreset('update')">
+            <div class="preset-header">
+              <span class="method-badge method-patch">PATCH</span>
+              <span style="font-size: 0.8rem;">⚙️</span>
+            </div>
+            <div class="preset-name">Update Status</div>
+            <div class="preset-endpoint">/api/complaints/{{ sample_complaint_id }}/</div>
+          </div>
+
+          <div class="preset-card" onclick="loadPreset('delete')">
+            <div class="preset-header">
+              <span class="method-badge method-delete">DELETE</span>
+              <span style="font-size: 0.8rem;">🔴</span>
+            </div>
+            <div class="preset-name">Delete Record</div>
+            <div class="preset-endpoint">/api/complaints/{{ sample_complaint_id }}/</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inspector Split View (Request & Response) -->
+      <section class="inspector-grid">
+        <!-- Request Panel -->
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div class="panel-title">
+              <span>🚀 REQUEST BUILDER</span>
+            </div>
+            <button class="btn-dev btn-dev-outline" onclick="copyRequestText()">📋 Copy Request</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">HTTP Method & Endpoint URL</label>
+            <div class="input-flex-row">
+              <select id="reqMethod" class="select-control">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+              <input type="text" id="reqUrl" class="input-control" value="/api/health/">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Request Headers</label>
+            <div class="headers-box">
+              <div>Content-Type: application/json</div>
+              <div>X-CSRFToken: <span id="csrfDisplay">fetching...</span></div>
+            </div>
+          </div>
+
+          <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+            <label class="form-label">JSON Request Payload Body</label>
+            <textarea id="reqBody" class="code-textarea" placeholder="{ /* JSON Body for POST / PATCH */ }"></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button id="sendBtn" class="btn-dev btn-dev-primary" style="flex: 1;" onclick="sendApiRequest()">
+              🚀 SEND LIVE REQUEST
+            </button>
+            <button class="btn-dev btn-dev-outline" onclick="clearPlayground()">🔄 Clear</button>
+          </div>
+        </div>
+
+        <!-- Response Panel -->
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div class="panel-title">
+              <span>📦 LIVE BACKEND RESPONSE</span>
+            </div>
+            <button class="btn-dev btn-dev-outline" onclick="copyResponseText()">📋 Copy Response</button>
+          </div>
+
+          <div class="response-meta-bar">
+            <div id="resStatusBadge" class="res-badge res-200">READY</div>
+            <div id="resTimeLabel" class="res-time">-- ms</div>
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">Content-Type: application/json</div>
+          </div>
+
+          <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+            <label class="form-label">Formatted JSON Output</label>
+            <div id="jsonOutput" class="json-viewer-box">// Click "SEND LIVE REQUEST" or select a preset to view actual response JSON...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Client-Side Request History Log -->
+      <section class="history-panel">
+        <div class="panel-header-row">
+          <div class="panel-title">
+            <span>📜 SESSION REQUEST HISTORY</span>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">Client-side log</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>METHOD</th>
+                <th>ENDPOINT</th>
+                <th>STATUS</th>
+                <th>DURATION</th>
+                <th>TIMESTAMP</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr>
+                <td colspan="5" style="color: var(--text-muted); text-align: center; padding: 20px;">No requests executed yet in this session.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Database Schema Inspector (Informational) -->
+      <section class="db-schema-panel">
+        <div class="panel-title">
+          <span>💾 SQLITE3 DATABASE SCHEMA</span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+          Live records are persisted securely in <code>db.sqlite3</code> using standard Django ORM models.
+        </p>
+
+        <div class="db-tables-grid">
+          <div class="db-table-card">
+            <div class="db-table-name">Complaint Table</div>
+            <div class="db-field-list">
+              <div>• complaint_id <span class="db-field-type">CharField (WM-YYYY-NNNN)</span></div>
+              <div>• issue_type <span class="db-field-type">CharField</span></div>
+              <div>• priority <span class="db-field-type">CharField (Auto Smart)</span></div>
+              <div>• status <span class="db-field-type">CharField (Lifecycle)</span></div>
+              <div>• latitude/longitude <span class="db-field-type">FloatField</span></div>
+            </div>
+          </div>
+
+          <div class="db-table-card">
+            <div class="db-table-name">PickupRequest Table</div>
+            <div class="db-field-list">
+              <div>• pickup_id <span class="db-field-type">CharField (PK-YYYY-NNNN)</span></div>
+              <div>• waste_category <span class="db-field-type">CharField</span></div>
+              <div>• quantity <span class="db-field-type">CharField</span></div>
+              <div>• preferred_date <span class="db-field-type">DateField</span></div>
+              <div>• status <span class="db-field-type">CharField</span></div>
+            </div>
+          </div>
+
+          <div class="db-table-card">
+            <div class="db-table-name">UserProfile Table</div>
+            <div class="db-field-list">
+              <div>• user <span class="db-field-type">OneToOne(User)</span></div>
+              <div>• clean_coins <span class="db-field-type">IntegerField (+50 reward)</span></div>
+              <div>• phone / address <span class="db-field-type">CharField</span></div>
+              <div>• is_admin_staff <span class="db-field-type">BooleanField</span></div>
+            </div>
+          </div>
+
+          <div class="db-table-card">
+            <div class="db-table-name">ComplaintUpdate Table</div>
+            <div class="db-field-list">
+              <div>• complaint <span class="db-field-type">ForeignKey(Complaint)</span></div>
+              <div>• status <span class="db-field-type">CharField</span></div>
+              <div>• note <span class="db-field-type">TextField (Audit Log)</span></div>
+              <div>• created_at <span class="db-field-type">DateTimeField</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Endpoint Catalog Reference -->
+      <section class="history-panel">
+        <div class="panel-title" style="margin-bottom: 14px;">
+          <span>📖 API ENDPOINT CATALOG</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>METHOD</th>
+                <th>ENDPOINT</th>
+                <th>PURPOSE</th>
+                <th>AUTHORIZATION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>/api/health/</code></td>
+                <td>Lightweight server & DB health status</td>
+                <td>Public</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>/api/complaints/</code></td>
+                <td>Retrieve complaint records list from SQLite3</td>
+                <td>Public / User Scoped</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>/api/complaints/&lt;id&gt;/</code></td>
+                <td>Retrieve detailed complaint object</td>
+                <td>Owner / Staff Only</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-post">POST</span></td>
+                <td><code>/api/complaints/</code></td>
+                <td>Submit new waste report with smart auto-priority</td>
+                <td>Authenticated / Demo</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-patch">PATCH</span></td>
+                <td><code>/api/complaints/&lt;id&gt;/</code></td>
+                <td>Update complaint status, priority & assign crew</td>
+                <td>Staff Admin Only</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-delete">DELETE</span></td>
+                <td><code>/api/complaints/&lt;id&gt;/</code></td>
+                <td>Delete complaint record from database</td>
+                <td>Staff Admin Only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="dev-footer" role="contentinfo">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <strong>SmartWaste API Playground & System Visualizer</strong>
+        <p style="margin-top: 4px; font-size: 0.8rem;">Designed for Spectrum Hackathon 2026 judging demonstration.</p>
+      </div>
+
+      <div class="footer-tech-pills">
+        <span class="tech-pill">Frontend: HTML5 + CSS3 + Vanilla JS</span>
+        <span class="tech-pill">Backend: Python 3.14 + Django 4.2</span>
+        <span class="tech-pill">Database: SQLite3</span>
+        <span class="tech-pill">Maps: Leafmap (Folium)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla JavaScript Logic -->
+  <script>
+    const sampleId = "{{ sample_complaint_id }}";
+
+    // Get CSRF cookie value helper
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    const csrfToken = getCookie('csrftoken') || '{{ csrf_token }}';
+    document.getElementById('csrfDisplay').textContent = csrfToken ? (csrfToken.substring(0, 12) + '...') : 'None';
+
+    // 1. Live Health Check on Page Load
+    document.addEventListener('DOMContentLoaded', function() {
+      checkApiHealth();
+    });
+
+    async function checkApiHealth() {
+      const badge = document.getElementById('healthBadge');
+      const text = document.getElementById('healthText');
+      try {
+        const res = await fetch('/api/health/');
+        const data = await res.json();
+        if (data.success && data.status === 'online') {
+          text.textContent = '● API ONLINE';
+          badge.style.backgroundColor = '#064e3b';
+          badge.style.color = '#34d399';
+        } else {
+          text.textContent = '⚠️ API ISSUES';
+          badge.style.backgroundColor = '#78350f';
+          badge.style.color = '#fbbf24';
+        }
+      } catch (err) {
+        text.textContent = '❌ API OFFLINE';
+        badge.style.backgroundColor = '#7f1d1d';
+        badge.style.color = '#fca5a5';
+      }
+    }
+
+    // 2. Preset Loaders (1-Click CRUD Visualizer)
+    function loadPreset(type) {
+      const methodSelect = document.getElementById('reqMethod');
+      const urlInput = document.getElementById('reqUrl');
+      const bodyInput = document.getElementById('reqBody');
+
+      if (type === 'health') {
+        methodSelect.value = 'GET';
+        urlInput.value = '/api/health/';
+        bodyInput.value = '';
+      } else if (type === 'list') {
+        methodSelect.value = 'GET';
+        urlInput.value = '/api/complaints/';
+        bodyInput.value = '';
+      } else if (type === 'detail') {
+        methodSelect.value = 'GET';
+        urlInput.value = `/api/complaints/${sampleId}/`;
+        bodyInput.value = '';
+      } else if (type === 'create') {
+        methodSelect.value = 'POST';
+        urlInput.value = '/api/complaints/';
+        bodyInput.value = JSON.stringify({
+          issue_type: "OVERFLOWING_BIN",
+          description: "Garbage bin near main gate overflowing onto footpath.",
+          location: "Main Campus Entrance",
+          landmark: "Opposite Metro Gate 2",
+          latitude: 28.6139,
+          longitude: 77.2090
+        }, null, 2);
+      } else if (type === 'update') {
+        methodSelect.value = 'PATCH';
+        urlInput.value = `/api/complaints/${sampleId}/`;
+        bodyInput.value = JSON.stringify({
+          status: "IN_PROGRESS",
+          priority: "HIGH",
+          assigned_crew: "Rapid Sanitation Crew Unit #4",
+          admin_notes: "Dispatch team notified. Truck dispatched to location."
+        }, null, 2);
+      } else if (type === 'delete') {
+        methodSelect.value = 'DELETE';
+        urlInput.value = `/api/complaints/${sampleId}/`;
+        bodyInput.value = '';
+      }
+    }
+
+    // 3. Highlight Visual Architecture Diagram Nodes
+    function setFlowActiveNode(step) {
+      const nodes = ['nodeClient', 'nodeRequest', 'nodeDjango', 'nodeLogic', 'nodeDb', 'nodeResponse'];
+      nodes.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active-node');
+      });
+
+      if (step === 'start') {
+        document.getElementById('nodeClient').classList.add('active-node');
+        document.getElementById('nodeRequest').classList.add('active-node');
+      } else if (step === 'processing') {
+        document.getElementById('nodeDjango').classList.add('active-node');
+        document.getElementById('nodeLogic').classList.add('active-node');
+        document.getElementById('nodeDb').classList.add('active-node');
+      } else if (step === 'done') {
+        document.getElementById('nodeResponse').classList.add('active-node');
+        document.getElementById('nodeClient').classList.add('active-node');
+      }
+    }
+
+    // 4. Send Live API Request via fetch()
+    const requestHistory = [];
+
+    async function sendApiRequest() {
+      const method = document.getElementById('reqMethod').value;
+      const url = document.getElementById('reqUrl').value.trim();
+      const bodyText = document.getElementById('reqBody').value.trim();
+      const sendBtn = document.getElementById('sendBtn');
+      const jsonOutput = document.getElementById('jsonOutput');
+      const statusBadge = document.getElementById('resStatusBadge');
+      const timeLabel = document.getElementById('resTimeLabel');
+
+      if (!url) {
+        alert("Please enter a valid endpoint URL.");
+        return;
+      }
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = '⏳ SENDING...';
+      jsonOutput.innerHTML = '// Request sending to Django backend...';
+      setFlowActiveNode('start');
+
+      const headers = {
+        'Accept': 'application/json',
+      };
+
+      if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+        headers['Content-Type'] = 'application/json';
+        if (csrfToken) {
+          headers['X-CSRFToken'] = csrfToken;
+        }
+      }
+
+      const options = {
+        method: method,
+        headers: headers,
+      };
+
+      if (['POST', 'PUT', 'PATCH'].includes(method) && bodyText) {
+        try {
+          // Verify valid JSON before sending
+          JSON.parse(bodyText);
+          options.body = bodyText;
+        } catch (err) {
+          alert("Invalid JSON in Request Body textarea. Please fix syntax before sending.");
+          sendBtn.disabled = false;
+          sendBtn.textContent = '🚀 SEND LIVE REQUEST';
+          return;
+        }
+      }
+
+      setTimeout(() => setFlowActiveNode('processing'), 150);
+
+      const startTime = performance.now();
+      try {
+        const response = await fetch(url, options);
+        const endTime = performance.now();
+        const duration = Math.round(endTime - startTime);
+
+        const status = response.status;
+        const statusText = response.statusText || (status === 200 ? 'OK' : status === 201 ? 'Created' : status === 403 ? 'Forbidden' : status === 404 ? 'Not Found' : 'Response');
+
+        // Status badge styling
+        statusBadge.textContent = `${status} ${statusText}`;
+        if (status >= 200 && status < 300) {
+          statusBadge.className = 'res-badge res-200';
+        } else if (status >= 400 && status < 500) {
+          statusBadge.className = 'res-badge res-400';
+        } else {
+          statusBadge.className = 'res-badge res-500';
+        }
+
+        timeLabel.textContent = `${duration} ms`;
+
+        let data;
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const rawText = await response.text();
+          data = { raw_response: rawText };
+        }
+
+        // Render Syntax Highlighted Pretty JSON
+        jsonOutput.innerHTML = syntaxHighlightJson(data);
+        setFlowActiveNode('done');
+
+        // Add entry to history log
+        addHistoryEntry(method, url, status, duration, data, bodyText);
+
+      } catch (error) {
+        const endTime = performance.now();
+        const duration = Math.round(endTime - startTime);
+
+        statusBadge.textContent = 'ERR NETWORK';
+        statusBadge.className = 'res-badge res-500';
+        timeLabel.textContent = `${duration} ms`;
+
+        jsonOutput.innerHTML = `<span class="json-null">Network Error / Request Failed:</span>\n${error.message}`;
+        setFlowActiveNode('done');
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = '🚀 SEND LIVE REQUEST';
+      }
+    }
+
+    // 5. Pretty JSON Syntax Highlighting Function (Vanilla JS)
+    function syntaxHighlightJson(jsonObj) {
+      let jsonStr = JSON.stringify(jsonObj, null, 2);
+      jsonStr = jsonStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return jsonStr.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        let cls = 'json-number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'json-key';
+          } else {
+            cls = 'json-string';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'json-boolean';
+        } else if (/null/.test(match)) {
+          cls = 'json-null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    // 6. Request History Management
+    function addHistoryEntry(method, url, status, duration, responseData, reqBodyText) {
+      const tbody = document.getElementById('historyTableBody');
+      const timeStr = new Date().toLocaleTimeString();
+
+      const item = { method, url, status, duration, timeStr, responseData, reqBodyText };
+      requestHistory.unshift(item);
+
+      if (requestHistory.length === 1) {
+        tbody.innerHTML = '';
+      }
+
+      const row = document.createElement('tr');
+      const methodClass = method === 'GET' ? 'method-get' : method === 'POST' ? 'method-post' : method === 'PATCH' ? 'method-patch' : 'method-delete';
+      const statusClass = status >= 200 && status < 300 ? 'res-200' : status >= 400 && status < 500 ? 'res-400' : 'res-500';
+
+      row.innerHTML = `
+        <td><span class="method-badge ${methodClass}">${method}</span></td>
+        <td><code>${url}</code></td>
+        <td><span class="res-badge ${statusClass}">${status}</span></td>
+        <td><span style="color: var(--accent-cyan);">${duration} ms</span></td>
+        <td style="color: var(--text-muted);">${timeStr}</td>
+      `;
+
+      row.onclick = function() {
+        document.getElementById('reqMethod').value = method;
+        document.getElementById('reqUrl').value = url;
+        document.getElementById('reqBody').value = reqBodyText || '';
+        document.getElementById('resStatusBadge').textContent = `${status}`;
+        document.getElementById('resTimeLabel').textContent = `${duration} ms`;
+        document.getElementById('jsonOutput').innerHTML = syntaxHighlightJson(responseData);
+      };
+
+      tbody.insertBefore(row, tbody.firstChild);
+    }
+
+    // 7. Clipboard Copy & Clear Actions
+    function copyRequestText() {
+      const method = document.getElementById('reqMethod').value;
+      const url = document.getElementById('reqUrl').value;
+      const body = document.getElementById('reqBody').value;
+
+      const fullText = `${method} ${url}\nContent-Type: application/json\n\n${body}`;
+      navigator.clipboard.writeText(fullText).then(() => {
+        alert("Request details copied to clipboard!");
+      }).catch(() => {
+        alert("Could not copy request.");
+      });
+    }
+
+    function copyResponseText() {
+      const output = document.getElementById('jsonOutput').innerText;
+      navigator.clipboard.writeText(output).then(() => {
+        alert("Response JSON copied to clipboard!");
+      }).catch(() => {
+        alert("Could not copy response.");
+      });
+    }
+
+    function clearPlayground() {
+      document.getElementById('reqUrl').value = '/api/health/';
+      document.getElementById('reqMethod').value = 'GET';
+      document.getElementById('reqBody').value = '';
+      document.getElementById('resStatusBadge').textContent = 'READY';
+      document.getElementById('resStatusBadge').className = 'res-badge res-200';
+      document.getElementById('resTimeLabel').textContent = '-- ms';
+      document.getElementById('jsonOutput').innerHTML = '// Cleared playground state...';
+    }
+  </script>
+
+</body>
+</html>

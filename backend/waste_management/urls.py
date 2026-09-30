@@ -30,4 +30,10 @@ urlpatterns = [
     path('admin-portal/', views.admin_dashboard_view, name='admin_dashboard'),
     path('admin-portal/complaint/<str:complaint_id>/', views.admin_complaint_update_view, name='admin_complaint_update'),
     path('admin-portal/pickup/<str:pickup_id>/', views.admin_pickup_update_view, name='admin_pickup_update'),
+
+    # API Playground & REST Endpoints
+    path('visual/', views.api_playground_view, name='api_playground'),
+    path('api/health/', views.api_health_view, name='api_health'),
+    path('api/complaints/', views.api_complaint_list_create_view, name='api_complaint_list_create'),
+    path('api/complaints/<str:complaint_id>/', views.api_complaint_detail_update_delete_view, name='api_complaint_detail_update_delete'),
 ]

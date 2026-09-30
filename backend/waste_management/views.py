@@ -5,7 +5,8 @@ to help Python beginners understand every step.
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
@@ -783,3 +784,305 @@ def custom_500_view(request):
 def custom_403_view(request, exception=None):
     """Friendly 403 error page for unauthorized access attempts."""
     return render(request, '403.html', status=403)
+
+
+# ==============================================================================
+# API PLAYGROUND & REST ENDPOINTS FOR HACKATHON SHOWCASE
+# ==============================================================================
+
+@ensure_csrf_cookie
+def api_playground_view(request):
+    """
+    Renders the dark-themed API Playground / System Visualizer page.
+    Passes initial sample complaint IDs and system status.
+    """
+    sample_complaint = Complaint.objects.first()
+    sample_id = sample_complaint.complaint_id if sample_complaint else "WM-2026-0001"
+    
+    context = {
+        'sample_complaint_id': sample_id,
+        'total_complaints': Complaint.objects.count(),
+        'total_pickups': PickupRequest.objects.count(),
+    }
+    return render(request, 'api_playground.html', context)
+
+
+def api_health_view(request):
+    """
+    GET /api/health/
+    Lightweight health check endpoint returning service status and database backend.
+    """
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'error': 'Method not allowed. Use GET.'}, status=405)
+
+    return JsonResponse({
+        'success': True,
+        'service': 'SmartWaste REST API',
+        'status': 'online',
+        'timestamp': timezone.now().isoformat(),
+        'database': 'SQLite3',
+        'version': '1.0.0'
+    })
+
+
+def api_complaint_list_create_view(request):
+    """
+    GET /api/complaints/ -> Returns JSON list of complaints from SQLite3.
+    POST /api/complaints/ -> Creates a new complaint from JSON payload.
+    Reuses existing models & smart priority calculation logic.
+    """
+    if request.method == 'GET':
+        # Retrieve complaints based on authentication status
+        if request.user.is_authenticated and is_staff_or_admin(request.user):
+            qs = Complaint.objects.all()[:30]
+        elif request.user.is_authenticated:
+            qs = Complaint.objects.filter(user=request.user)[:30]
+        else:
+            qs = Complaint.objects.all()[:15]
+
+        data = []
+        for c in qs:
+            data.append({
+                'complaint_id': c.complaint_id,
+                'user': c.user.username,
+                'issue_type': c.issue_type,
+                'issue_type_display': c.get_issue_type_display(),
+                'description': c.description,
+                'location': c.location,
+                'landmark': c.landmark or '',
+                'latitude': c.latitude,
+                'longitude': c.longitude,
+                'priority': c.priority,
+                'status': c.status,
+                'assigned_crew': c.assigned_crew or '',
+                'created_at': c.created_at.isoformat()
+            })
+        return JsonResponse({
+            'success': True,
+            'count': len(data),
+            'data': data
+        })
+
+    elif request.method == 'POST':
+        # Parse JSON body
+        try:
+            body = json.loads(request.body.decode('utf-8'))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid JSON body in request.'
+            }, status=400)
+
+        # Mandatory fields validation
+        issue_type = body.get('issue_type', '').strip()
+        description = body.get('description', '').strip()
+        location = body.get('location', body.get('address', '')).strip()
+
+        if not issue_type or not description or not location:
+            return JsonResponse({
+                'success': False,
+                'error': 'Missing required fields: issue_type, description, location/address are required.'
+            }, status=400)
+
+        # Validate issue_type choices
+        valid_issues = [choice[0] for choice in Complaint.ISSUE_CHOICES]
+        if issue_type not in valid_issues:
+            return JsonResponse({
+                'success': False,
+                'error': f'Invalid issue_type. Must be one of: {", ".join(valid_issues)}'
+            }, status=400)
+
+        # User assignment (use request.user or fallback to demo citizen)
+        if request.user.is_authenticated:
+            comp_user = request.user
+        else:
+            comp_user = User.objects.filter(is_staff=False).first()
+            if not comp_user:
+                comp_user = User.objects.first()
+
+        # Parse coordinates
+        try:
+            latitude = float(body.get('latitude', 28.6139))
+            longitude = float(body.get('longitude', 77.2090))
+        except (ValueError, TypeError):
+            latitude = 28.6139
+            longitude = 77.2090
+
+        landmark = body.get('landmark', '').strip()
+
+        # Calculate smart priority using existing business logic
+        calculated_priority = Complaint.calculate_smart_priority(issue_type, location, latitude, longitude)
+
+        # Create and save complaint in SQLite3
+        complaint = Complaint(
+            user=comp_user,
+            issue_type=issue_type,
+            description=description,
+            location=location,
+            address=location,
+            landmark=landmark,
+            latitude=latitude,
+            longitude=longitude,
+            priority=calculated_priority,
+            status='PENDING'
+        )
+        complaint.save()
+
+        # Log timeline update
+        ComplaintUpdate.objects.create(
+            complaint=complaint,
+            status='PENDING',
+            note='Complaint registered via REST API. Pending municipal dispatch review.',
+            updated_by=comp_user
+        )
+
+        return JsonResponse({
+            'success': True,
+            'message': f'Complaint {complaint.complaint_id} registered successfully.',
+            'data': {
+                'complaint_id': complaint.complaint_id,
+                'user': complaint.user.username,
+                'issue_type': complaint.issue_type,
+                'priority': complaint.priority,
+                'status': complaint.status,
+                'location': complaint.location,
+                'latitude': complaint.latitude,
+                'longitude': complaint.longitude,
+                'created_at': complaint.created_at.isoformat()
+            }
+        }, status=201)
+
+    else:
+        return JsonResponse({'success': False, 'error': 'Method not allowed.'}, status=405)
+
+
+def api_complaint_detail_update_delete_view(request, complaint_id):
+    """
+    GET /api/complaints/<id>/ -> Retrieve single complaint JSON
+    PATCH /api/complaints/<id>/ -> Update status/priority/crew/notes (Admin authorized)
+    DELETE /api/complaints/<id>/ -> Delete complaint (Admin authorized)
+    """
+    try:
+        complaint = Complaint.objects.get(complaint_id=complaint_id)
+    except Complaint.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': f'Complaint with ID "{complaint_id}" was not found in SQLite3 database.'
+        }, status=404)
+
+    if request.method == 'GET':
+        # Enforce security: users can only view their own unless staff
+        if not is_staff_or_admin(request.user) and request.user.is_authenticated and complaint.user != request.user:
+            return JsonResponse({
+                'success': False,
+                'error': 'Forbidden: You do not have permission to access another citizen\'s complaint data.'
+            }, status=403)
+
+        return JsonResponse({
+            'success': True,
+            'data': {
+                'complaint_id': complaint.complaint_id,
+                'user': complaint.user.username,
+                'user_full_name': complaint.user.get_full_name() or complaint.user.username,
+                'issue_type': complaint.issue_type,
+                'issue_type_display': complaint.get_issue_type_display(),
+                'description': complaint.description,
+                'location': complaint.location,
+                'landmark': complaint.landmark or '',
+                'latitude': complaint.latitude,
+                'longitude': complaint.longitude,
+                'priority': complaint.priority,
+                'status': complaint.status,
+                'assigned_crew': complaint.assigned_crew or '',
+                'admin_notes': complaint.admin_notes or '',
+                'created_at': complaint.created_at.isoformat(),
+                'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
+            }
+        })
+
+    elif request.method == 'PATCH':
+        # Enforce staff authorization for administrative status updates
+        if not is_staff_or_admin(request.user):
+            return JsonResponse({
+                'success': False,
+                'error': 'Forbidden: Administrative staff credentials required to modify complaint status or assign crews.'
+            }, status=403)
+
+        try:
+            body = json.loads(request.body.decode('utf-8'))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({'success': False, 'error': 'Invalid JSON body.'}, status=400)
+
+        old_status = complaint.status
+
+        # Update allowed fields
+        if 'status' in body:
+            valid_statuses = [s[0] for s in Complaint.STATUS_CHOICES]
+            if body['status'] in valid_statuses:
+                complaint.status = body['status']
+            else:
+                return JsonResponse({'success': False, 'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'}, status=400)
+
+        if 'priority' in body:
+            valid_priorities = [p[0] for p in Complaint.PRIORITY_CHOICES]
+            if body['priority'] in valid_priorities:
+                complaint.priority = body['priority']
+
+        if 'assigned_crew' in body:
+            complaint.assigned_crew = str(body['assigned_crew']).strip()
+
+        if 'admin_notes' in body:
+            complaint.admin_notes = str(body['admin_notes']).strip()
+
+        complaint.save()
+
+        # Log timeline update
+        if complaint.status != old_status or complaint.admin_notes:
+            note_text = f"API update: Status changed from {old_status} to {complaint.status}."
+            if complaint.assigned_crew:
+                note_text += f" Assigned to {complaint.assigned_crew}."
+            
+            # Award CleanCoins if resolved
+            if complaint.status == 'RESOLVED' and old_status != 'RESOLVED' and complaint.user:
+                profile, _ = UserProfile.objects.get_or_create(user=complaint.user)
+                profile.clean_coins += 50
+                profile.save()
+                note_text += " +50 CleanCoins awarded to citizen!"
+
+            ComplaintUpdate.objects.create(
+                complaint=complaint,
+                status=complaint.status,
+                note=note_text,
+                updated_by=request.user
+            )
+
+        return JsonResponse({
+            'success': True,
+            'message': f'Complaint {complaint.complaint_id} updated successfully.',
+            'data': {
+                'complaint_id': complaint.complaint_id,
+                'status': complaint.status,
+                'priority': complaint.priority,
+                'assigned_crew': complaint.assigned_crew,
+                'admin_notes': complaint.admin_notes,
+                'updated_at': complaint.updated_at.isoformat()
+            }
+        })
+
+    elif request.method == 'DELETE':
+        # Enforce staff authorization for record deletion
+        if not is_staff_or_admin(request.user):
+            return JsonResponse({
+                'success': False,
+                'error': 'Forbidden: Administrative staff credentials required to delete records.'
+            }, status=403)
+
+        cid = complaint.complaint_id
+        complaint.delete()
+        return JsonResponse({
+            'success': True,
+            'message': f'Complaint {cid} permanently deleted from SQLite3 database.'
+        })
+
+    else:
+        return JsonResponse({'success': False, 'error': 'Method not allowed.'}, status=405)
