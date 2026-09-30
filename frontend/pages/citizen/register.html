@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complaint Tracking — CleanLoop</title>
+  <title>Citizen Registration - Smart Waste Management</title>
   
   <meta name="description" content="CleanLoop is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="index, follow">
   <meta name="author" content="Spectrum Hackathon Team">
   <meta name="theme-color" content="#10B981">
 
@@ -2064,20 +2064,16 @@ ul, ol {
       </button>
 
       <!-- Navigation Links -->
-      <nav aria-label="Primary Navigation">
+            <nav aria-label="Primary Navigation">
         <ul class="nav-menu" id="navMenu">
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
           <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
           <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
-          
           {% if user.is_authenticated %}
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
             <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
-            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
-              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
-            {% endif %}
           {% endif %}
         </ul>
       </nav>
@@ -2114,105 +2110,84 @@ ul, ol {
       {% endif %}
 
       
-<div class="tracking-page-container">
-  <!-- Header & Action -->
-  <div class="page-header-row">
-    <div>
-      <h1 class="page-title">
-        Complaint Tracking
-      </h1>
-      <p class="page-subtitle">
-        Monitor real-time resolution workflows from report submission to collection completion.
-      </p>
-    </div>
-    <div>
-      <a href="{% url 'report_waste' %}" class="btn btn-primary">
-        <span>+</span> Report New Issue
-      </a>
-    </div>
-  </div>
-
-  <!-- Filter Pills -->
-  <div class="filter-pills-bar">
-    <a href="{% url 'complaint_tracking' %}" class="btn btn-sm {% if not selected_status %}btn-primary{% else %}btn-outline{% endif %}">
-      All Reports
-    </a>
-    <a href="{% url 'complaint_tracking' %}?status=PENDING" class="btn btn-sm {% if selected_status == 'PENDING' %}btn-primary{% else %}btn-outline{% endif %}">
-      Pending
-    </a>
-    <a href="{% url 'complaint_tracking' %}?status=ASSIGNED" class="btn btn-sm {% if selected_status == 'ASSIGNED' %}btn-primary{% else %}btn-outline{% endif %}">
-      Assigned
-    </a>
-    <a href="{% url 'complaint_tracking' %}?status=IN_PROGRESS" class="btn btn-sm {% if selected_status == 'IN_PROGRESS' %}btn-primary{% else %}btn-outline{% endif %}">
-      In Progress
-    </a>
-    <a href="{% url 'complaint_tracking' %}?status=RESOLVED" class="btn btn-sm {% if selected_status == 'RESOLVED' %}btn-primary{% else %}btn-outline{% endif %}">
-      Resolved
-    </a>
-  </div>
-
-  <!-- Complaint List -->
-  {% if complaints %}
-    <div class="complaints-list-stack">
-      {% for complaint in complaints %}
-        <div class="card complaint-item-card">
-          <div class="item-header-row">
-            <div>
-              <div class="badge-cluster">
-                <span class="item-id-tag">
-                  {{ complaint.complaint_id }}
-                </span>
-                <span class="badge badge-priority-{{ complaint.priority|lower }}">
-                  {{ complaint.get_priority_display }} Priority
-                </span>
-                <span class="badge badge-{{ complaint.status|lower }}">
-                  {{ complaint.get_status_display }}
-                </span>
-              </div>
-              <h3 class="item-title">
-                {{ complaint.get_issue_type_display }}
-              </h3>
-            </div>
-
-            <div class="item-meta-date">
-              <span>Reported: {{ complaint.created_at|date:"M d, Y • h:i A" }}</span>
-            </div>
-          </div>
-
-          <p class="item-description">
-            {{ complaint.description|truncatewords:35 }}
-          </p>
-
-          <div class="item-footer-row">
-            <div class="item-location-info">
-              📍 <strong>Location:</strong> {{ complaint.location }}
-              {% if complaint.landmark %} • <em>Near {{ complaint.landmark }}</em>{% endif %}
-            </div>
-            <div>
-              <a href="{% url 'complaint_detail' complaint.complaint_id %}" class="btn btn-outline-primary btn-sm">
-                View Full Timeline →
-              </a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="empty-state">
-      <div class="empty-state-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: #d1fae5; color: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
       </div>
-      <h3>No waste reports yet</h3>
-      <p>
-        {% if selected_status %}
-          No complaints match the filter "<strong>{{ selected_status }}</strong>".
-        {% else %}
-          Your community is clean so far. If you spot an issue, report it here.
-        {% endif %}
-      </p>
-      <a href="{% url 'report_waste' %}" class="btn btn-primary">Report a Waste Issue</a>
+      <h1>Citizen Registration</h1>
+      <p>Create your account to report waste issues and schedule doorstep pickups.</p>
     </div>
-  {% endif %}
+
+    <form method="POST" action="{% url 'register' %}" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" style="margin-bottom: 16px;">
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.full_name.id_for_label }}">Full Name *</label>
+        {{ form.full_name }}
+        {% if form.full_name.errors %}
+          <div class="field-error">{{ form.full_name.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.email.id_for_label }}">Email Address *</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="field-error">{{ form.email.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.phone.id_for_label }}">Contact Phone *</label>
+        {{ form.phone }}
+        {% if form.phone.errors %}
+          <div class="field-error">{{ form.phone.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.address.id_for_label }}">Residential Society / Area Address</label>
+        {{ form.address }}
+        {% if form.address.errors %}
+          <div class="field-error">{{ form.address.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.password.id_for_label }}">Password *</label>
+        {{ form.password }}
+        {% if form.password.errors %}
+          <div class="field-error">{{ form.password.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.confirm_password.id_for_label }}">Confirm Password *</label>
+        {{ form.confirm_password }}
+        {% if form.confirm_password.errors %}
+          <div class="field-error">{{ form.confirm_password.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px; font-size: 1rem;">
+        Complete Registration
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-muted);">
+      Already have an account? <a href="{% url 'login' %}" style="font-weight: 600;">Sign in here</a>
+    </div>
+  </div>
 </div>
 
     </div>

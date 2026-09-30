@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Citizen Dashboard — CleanLoop</title>
+  <title>Manage Complaint {{ complaint.complaint_id }} - Admin Control</title>
   
   <meta name="description" content="CleanLoop is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="index, follow">
   <meta name="author" content="Spectrum Hackathon Team">
   <meta name="theme-color" content="#10B981">
 
@@ -2038,6 +2038,21 @@ ul, ol {
   }
 }
 
+
+/* Admin Navigation Variant */
+.admin-portal-badge {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+  letter-spacing: 0.04em;
+}
+
 </style>
   
 </head>
@@ -2064,21 +2079,13 @@ ul, ol {
       </button>
 
       <!-- Navigation Links -->
-      <nav aria-label="Primary Navigation">
+            <nav aria-label="Admin Navigation">
         <ul class="nav-menu" id="navMenu">
-          <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
-          <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
-          <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
-          <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
-          
-          {% if user.is_authenticated %}
-            <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
-            <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
-            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
-              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
-            {% endif %}
-          {% endif %}
+          <li><a href="{% url 'admin_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Overview</a></li>
+          <li><a href="{% url 'admin_dashboard' %}?section=complaints" class="nav-link {% if request.resolver_match.url_name == 'admin_complaint_update' %}active{% endif %}">Complaints</a></li>
+          <li><a href="{% url 'admin_dashboard' %}?section=pickups" class="nav-link {% if request.resolver_match.url_name == 'admin_pickup_update' %}active{% endif %}">Pickup Requests</a></li>
+          <li><a href="{% url 'api_playground' %}" class="nav-link {% if request.resolver_match.url_name == 'api_playground' %}active{% endif %}">System Visualizer</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
         </ul>
       </nav>
 
@@ -2114,258 +2121,105 @@ ul, ol {
       {% endif %}
 
       
-<div class="dashboard-wrapper">
-  <!-- Welcome Greeting Banner -->
-  <div class="dashboard-greeting-bar">
-    <div>
-      <h1 class="page-title">
-        Welcome, {{ user.first_name|default:user.username }}! 👋
-      </h1>
-      <p class="page-subtitle">
-        Manage your waste reports, schedule doorstep pickups, and track community resolutions.
-      </p>
-    </div>
-    <div class="greeting-actions">
-      <a href="{% url 'report_waste' %}" class="btn btn-primary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 5v14M5 12h14"/>
-        </svg>
-        Report Issue
-      </a>
-      <a href="{% url 'pickup_request' %}" class="btn btn-outline-primary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="1" y="3" width="15" height="13"></rect>
-          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-          <circle cx="5.5" cy="18.5" r="2.5"></circle>
-          <circle cx="18.5" cy="18.5" r="2.5"></circle>
-        </svg>
-        Request Pickup
-      </a>
-    </div>
+<div style="max-width: 760px; margin: 0 auto;">
+
+  <div style="margin-bottom: 24px;">
+    <a href="{% url 'admin_dashboard' %}" style="font-size: 0.88rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+      ← Back to Admin Operations Dashboard
+    </a>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+      Dispatch & Manage: {{ complaint.complaint_id }}
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Reported by <strong>{{ complaint.user.get_full_name|default:complaint.user.username }}</strong> on {{ complaint.created_at|date:"F d, Y at h:i A" }}
+    </p>
   </div>
 
-  <!-- Key Statistics Cards -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon green">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+  <!-- Complaint Context Summary Box -->
+  <div class="card" style="margin-bottom: 24px; background: var(--bg-alt);">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 0.9rem;">
+      <div>
+        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">CATEGORY</span>
+        <div style="font-weight: 700;">{{ complaint.get_issue_type_display }}</div>
       </div>
       <div>
-        <div class="stat-value">{{ total_complaints }}</div>
-        <div class="stat-label">Total Complaints</div>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-icon amber">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">LOCATION</span>
+        <div style="font-weight: 700;">{{ complaint.location }}</div>
+        {% if complaint.landmark %}<div style="font-size: 0.82rem; color: var(--text-muted);">Near {{ complaint.landmark }}</div>{% endif %}
       </div>
       <div>
-        <div class="stat-value">{{ pending_complaints }}</div>
-        <div class="stat-label">Pending Complaints</div>
+        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">CITIZEN CONTACT</span>
+        <div>{{ complaint.user.profile.phone|default:complaint.user.email }}</div>
       </div>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-icon green">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-      </div>
-      <div>
-        <div class="stat-value">{{ resolved_complaints }}</div>
-        <div class="stat-label">Resolved Complaints</div>
-      </div>
+    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color); font-size: 0.9rem;">
+      <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">CITIZEN DESCRIPTION</span>
+      <p style="margin-top: 4px; color: var(--text-main);">{{ complaint.description }}</p>
     </div>
-
-    <div class="stat-card" style="border: 2px solid #3b82f6; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);">
-      <div class="stat-icon blue" style="background: #2563eb; color: #ffffff;">
-        🪙
+    {% if complaint.image %}
+      <div style="margin-top: 14px; text-align: center;">
+        <img src="{{ complaint.image.url }}" alt="Evidence" style="max-height: 220px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
       </div>
-      <div>
-        <div class="stat-value" style="color: #1d4ed8;">{{ clean_coins }}</div>
-        <div class="stat-label">CleanCoins Balance</div>
-      </div>
-    </div>
+    {% endif %}
   </div>
 
-  <!-- CleanCoins Incentive & Community Leaderboard -->
-  <div class="section-container" style="margin-top: 24px;">
-    <div class="two-col-grid">
-      <div class="card" style="padding: 24px; border: 1px solid #bfdbfe; background: #f8fafc;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e3a8a; margin: 0;">🪙 CleanCoins Citizen Rewards</h3>
-          <span class="badge badge-resolved" style="font-size: 0.8rem; padding: 4px 10px;">Active Balance: {{ clean_coins }} PTS</span>
-        </div>
-        <p style="font-size: 0.88rem; color: #475569; margin-bottom: 16px;">
-          Earn <strong>+50 CleanCoins</strong> for every verified waste report resolved by municipal sanitation teams. Redeem coins for municipal tax rebates, public transport passes, or eco-friendly store discounts!
-        </p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="btn btn-primary btn-sm" onclick="alert('🎁 CleanCoins Rewards Store:\n- 100 Coins = 5% Municipal Tax Rebate Coupon\n- 200 Coins = Free City Bus Pass (1 Week)\n- 500 Coins = Eco-Store Voucher ₹250\n\nSubmit more verified reports to redeem!')">Redeem Rewards</button>
-          <a href="{% url 'report_waste' %}" class="btn btn-outline-primary btn-sm">Report & Earn +50 Coins</a>
-        </div>
-      </div>
+  <!-- Admin Action Form -->
+  <div class="card" style="padding: 32px;">
+    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 20px;">Update Municipal Dispatch Status</h3>
 
-      <div class="card" style="padding: 24px;">
-        <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 14px;">🏆 Community Champion Leaderboard</h3>
-        {% if leaderboard %}
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            {% for profile in leaderboard %}
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 6px; border-left: 4px solid {% if forloop.first %}#eab308{% elif forloop.counter == 2 %}#94a3b8{% elif forloop.counter == 3 %}#d97706{% else %}#2563eb{% endif %};">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <strong style="width: 20px; font-size: 0.9rem;">#{{ forloop.counter }}</strong>
-                  <span style="font-size: 0.9rem; font-weight: 600; color: #334155;">{{ profile.user.first_name|default:profile.user.username }}</span>
-                </div>
-                <span style="font-size: 0.85rem; font-weight: 700; color: #2563eb;">🪙 {{ profile.clean_coins }} Coins</span>
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p style="font-size: 0.88rem; color: #64748b;">No leaderboard data available yet.</p>
-        {% endif %}
-      </div>
-    </div>
-  </div>
+    <form method="POST">
+      {% csrf_token %}
 
-  <!-- Quick Action Navigation Cards -->
-  <div class="section-container">
-    <h2 class="sub-heading">Quick Actions</h2>
-    <div class="actions-grid">
-      <a href="{% url 'report_waste' %}" class="action-card">
-        <div class="action-card-icon green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-        </div>
-        <h3>1. Report Waste</h3>
-        <p>File reports for overflowing bins, roadside dumping, or missed collection.</p>
-      </a>
-
-      <a href="{% url 'pickup_request' %}" class="action-card">
-        <div class="action-card-icon blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-        </div>
-        <h3>2. Request Pickup</h3>
-        <p>Book convenient doorstep collection for e-waste, recyclables, or bulk items.</p>
-      </a>
-
-      <a href="{% url 'complaint_tracking' %}" class="action-card">
-        <div class="action-card-icon purple">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-        </div>
-        <h3>3. Track Complaints</h3>
-        <p>Monitor real-time workflow status, assigned crews, and resolution notes.</p>
-      </a>
-
-      <a href="{% url 'awareness' %}" class="action-card">
-        <div class="action-card-icon amber">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        </div>
-        <h3>4. Waste Awareness</h3>
-        <p>Learn 3-color bin segregation, recycling guidelines, and Do's & Don'ts.</p>
-      </a>
-    </div>
-  </div>
-
-  <!-- Two Column Layout: Recent Complaints & Recent Pickups -->
-  <div class="dashboard-split-grid">
-    <!-- Recent Complaints -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">My Recent Complaints</h3>
-        <a href="{% url 'complaint_tracking' %}" class="view-all-link">View All →</a>
-      </div>
-
-      {% if recent_complaints %}
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Complaint ID</th>
-                <th>Issue Type</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for complaint in recent_complaints %}
-                <tr>
-                  <td><strong>{{ complaint.complaint_id }}</strong></td>
-                  <td>{{ complaint.get_issue_type_display }}</td>
-                  <td>
-                    <span class="badge badge-priority-{{ complaint.priority|lower }}">
-                      {{ complaint.get_priority_display }}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge badge-{{ complaint.status|lower }}">
-                      {{ complaint.get_status_display }}
-                    </span>
-                  </td>
-                  <td>
-                    <a href="{% url 'complaint_detail' complaint.complaint_id %}" class="btn btn-outline btn-sm">
-                      Track
-                    </a>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% else %}
-        <div class="empty-state">
-          <div class="empty-state-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          </div>
-          <h3>No waste reports yet</h3>
-          <p>Your community is clean so far. If you spot an issue, report it here.</p>
-          <a href="{% url 'report_waste' %}" class="btn btn-primary btn-sm">Report a Waste Issue</a>
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
         </div>
       {% endif %}
-    </div>
 
-    <!-- Recent Doorstep Pickups -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">My Doorstep Pickups</h3>
-        <a href="{% url 'pickup_list' %}" class="view-all-link">View All →</a>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label class="form-label" for="{{ form.status.id_for_label }}">
+            Workflow Status *
+          </label>
+          {{ form.status }}
+          <div class="form-text">Pending → Assigned → In Progress → Resolved</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.priority.id_for_label }}">
+            Assigned Priority *
+          </label>
+          {{ form.priority }}
+        </div>
       </div>
 
-      {% if recent_pickups %}
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Pickup ID</th>
-                <th>Category</th>
-                <th>Preferred Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for pickup in recent_pickups %}
-                <tr>
-                  <td><strong>{{ pickup.pickup_id }}</strong></td>
-                  <td>{{ pickup.get_waste_category_display }}</td>
-                  <td>{{ pickup.preferred_date|date:"M d, Y" }}</td>
-                  <td>
-                    <span class="badge badge-{{ pickup.status|lower }}">
-                      {{ pickup.get_status_display }}
-                    </span>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% else %}
-        <div class="empty-state">
-          <div class="empty-state-icon" style="background: var(--secondary-light); color: var(--secondary);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-          </div>
-          <h3>No pickup requests yet</h3>
-          <p>Have bulky recyclables or e-waste piling up at home? Schedule an on-demand doorstep pickup.</p>
-          <a href="{% url 'pickup_request' %}" class="btn btn-secondary btn-sm">Request a Pickup</a>
-        </div>
-      {% endif %}
-    </div>
+      <div class="form-group">
+        <label class="form-label" for="{{ form.assigned_crew.id_for_label }}">
+          Assigned Sanitation Crew / Vehicle
+        </label>
+        {{ form.assigned_crew }}
+        <div class="form-text">e.g. Rapid Cleanup Team Alpha, Waste Compactor #12</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.admin_notes.id_for_label }}">
+          Resolution Report / Dispatch Notes
+        </label>
+        {{ form.admin_notes }}
+        <div class="form-text">Visible to citizen on tracking timeline upon resolution.</div>
+      </div>
+
+      <div style="display: flex; gap: 14px; align-items: center; margin-top: 24px;">
+        <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
+          Save & Update Workflow
+        </button>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline btn-lg">
+          Cancel
+        </a>
+      </div>
+    </form>
   </div>
 </div>
 

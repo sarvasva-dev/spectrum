@@ -104,7 +104,7 @@ def waste_awareness_view(request):
     - Community DO's and DON'Ts
     - Interactive waste search guide
     """
-    return render(request, 'awareness.html')
+    return render(request, 'misc/awareness.html')
 
 
 def robots_txt_view(request):
@@ -180,7 +180,7 @@ def register_view(request):
     else:
         form = CitizenRegistrationForm()
 
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'citizen/register.html', {'form': form})
 
 
 def login_view(request):
@@ -230,7 +230,7 @@ def login_view(request):
     else:
         form = CitizenLoginForm()
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'citizen/login.html', {'form': form})
 
 
 @login_required
@@ -288,7 +288,7 @@ def citizen_dashboard_view(request):
         'clean_coins': clean_coins,
         'leaderboard': leaderboard,
     }
-    return render(request, 'citizen_dashboard.html', context)
+    return render(request, 'citizen/dashboard.html', context)
 
 
 # ==============================================================================
@@ -359,7 +359,7 @@ def report_waste_view(request):
     m = leafmap.Map(center=[28.6139, 77.2090], zoom=13)
     map_html = m._repr_html_()
 
-    return render(request, 'report_waste.html', {'form': form, 'map_html': map_html})
+    return render(request, 'citizen/report_waste.html', {'form': form, 'map_html': map_html})
 
 
 @login_required
@@ -381,7 +381,7 @@ def complaint_tracking_view(request):
         'complaints': complaints,
         'selected_status': status_filter,
     }
-    return render(request, 'complaint_tracking.html', context)
+    return render(request, 'citizen/complaint_tracking.html', context)
 
 
 @login_required
@@ -411,7 +411,7 @@ def complaint_detail_view(request, complaint_id):
         'updates': updates,
         'map_html': map_html,
     }
-    return render(request, 'complaint_detail.html', context)
+    return render(request, 'citizen/complaint_detail.html', context)
 
 
 # ==============================================================================
@@ -461,7 +461,7 @@ def pickup_request_view(request):
     m = leafmap.Map(center=[28.6139, 77.2090], zoom=13)
     map_html = m._repr_html_()
 
-    return render(request, 'pickup_request.html', {'form': form, 'map_html': map_html})
+    return render(request, 'citizen/pickup_request.html', {'form': form, 'map_html': map_html})
 
 
 @login_required
@@ -471,7 +471,7 @@ def pickup_list_view(request):
     Status workflow: REQUESTED -> ASSIGNED -> PICKED UP -> COMPLETED
     """
     pickups = PickupRequest.objects.filter(user=request.user)
-    return render(request, 'pickup_list.html', {'pickups': pickups})
+    return render(request, 'citizen/pickup_list.html', {'pickups': pickups})
 
 
 # ==============================================================================
@@ -700,7 +700,7 @@ def admin_dashboard_view(request):
         'issue_type_stats': formatted_issue_stats,
         'map_html': map_html,
     }
-    return render(request, 'admin_dashboard.html', context)
+    return render(request, 'admin/dashboard.html', context)
 
 
 @login_required
@@ -753,7 +753,7 @@ def admin_complaint_update_view(request, complaint_id):
         'complaint': complaint,
         'form': form,
     }
-    return render(request, 'admin_complaint_update.html', context)
+    return render(request, 'admin/complaint_update.html', context)
 
 
 @login_required
@@ -780,7 +780,7 @@ def admin_pickup_update_view(request, pickup_id):
         'pickup': pickup,
         'form': form,
     }
-    return render(request, 'admin_pickup_update.html', context)
+    return render(request, 'admin/pickup_update.html', context)
 
 
 # ==============================================================================
@@ -789,17 +789,17 @@ def admin_pickup_update_view(request, pickup_id):
 
 def custom_404_view(request, exception=None):
     """Friendly 404 page for missing pages or invalid IDs."""
-    return render(request, '404.html', status=404)
+    return render(request, 'misc/404.html', status=404)
 
 
 def custom_500_view(request):
     """Friendly 500 error page for unexpected server issues."""
-    return render(request, '500.html', status=500)
+    return render(request, 'misc/500.html', status=500)
 
 
 def custom_403_view(request, exception=None):
     """Friendly 403 error page for unauthorized access attempts."""
-    return render(request, '403.html', status=403)
+    return render(request, 'misc/403.html', status=403)
 
 
 # ==============================================================================
@@ -820,7 +820,7 @@ def api_playground_view(request):
         'total_complaints': Complaint.objects.count(),
         'total_pickups': PickupRequest.objects.count(),
     }
-    return render(request, 'api_playground.html', context)
+    return render(request, 'visual.html', context)
 
 
 def api_health_view(request):
@@ -1253,4 +1253,4 @@ def man_of_the_month_view(request, slug=None):
         'citizen': recognized_citizen
     }
     
-    return render(request, 'man_of_the_month.html', context)
+    return render(request, 'misc/man_of_the_month.html', context)

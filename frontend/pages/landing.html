@@ -2064,20 +2064,16 @@ ul, ol {
       </button>
 
       <!-- Navigation Links -->
-      <nav aria-label="Primary Navigation">
+            <nav aria-label="Primary Navigation">
         <ul class="nav-menu" id="navMenu">
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
           <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
           <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
-          
           {% if user.is_authenticated %}
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
             <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
-            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
-              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
-            {% endif %}
           {% endif %}
         </ul>
       </nav>

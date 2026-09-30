@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Access Denied (403) - Smart Waste Management</title>
+  <title>My Doorstep Pickups — CleanLoop</title>
   
   <meta name="description" content="CleanLoop is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="author" content="Spectrum Hackathon Team">
   <meta name="theme-color" content="#10B981">
 
@@ -2064,20 +2064,16 @@ ul, ol {
       </button>
 
       <!-- Navigation Links -->
-      <nav aria-label="Primary Navigation">
+            <nav aria-label="Primary Navigation">
         <ul class="nav-menu" id="navMenu">
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
           <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
           <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
-          
           {% if user.is_authenticated %}
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
             <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
-            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
-              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
-            {% endif %}
           {% endif %}
         </ul>
       </nav>
@@ -2114,18 +2110,102 @@ ul, ol {
       {% endif %}
 
       
-<div class="empty-state" style="max-width: 580px; margin: 60px auto; padding: 48px 30px;">
-  <div class="empty-state-icon" style="background: #fee2e2; color: #dc2626;">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+<div class="tracking-page-container">
+  <!-- Header & Actions -->
+  <div class="page-header-row">
+    <div>
+      <h1 class="page-title">
+        My Doorstep Waste Pickups
+      </h1>
+      <p class="page-subtitle">
+        Track scheduled collection vehicles, time windows, and completion status.
+      </p>
+    </div>
+    <div>
+      <a href="{% url 'pickup_request' %}" class="btn btn-primary">
+        <span>+</span> Schedule New Pickup
+      </a>
+    </div>
   </div>
-  <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;">403 - Access Restricted</h1>
-  <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
-    You do not possess the required municipal staff privileges to view this section or record.
-  </p>
-  <div style="display: flex; gap: 12px; justify-content: center;">
-    <a href="{% url 'citizen_dashboard' %}" class="btn btn-primary">Go to Citizen Dashboard</a>
-    <a href="{% url 'landing' %}" class="btn btn-outline">Home</a>
-  </div>
+
+  <!-- Pickup Cards List -->
+  {% if pickups %}
+    <div class="complaints-list-stack">
+      {% for pickup in pickups %}
+        <div class="card complaint-item-card">
+          <div class="item-header-row">
+            <div>
+              <div class="badge-cluster">
+                <span class="item-id-tag">
+                  {{ pickup.pickup_id }}
+                </span>
+                <span class="badge badge-{{ pickup.status|lower }}">
+                  {{ pickup.get_status_display }}
+                </span>
+              </div>
+              <h3 class="item-title">
+                {{ pickup.get_waste_category_display }}
+              </h3>
+            </div>
+
+            <div class="item-meta-date text-right">
+              <div style="font-weight: 700; color: var(--text-main);">
+                📅 {{ pickup.preferred_date|date:"F d, Y" }}
+              </div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">
+                ⏰ {{ pickup.preferred_time }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Pickup Progress Steps -->
+          <div class="pickup-stepper-grid">
+            <div class="{% if pickup.status == 'REQUESTED' or pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}step-active{% else %}step-inactive{% endif %}">
+              1. REQUESTED ✓
+            </div>
+            <div class="{% if pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}step-active{% else %}step-inactive{% endif %}">
+              2. ASSIGNED {% if pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}✓{% endif %}
+            </div>
+            <div class="{% if pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}step-active{% else %}step-inactive{% endif %}">
+              3. PICKED UP {% if pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}✓{% endif %}
+            </div>
+            <div class="{% if pickup.status == 'COMPLETED' %}step-active step-finished{% else %}step-inactive{% endif %}">
+              4. COMPLETED {% if pickup.status == 'COMPLETED' %}✓{% endif %}
+            </div>
+          </div>
+
+          <!-- Details Grid -->
+          <div class="pickup-meta-grid">
+            <div>
+              <strong>Quantity:</strong> {{ pickup.quantity }}
+            </div>
+            <div>
+              <strong>Pickup Address:</strong> {{ pickup.pickup_address }}
+            </div>
+            {% if pickup.assigned_vehicle %}
+              <div>
+                <strong>Assigned Vehicle:</strong> <span style="color: var(--secondary); font-weight: 600;">{{ pickup.assigned_vehicle }}</span>
+              </div>
+            {% endif %}
+            {% if pickup.notes %}
+              <div>
+                <strong>Notes:</strong> {{ pickup.notes }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon" style="background: var(--secondary-light); color: var(--secondary);">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+      </div>
+      <h3>No pickup requests yet</h3>
+      <p>Have bulky recyclables, appliances, cartons, or segregated scrap piled up? Schedule an on-demand doorstep pickup.</p>
+      <a href="{% url 'pickup_request' %}" class="btn btn-primary">Schedule a Doorstep Pickup</a>
+    </div>
+  {% endif %}
 </div>
 
     </div>

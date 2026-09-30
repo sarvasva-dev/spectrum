@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Report Waste Issue — CleanLoop</title>
+  <title>Complaint Tracking — CleanLoop</title>
   
   <meta name="description" content="CleanLoop is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
   <meta name="robots" content="noindex, nofollow">
@@ -2040,8 +2040,6 @@ ul, ol {
 
 </style>
   
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-
 </head>
 <body>
 
@@ -2066,20 +2064,16 @@ ul, ol {
       </button>
 
       <!-- Navigation Links -->
-      <nav aria-label="Primary Navigation">
+            <nav aria-label="Primary Navigation">
         <ul class="nav-menu" id="navMenu">
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
           <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
-                    <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
           <li><a href="{% url 'man_of_the_month' %}" class="nav-link {% if request.resolver_match.url_name == 'man_of_the_month' %}active{% endif %}">Man of the Month</a></li>
-          
           {% if user.is_authenticated %}
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
             <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
-            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
-              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
-            {% endif %}
           {% endif %}
         </ul>
       </nav>
@@ -2116,152 +2110,105 @@ ul, ol {
       {% endif %}
 
       
-<div class="form-page-container">
-
-  <!-- Form Header -->
-  <div class="form-header">
-    <a href="{% url 'citizen_dashboard' %}" class="back-link">
-      ← Back to Dashboard
-    </a>
-    <h1 class="page-title">
-      Report a Waste Issue
-    </h1>
-    <p class="page-subtitle">
-      Help CleanLoop collection teams locate, prioritize, and clear waste hazards quickly.
-    </p>
+<div class="tracking-page-container">
+  <!-- Header & Action -->
+  <div class="page-header-row">
+    <div>
+      <h1 class="page-title">
+        Complaint Tracking
+      </h1>
+      <p class="page-subtitle">
+        Monitor real-time resolution workflows from report submission to collection completion.
+      </p>
+    </div>
+    <div>
+      <a href="{% url 'report_waste' %}" class="btn btn-primary">
+        <span>+</span> Report New Issue
+      </a>
+    </div>
   </div>
 
-  <div class="card form-card">
-    <form method="POST" action="{% url 'report_waste' %}" enctype="multipart/form-data" novalidate>
-      {% csrf_token %}
+  <!-- Filter Pills -->
+  <div class="filter-pills-bar">
+    <a href="{% url 'complaint_tracking' %}" class="btn btn-sm {% if not selected_status %}btn-primary{% else %}btn-outline{% endif %}">
+      All Reports
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=PENDING" class="btn btn-sm {% if selected_status == 'PENDING' %}btn-primary{% else %}btn-outline{% endif %}">
+      Pending
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=ASSIGNED" class="btn btn-sm {% if selected_status == 'ASSIGNED' %}btn-primary{% else %}btn-outline{% endif %}">
+      Assigned
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=IN_PROGRESS" class="btn btn-sm {% if selected_status == 'IN_PROGRESS' %}btn-primary{% else %}btn-outline{% endif %}">
+      In Progress
+    </a>
+    <a href="{% url 'complaint_tracking' %}?status=RESOLVED" class="btn btn-sm {% if selected_status == 'RESOLVED' %}btn-primary{% else %}btn-outline{% endif %}">
+      Resolved
+    </a>
+  </div>
 
-      {% if form.non_field_errors %}
-        <div class="alert alert-error">
-          {% for error in form.non_field_errors %}
-            <div>{{ error }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+  <!-- Complaint List -->
+  {% if complaints %}
+    <div class="complaints-list-stack">
+      {% for complaint in complaints %}
+        <div class="card complaint-item-card">
+          <div class="item-header-row">
+            <div>
+              <div class="badge-cluster">
+                <span class="item-id-tag">
+                  {{ complaint.complaint_id }}
+                </span>
+                <span class="badge badge-priority-{{ complaint.priority|lower }}">
+                  {{ complaint.get_priority_display }} Priority
+                </span>
+                <span class="badge badge-{{ complaint.status|lower }}">
+                  {{ complaint.get_status_display }}
+                </span>
+              </div>
+              <h3 class="item-title">
+                {{ complaint.get_issue_type_display }}
+              </h3>
+            </div>
 
-      <!-- Waste Issue Type -->
-      <div class="form-group">
-        <label class="form-label" for="{{ form.issue_type.id_for_label }}">
-          Waste Issue Category *
-        </label>
-        {{ form.issue_type }}
-        {% if form.issue_type.errors %}
-          <div class="field-error">{{ form.issue_type.errors.0 }}</div>
-        {% endif %}
-      </div>
+            <div class="item-meta-date">
+              <span>Reported: {{ complaint.created_at|date:"M d, Y • h:i A" }}</span>
+            </div>
+          </div>
 
-      <!-- Dynamic Smart Priority Hint Box (Managed via main.js) -->
-      <div id="priorityTipBox" class="priority-hint-box" style="display: none;">
-        <span class="priority-hint-title">⚡ CleanLoop Urgency Engine:</span> <span id="priorityTipText"></span>
-      </div>
+          <p class="item-description">
+            {{ complaint.description|truncatewords:35 }}
+          </p>
 
-      <!-- Location / Street -->
-      <div class="form-group">
-        <label class="form-label" for="{{ form.location.id_for_label }}">
-          Location / Area Name *
-        </label>
-        {{ form.location }}
-        <div class="form-text">Specify the street, society gate, campus block, or market name.</div>
-        {% if form.location.errors %}
-          <div class="field-error">{{ form.location.errors.0 }}</div>
-        {% endif %}
-      </div>
-
-      <!-- Map Container & Geolocation -->
-      <div class="form-group">
-        <label class="form-label">Pin Location on Map</label>
-        <div class="form-text" style="margin-bottom: 8px;">Click on the map or use the controls below to select your exact location.</div>
-        <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-            <button type="button" id="btn-geolocate" class="btn btn-outline btn-sm">📍 USE MY CURRENT LOCATION</button>
-            <button type="button" id="btn-select-map" class="btn btn-outline btn-sm">🗺️ SELECT ON MAP</button>
-            <button type="button" id="btn-reset-location" class="btn btn-outline btn-sm">🔄 RESET LOCATION</button>
-        </div>
-        <div class="folium-map-container" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid var(--border-color); z-index: 1;">
-            {{ map_html|safe }}
-        </div>
-        
-        <!-- Hidden Lat/Lng Fields -->
-        <div style="display: none;">
-            {{ form.latitude }}
-            {{ form.longitude }}
-        </div>
-        {% if form.latitude.errors or form.longitude.errors %}
-          <div class="field-error">Please select a valid location on the map.</div>
-        {% endif %}
-      </div>
-
-      <!-- Landmark -->
-      <div class="form-group">
-        <label class="form-label" for="{{ form.landmark.id_for_label }}">
-          Nearby Landmark (Optional)
-        </label>
-        {{ form.landmark }}
-        <div class="form-text">e.g. Near Transformer, Behind Community Hall, Metro Pillar 42</div>
-        {% if form.landmark.errors %}
-          <div class="field-error">{{ form.landmark.errors.0 }}</div>
-        {% endif %}
-      </div>
-
-      <!-- Detailed Description -->
-      <div class="form-group">
-        <label class="form-label" for="{{ form.description.id_for_label }}">
-          Detailed Description *
-        </label>
-        {{ form.description }}
-        {% if form.description.errors %}
-          <div class="field-error">{{ form.description.errors.0 }}</div>
-        {% endif %}
-      </div>
-
-      <!-- Image Upload -->
-      <div class="form-group">
-        <label class="form-label" for="{{ form.image.id_for_label }}">
-          Upload Photo (Optional, JPG/PNG/WebP, Max 5MB)
-        </label>
-        {{ form.image }}
-        <div class="form-text">A photo drastically accelerates sanitation team dispatch and verification.</div>
-        {% if form.image.errors %}
-          <div class="field-error">{{ form.image.errors.0 }}</div>
-        {% endif %}
-      </div>
-
-      <!-- Smart Priority Toggle & Manual Override -->
-      <div class="smart-priority-panel">
-        <div class="form-check">
-          {{ form.auto_priority }}
-          <label for="auto_priority_toggle" class="form-check-label">
-            Enable Smart Rule-Based Urgency Engine
-          </label>
-        </div>
-        <p class="panel-subtext">
-          CleanLoop automatically evaluates reports to <strong>HIGH</strong> or <strong>CRITICAL</strong> priority for illegal dumping, overflowing bins, and repeat hotspot areas.
-        </p>
-
-        <div id="manualPrioritySection" class="manual-priority-row">
-          <label class="form-label" for="{{ form.priority.id_for_label }}">
-            Or specify manual priority:
-          </label>
-          <div style="max-width: 240px;">
-            {{ form.priority }}
+          <div class="item-footer-row">
+            <div class="item-location-info">
+              📍 <strong>Location:</strong> {{ complaint.location }}
+              {% if complaint.landmark %} • <em>Near {{ complaint.landmark }}</em>{% endif %}
+            </div>
+            <div>
+              <a href="{% url 'complaint_detail' complaint.complaint_id %}" class="btn btn-outline-primary btn-sm">
+                View Full Timeline →
+              </a>
+            </div>
           </div>
         </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="form-actions-row">
-        <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
-          Submit Waste Report
-        </button>
-        <a href="{% url 'citizen_dashboard' %}" class="btn btn-outline btn-lg">
-          Cancel
-        </a>
-      </div>
-    </form>
-  </div>
+      <h3>No waste reports yet</h3>
+      <p>
+        {% if selected_status %}
+          No complaints match the filter "<strong>{{ selected_status }}</strong>".
+        {% else %}
+          Your community is clean so far. If you spot an issue, report it here.
+        {% endif %}
+      </p>
+      <a href="{% url 'report_waste' %}" class="btn btn-primary">Report a Waste Issue</a>
+    </div>
+  {% endif %}
 </div>
 
     </div>
@@ -2482,175 +2429,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </script>
   
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const mapContainers = document.querySelectorAll('.folium-map-container');
-    
-    if (mapContainers.length === 0) return;
-
-    mapContainers.forEach(container => {
-        const isReadOnly = container.hasAttribute('data-readonly');
-        const latInput = document.getElementById('id_latitude');
-        const lngInput = document.getElementById('id_longitude');
-        const geoBtn = document.getElementById('btn-geolocate');
-        
-        // Find the iframe generated by leafmap/folium
-        const iframe = container.querySelector('iframe');
-        if (!iframe) return;
-
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.border = 'none';
-        iframe.style.borderRadius = '8px';
-
-        iframe.onload = function() {
-
-            // Reverse Geocoding helper
-            async function reverseGeocodeAndUpdate(lat, lng) {
-                const locInput = document.getElementById('id_location');
-                if (!locInput) return;
-                
-                try {
-                    const originalPlaceholder = locInput.placeholder;
-                    locInput.placeholder = "Auto-filling location...";
-                    
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-                    const data = await response.json();
-                    
-                    if (data && data.display_name) {
-                        let parts = [];
-                        if (data.address) {
-                            if (data.address.road) parts.push(data.address.road);
-                            if (data.address.suburb) parts.push(data.address.suburb);
-                            if (data.address.city_district) parts.push(data.address.city_district);
-                            if (data.address.city || data.address.town || data.address.village) parts.push(data.address.city || data.address.town || data.address.village);
-                        }
-                        const conciseAddress = parts.length > 0 ? parts.join(', ') : data.display_name.split(',').slice(0, 3).join(', ');
-                        
-                        // Only set if user hasn't already typed a lot of details
-                        if (!locInput.value || locInput.value.length < 5 || locInput.value === "28.613900") {
-                            locInput.value = conciseAddress;
-                        } else if (locInput.value.length > 0) {
-                            // If they already clicked the map and generated an address, just overwrite it
-                            locInput.value = conciseAddress;
-                        }
-                    }
-                    locInput.placeholder = originalPlaceholder;
-                } catch (e) {
-                    console.error("Reverse geocoding failed", e);
-                }
-            }
-
-            const iframeWin = iframe.contentWindow;
-            let mapObj = null;
-            let L = iframeWin.L;
-
-            // Folium assigns map variables starting with map_
-            for (let key in iframeWin) {
-                if (key.startsWith('map_')) {
-                    mapObj = iframeWin[key];
-                    break;
-                }
-            }
-
-            if (!mapObj || !L) return;
-
-            let marker = null;
-
-            // Initialize marker from hidden inputs if they exist (form re-render)
-            if (!isReadOnly && latInput && lngInput && latInput.value && lngInput.value) {
-                const savedLat = parseFloat(latInput.value);
-                const savedLng = parseFloat(lngInput.value);
-                if (!isNaN(savedLat) && !isNaN(savedLng)) {
-                    marker = L.marker([savedLat, savedLng]).addTo(mapObj);
-                    mapObj.setView([savedLat, savedLng], 15);
-                }
-            }
-
-            if (!isReadOnly) {
-                // Click to place marker
-                mapObj.on('click', function(e) {
-                    const lat = e.latlng.lat;
-                    const lng = e.latlng.lng;
-
-                    if (marker) {
-                        marker.setLatLng(e.latlng);
-                    } else {
-                        marker = L.marker(e.latlng).addTo(mapObj);
-                    }
-
-                    if (latInput && lngInput) {
-                        latInput.value = lat.toFixed(6);
-                        lngInput.value = lng.toFixed(6);
-                    }
-                    reverseGeocodeAndUpdate(lat, lng);
-                });
-
-                // 1. Geolocation button
-                if (geoBtn) {
-                    geoBtn.addEventListener('click', function() {
-                        if ("geolocation" in navigator) {
-                            geoBtn.textContent = "📍 Locating...";
-                            navigator.geolocation.getCurrentPosition(function(position) {
-                                const lat = position.coords.latitude;
-                                const lng = position.coords.longitude;
-                                
-                                const newLatLng = new L.LatLng(lat, lng);
-                                mapObj.setView(newLatLng, 15);
-                                
-                                if (marker) {
-                                    marker.setLatLng(newLatLng);
-                                } else {
-                                    marker = L.marker(newLatLng).addTo(mapObj);
-                                }
-
-                                if (latInput && lngInput) {
-                                    latInput.value = lat.toFixed(6);
-                                    lngInput.value = lng.toFixed(6);
-                                }
-                                reverseGeocodeAndUpdate(lat, lng);
-                                geoBtn.textContent = "📍 USE MY CURRENT LOCATION";
-                            }, function(error) {
-                                alert("Could not get your location. Please check browser GPS permissions.");
-                                geoBtn.textContent = "📍 USE MY CURRENT LOCATION";
-                            });
-                        } else {
-                            alert("Geolocation is not supported by your browser");
-                        }
-                    });
-                }
-
-                // 2. Select on map button
-                const selectMapBtn = document.getElementById('btn-select-map');
-                if (selectMapBtn) {
-                    selectMapBtn.addEventListener('click', function() {
-                        container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        alert("Click anywhere directly on the interactive map below to place or move your location marker.");
-                    });
-                }
-
-                // 3. Reset location button
-                const resetLocBtn = document.getElementById('btn-reset-location');
-                if (resetLocBtn) {
-                    resetLocBtn.addEventListener('click', function() {
-                        if (marker) {
-                            mapObj.removeLayer(marker);
-                            marker = null;
-                        }
-                        if (latInput && lngInput) {
-                            latInput.value = "28.613900";
-                            lngInput.value = "77.209000";
-                        }
-                        mapObj.setView([28.6139, 77.2090], 13);
-                    });
-                }
-            }
-        };
-    });
-});
-
-</script>
-
 </body>
 </html>

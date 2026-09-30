@@ -648,6 +648,10 @@ a:hover {
   color: var(--accent-cyan);
 }
   </style>
+
+    <!-- Chart.js for Live Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
 <body>
 
@@ -752,6 +756,16 @@ a:hover {
             Every animation on this screen is driven by a real backend event via Django Channels.
         </div>
         
+        
+        <div style="margin-top:20px; padding:16px; background:#05070f; border:1px solid #1e293b; border-radius:10px;">
+            <div style="font-family:var(--font-mono); font-size:0.85rem; color:var(--primary); margin-bottom:8px;">
+                <span>LIVE TRAFFIC GRAPH (Req/sec)</span>
+            </div>
+            <div style="height: 200px; width: 100%;">
+                <canvas id="trafficChart"></canvas>
+            </div>
+        </div>
+
         <div style="margin-top:20px; padding:16px; background:#05070f; border:1px solid #1e293b; border-radius:10px;">
             <div style="font-family:var(--font-mono); font-size:0.85rem; color:var(--primary); margin-bottom:8px; display:flex; justify-content:space-between;">
                 <span>LIVE EVENT LOG</span>
@@ -1458,8 +1472,11 @@ a:hover {
         req.current = toNode;
         
         // Log event
+        
         if (evt.type === 'request_start') {
+            currentReqsPerSec++;
             logEvent("REQUEST", `${evt.method} ${evt.path} [${evt.request_id}]`, "#3b82f6");
+
         } else if (evt.type === 'response') {
             metrics.active = Math.max(0, metrics.active - 1);
             if (evt.status >= 200 && evt.status < 300) metrics._2xx++;
@@ -1608,6 +1625,67 @@ a:hover {
     // Connect WebSocket on load
     window.addEventListener('DOMContentLoaded', connectWebSocket);
     
+    
+    // --- Live Traffic Chart ---
+    let trafficChart = null;
+    const chartData = {
+        labels: Array(20).fill(''),
+        datasets: [{
+            label: 'Requests/sec',
+            data: Array(20).fill(0),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    };
+    
+    function initChart() {
+        const ctx = document.getElementById('trafficChart');
+        if (!ctx) return;
+        trafficChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 0 }, // turn off animation for live updates
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        suggestedMax: 10,
+                        grid: { color: '#1e293b' },
+                        ticks: { color: '#94a3b8', stepSize: 1 }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { display: false }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+        
+        // Polling to update chart every second
+        setInterval(() => {
+            if (!trafficChart) return;
+            chartData.labels.push('');
+            chartData.labels.shift();
+            
+            chartData.datasets[0].data.push(currentReqsPerSec);
+            chartData.datasets[0].data.shift();
+            
+            trafficChart.update();
+            currentReqsPerSec = 0; // reset counter
+        }, 1000);
+    }
+    
+    let currentReqsPerSec = 0;
+    
+    window.addEventListener('DOMContentLoaded', initChart);
+    // --------------------------
+
     // Live Demo Function
     async function runLiveDemo() {
         logEvent("DEMO", "Starting live request sequence...", "#fbbf24");
