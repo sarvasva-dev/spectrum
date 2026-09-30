@@ -106,7 +106,6 @@
         .msg.ai b { color: var(--primary-dark); }
         .msg-time { display: block; font-size: 0.66rem; opacity: 0.55; margin-top: 4px; }
 
-        /* Timer badge */
         .timer-box {
             align-self: flex-start;
             background: #eff6ff;
@@ -120,6 +119,21 @@
             align-items: center;
             gap: 8px;
         }
+
+        /* Form simulation card */
+        .form-sim-card {
+            align-self: stretch;
+            background: #f8fafc;
+            border: 1.5px solid var(--primary-light);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin: 4px 0;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-sim-title { font-size: 0.9rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-sim-field { margin-bottom: 8px; }
+        .form-sim-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .form-sim-val { font-size: 0.9rem; font-weight: 600; color: var(--text-main); background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-soft); min-height: 32px; }
 
         /* Action chips */
         .actions-wrap { display: flex; flex-direction: column; gap: 8px; align-self: stretch; margin-top: 4px; }
@@ -236,7 +250,6 @@
         var sendBtn = document.getElementById("send-btn");
         var composer = document.getElementById("composer");
         var timerBoxEl = null;
-        var countdownTimer = null;
 
         function getCookie(name) {
             var m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
@@ -304,20 +317,22 @@
             scrollDown();
         }
 
-        function boot() {
-            fetch("/api/demo/auto-login/?role=citizen", { method: "GET", credentials: "same-origin" })
+        function fetchSync(cb) {
+            fetch("/api/demo/citizen-sync/", { method: "GET", credentials: "same-origin" })
             .then(function(r) { return r.json(); })
-            .then(function() {
-                fetchSync(function(syncData) {
-                    var hasComp = syncData.complaints && syncData.complaints.length > 0;
-                    if (hasComp) {
-                        addMessage("Welcome back 👋<br>Your citizen demo requests have been submitted to municipal operations.", "ai");
-                        showTrackingButtons();
-                    } else {
-                        addMessage("Welcome to CleanLoop 👋<br>Preparing your citizen service demonstration…", "ai");
-                        startCountdownTimer(20);
-                    }
-                });
+            .then(function(res) { if (cb) cb(res); });
+        }
+
+        function boot() {
+            fetchSync(function(res) {
+                var hasRecords = res.ok && ((res.complaints && res.complaints.length > 0) || (res.pickups && res.pickups.length > 0));
+                if (hasRecords) {
+                    addMessage("Welcome back 👋<br>Your citizen demo requests have been submitted to municipal operations.<br><br><b>MY CLEANLOOP ACTIVITY</b>", "ai");
+                    showTrackingButtons();
+                } else {
+                    addMessage("Welcome to CleanLoop 👋<br>Preparing your citizen service demonstration…", "ai");
+                    start5SecTimer();
+                }
             });
         }
 
@@ -328,41 +343,110 @@
             ]);
         }
 
-        function startCountdownTimer(seconds) {
-            var remaining = seconds;
+        function start5SecTimer() {
+            var remaining = 5;
             timerBoxEl = document.createElement("div");
             timerBoxEl.className = "timer-box";
-            timerBoxEl.innerHTML = '⏱️ Automatic demonstration starting in <b><span id="countdown-val">' + remaining + '</span>s</b>…';
+            timerBoxEl.innerHTML = '⏱️ Automatic demonstration starting in <b><span id="cd-val">' + remaining + '</span>s</b>…';
             chatWindow.appendChild(timerBoxEl);
             scrollDown();
 
-            countdownTimer = setInterval(function() {
+            var timer = setInterval(function() {
                 remaining--;
-                var valEl = document.getElementById("countdown-val");
-                if (valEl) valEl.textContent = remaining;
+                var v = document.getElementById("cd-val");
+                if (v) v.textContent = remaining;
 
                 if (remaining <= 0) {
-                    clearInterval(countdownTimer);
+                    clearInterval(timer);
                     if (timerBoxEl) timerBoxEl.remove();
-                    runAutoCitizenScript();
+                    runScriptedCitizenFlow();
                 }
             }, 1000);
         }
 
-        function runAutoCitizenScript() {
-            addMessage("Hi 👋 Let me show you how CleanLoop handles a citizen request.", "ai");
+        function runScriptedCitizenFlow() {
+            addMessage("Welcome to CleanLoop 👋 Let's create your citizen account.", "ai");
             setTimeout(function() {
-                addMessage("First, let's report a waste issue.", "ai");
-                setTimeout(function() {
-                    addMessage("Identifying issue: <b>Garbage on Road</b>… Location: <b>Spectrum Demo Location</b> ✓", "ai");
+                renderRegistrationCardSimulation(function() {
+                    addMessage("Creating your CleanLoop account in Django database…", "ai");
                     setTimeout(function() {
-                        executeCitizenBackendStart();
-                    }, 1500);
-                }, 1500);
+                        executeCitizenBackendStart(function(res) {
+                            addMessage("Hi 👋 Welcome to CleanLoop.<br>I'll walk you through how a citizen can report a waste issue and request a pickup.", "ai");
+                            setTimeout(function() {
+                                addMessage("What would you like to report? → <b>Garbage on Road</b>", "ai");
+                                setTimeout(function() {
+                                    addMessage("Please describe what you found: <i>Demonstration complaint created for CleanLoop presentation.</i>", "ai");
+                                    setTimeout(function() {
+                                        addMessage("Identifying location… <b>Spectrum Demo Location</b> ✓", "ai");
+                                        setTimeout(function() {
+                                            renderComplaintCard(res.complaint);
+                                            setTimeout(function() {
+                                                addMessage("Your complaint is submitted. Now let's request a waste pickup.", "ai");
+                                                setTimeout(function() {
+                                                    addMessage("Waste category: <b>E-Waste</b> • Quantity: <b>2 demo bags</b> • Address: <b>Spectrum Demo Location</b> ✓", "ai");
+                                                    setTimeout(function() {
+                                                        renderPickupCard(res.pickup);
+                                                        setTimeout(function() {
+                                                            addMessage("Your request has been sent to municipal operations.<br><br>" +
+                                                                "<b>YOUR REQUESTS SUMMARY</b><br>" +
+                                                                "• Complaint: <span class=\"card-id\">" + escapeHtml(res.complaint.id) + "</span> (Garbage on Road) <b>" + escapeHtml(res.complaint.status) + "</b><br>" +
+                                                                "• Pickup: <span class=\"card-id\">" + escapeHtml(res.pickup.id) + "</span> (E-Waste) <b>" + escapeHtml(res.pickup.status) + "</b><br><br>" +
+                                                                "<i>Municipal team can now process these requests in /demoadmin/.</i>", "ai");
+                                                            showTrackingButtons();
+                                                        }, 1200);
+                                                    }, 1000);
+                                                }, 1200);
+                                            }, 1000);
+                                        }, 1000);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1200);
+                        });
+                    }, 1200);
+                });
             }, 1000);
         }
 
-        function executeCitizenBackendStart() {
+        function renderRegistrationCardSimulation(onComplete) {
+            var card = document.createElement("div");
+            card.className = "form-sim-card";
+            card.innerHTML = '<div class="form-sim-title">CITIZEN ACCOUNT REGISTRATION</div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Full Name</div><div class="form-sim-val" id="f-name"></div></div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Email Address</div><div class="form-sim-val" id="f-email"></div></div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Phone Number</div><div class="form-sim-val" id="f-phone"></div></div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Residential Address</div><div class="form-sim-val" id="f-addr"></div></div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Password</div><div class="form-sim-val" id="f-pass"></div></div>';
+            chatWindow.appendChild(card);
+            scrollDown();
+
+            typeText("f-name", "Rahul Sharma", 50, function() {
+                typeText("f-email", "citizen@cleanloop.com", 40, function() {
+                    typeText("f-phone", "+91 9876543210", 40, function() {
+                        typeText("f-addr", "Spectrum Demo Location, Sector 18", 35, function() {
+                            typeText("f-pass", "••••••••", 80, function() {
+                                if (onComplete) onComplete();
+                            });
+                        });
+                    });
+                });
+            });
+        }
+
+        function typeText(elementId, text, speed, cb) {
+            var el = document.getElementById(elementId);
+            if (!el) { if (cb) cb(); return; }
+            var idx = 0;
+            var t = setInterval(function() {
+                el.textContent += text.charAt(idx);
+                idx++;
+                if (idx >= text.length) {
+                    clearInterval(t);
+                    if (cb) cb();
+                }
+            }, speed);
+        }
+
+        function executeCitizenBackendStart(cb) {
             fetch("/api/demo/citizen-start/", {
                 method: "POST",
                 credentials: "same-origin",
@@ -370,51 +454,34 @@
             })
             .then(function(r) { return r.json(); })
             .then(function(res) {
-                if (!res.ok) return;
-                var c = res.complaint;
-                var p = res.pickup;
-
-                var card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = '<div class="card-head">' +
-                    '<span class="card-id">' + escapeHtml(c.id) + '</span>' +
-                    '<span class="' + badgeClass(c.status) + '">' + escapeHtml(c.status) + '</span>' +
-                    '</div>' +
-                    '<div class="card-title">' + escapeHtml(c.issue) + '</div>' +
-                    '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(c.location) + ' • Priority: ' + escapeHtml(c.priority) + '</div>';
-                chatWindow.appendChild(card);
-
-                setTimeout(function() {
-                    addMessage("Now let's request a doorstep waste pickup. Category: <b>E-Waste</b>… Quantity: <b>2 demo bags</b> ✓", "ai");
-                    setTimeout(function() {
-                        var pcard = document.createElement("div");
-                        pcard.className = "card";
-                        pcard.innerHTML = '<div class="card-head">' +
-                            '<span class="card-id">' + escapeHtml(p.id) + '</span>' +
-                            '<span class="' + badgeClass(p.status) + '">' + escapeHtml(p.status) + '</span>' +
-                            '</div>' +
-                            '<div class="card-title">' + escapeHtml(p.category) + ' (' + escapeHtml(p.quantity) + ')</div>' +
-                            '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(p.address) + '</div>';
-                        chatWindow.appendChild(pcard);
-                        scrollDown();
-
-                        setTimeout(function() {
-                            addMessage("Citizen requests have been submitted to municipal operations.<br><br>" +
-                                "<b>LIVE DEMO REQUESTS</b><br>" +
-                                "• Complaint: <span class=\"card-id\">" + escapeHtml(c.id) + "</span> <b>" + escapeHtml(c.status) + "</b><br>" +
-                                "• Pickup: <span class=\"card-id\">" + escapeHtml(p.id) + "</span> <b>" + escapeHtml(p.status) + "</b><br><br>" +
-                                "<i>Municipal team can now process these requests.</i>", "ai");
-                            showTrackingButtons();
-                        }, 1200);
-                    }, 1200);
-                }, 1200);
+                if (cb) cb(res);
             });
         }
 
-        function fetchSync(cb) {
-            fetch("/api/demo/citizen-sync/", { method: "GET", credentials: "same-origin" })
-            .then(function(r) { return r.json(); })
-            .then(function(res) { if (cb) cb(res); });
+        function renderComplaintCard(c) {
+            var card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = '<div class="card-head">' +
+                '<span class="card-id">' + escapeHtml(c.id) + '</span>' +
+                '<span class="' + badgeClass(c.status) + '">' + escapeHtml(c.status) + '</span>' +
+                '</div>' +
+                '<div class="card-title">' + escapeHtml(c.issue) + '</div>' +
+                '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(c.location) + ' • Priority: ' + escapeHtml(c.priority) + '</div>';
+            chatWindow.appendChild(card);
+            scrollDown();
+        }
+
+        function renderPickupCard(p) {
+            var pcard = document.createElement("div");
+            pcard.className = "card";
+            pcard.innerHTML = '<div class="card-head">' +
+                '<span class="card-id">' + escapeHtml(p.id) + '</span>' +
+                '<span class="' + badgeClass(p.status) + '">' + escapeHtml(p.status) + '</span>' +
+                '</div>' +
+                '<div class="card-title">' + escapeHtml(p.category) + ' (' + escapeHtml(p.quantity) + ')</div>' +
+                '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(p.address) + '</div>';
+            chatWindow.appendChild(pcard);
+            scrollDown();
         }
 
         function handleAction(text) {
@@ -429,7 +496,7 @@
                 return;
             }
 
-            addMessage("Processing: " + escapeHtml(text), "ai");
+            addMessage("Processing query: " + escapeHtml(text), "ai");
             showTrackingButtons();
         }
 
@@ -441,7 +508,7 @@
                     return;
                 }
 
-                addMessage("📍 <b>Complaint Status Query — SQLite Database</b>", "ai");
+                addMessage("📍 <b>Complaint Tracking Query — SQLite Database</b>", "ai");
                 res.complaints.forEach(function(c) {
                     var card = document.createElement("div");
                     card.className = "card";
@@ -481,7 +548,7 @@
                     return;
                 }
 
-                addMessage("📦 <b>Pickup Request Query — SQLite Database</b>", "ai");
+                addMessage("📦 <b>Pickup Request Tracking Query — SQLite Database</b>", "ai");
                 res.pickups.forEach(function(p) {
                     var card = document.createElement("div");
                     card.className = "card";

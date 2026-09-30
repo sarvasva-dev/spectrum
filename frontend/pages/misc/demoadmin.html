@@ -107,22 +107,34 @@
         .msg.ai b { color: #1e3a8a; }
         .msg-time { display: block; font-size: 0.66rem; opacity: 0.55; margin-top: 5px; }
 
-        /* Action chips */
-        .action-chip {
-            background: #1e40af;
-            border: none;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
+        .timer-box {
+            align-self: flex-start;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 0.88rem;
             font-weight: 700;
-            transition: background 0.15s ease;
-            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .action-chip:hover { background: #1d4ed8; }
-        .action-chip.success { background: #059669; }
-        .action-chip.success:hover { background: #047857; }
+
+        /* Form sim card */
+        .form-sim-card {
+            align-self: stretch;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin: 4px 0;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-sim-title { font-size: 0.88rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; text-transform: uppercase; }
+        .form-sim-field { margin-bottom: 8px; }
+        .form-sim-label { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .form-sim-val { font-size: 0.9rem; font-weight: 600; color: #0f172a; background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; min-height: 32px; }
 
         /* Cards */
         .card {
@@ -215,6 +227,7 @@
         var inputEl = document.getElementById("chat-input");
         var sendBtn = document.getElementById("send-btn");
         var composer = document.getElementById("composer");
+        var timerBoxEl = null;
 
         function getCookie(name) {
             var m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
@@ -254,15 +267,74 @@
         }
 
         function boot() {
-            fetch("/api/demo/auto-login/?role=admin", { method: "GET", credentials: "same-origin" })
-            .then(function(r) { return r.json(); })
-            .then(function() {
-                addMessage("CleanLoop Control AI Active 🛡️<br>Welcome back, Officer Municipal.<br><br><b>CITIZEN REQUEST QUEUE — DISPATCH CONSOLE</b>", "ai");
-                loadAdminQueue();
+            addMessage("Municipal Control AI<br>Connecting to operations console…", "ai");
+            start5SecTimer();
+        }
+
+        function start5SecTimer() {
+            var remaining = 5;
+            timerBoxEl = document.createElement("div");
+            timerBoxEl.className = "timer-box";
+            timerBoxEl.innerHTML = '⏱️ Authenticating municipal administrator session in <b><span id="ad-cd">' + remaining + '</span>s</b>…';
+            chatWindow.appendChild(timerBoxEl);
+            scrollDown();
+
+            var timer = setInterval(function() {
+                remaining--;
+                var el = document.getElementById("ad-cd");
+                if (el) el.textContent = remaining;
+
+                if (remaining <= 0) {
+                    clearInterval(timer);
+                    if (timerBoxEl) timerBoxEl.remove();
+                    runAdminAutoLoginAndProcessing();
+                }
+            }, 1000);
+        }
+
+        function runAdminAutoLoginAndProcessing() {
+            renderAdminLoginSimulation(function() {
+                addMessage("Authenticating admin session with Django backend…", "ai");
+                fetch("/api/demo/auto-login/?role=admin", { method: "GET", credentials: "same-origin" })
+                .then(function(r) { return r.json(); })
+                .then(function() {
+                    addMessage("CleanLoop Control AI Active 🛡️<br>Welcome back, Officer Municipal.<br><br><b>LIVE CITIZEN REQUEST QUEUE</b>", "ai");
+                    loadAndProcessDemoState();
+                });
             });
         }
 
-        function loadAdminQueue() {
+        function renderAdminLoginSimulation(cb) {
+            var card = document.createElement("div");
+            card.className = "form-sim-card";
+            card.innerHTML = '<div class="form-sim-title">MUNICIPAL OFFICER AUTHENTICATION</div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Admin ID / Email</div><div class="form-sim-val" id="ad-email"></div></div>' +
+                '<div class="form-sim-field"><div class="form-sim-label">Password</div><div class="form-sim-val" id="ad-pass"></div></div>';
+            chatWindow.appendChild(card);
+            scrollDown();
+
+            typeText("ad-email", "admin@gmail.com", 45, function() {
+                typeText("ad-pass", "••••••••", 70, function() {
+                    if (cb) cb();
+                });
+            });
+        }
+
+        function typeText(elementId, text, speed, cb) {
+            var el = document.getElementById(elementId);
+            if (!el) { if (cb) cb(); return; }
+            var idx = 0;
+            var t = setInterval(function() {
+                el.textContent += text.charAt(idx);
+                idx++;
+                if (idx >= text.length) {
+                    clearInterval(t);
+                    if (cb) cb();
+                }
+            }, speed);
+        }
+
+        function loadAndProcessDemoState() {
             fetch("/api/demo/citizen-sync/", { method: "GET", credentials: "same-origin" })
             .then(function(r) { return r.json(); })
             .then(function(res) {
@@ -274,90 +346,65 @@
                 if (c) {
                     var card = document.createElement("div");
                     card.className = "card";
-                    card.id = "complaint-card-" + c.id;
-                    var html = '<div class="card-head">' +
+                    card.id = "c-card";
+                    card.innerHTML = '<div class="card-head">' +
                         '<span class="card-id">' + escapeHtml(c.id) + '</span>' +
-                        '<span class="' + badgeClass(c.status) + '" id="c-badge-' + c.id + '">' + escapeHtml(c.status) + '</span>' +
+                        '<span class="' + badgeClass(c.status) + '" id="c-badge">' + escapeHtml(c.status) + '</span>' +
                         '</div>' +
                         '<div class="card-title">' + escapeHtml(c.issue) + '</div>' +
                         '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(c.location) + ' • Priority: ' + escapeHtml(c.priority) + '</div>';
-
-                    if (c.status !== "Resolved") {
-                        html += '<button type="button" class="action-chip success" id="c-btn-' + c.id + '" onclick="window.resolveComplaint(\'' + c.id + '\')">✓ Resolve Complaint</button>';
-                    } else {
-                        html += '<div style="font-size:0.82rem;color:var(--ok);font-weight:700;margin-top:8px;">✓ Resolved & CleanCoins Awarded</div>';
-                    }
-                    card.innerHTML = html;
                     chatWindow.appendChild(card);
                 }
 
                 if (p) {
                     var pcard = document.createElement("div");
                     pcard.className = "card";
-                    pcard.id = "pickup-card-" + p.id;
-                    var phtml = '<div class="card-head">' +
+                    pcard.id = "p-card";
+                    pcard.innerHTML = '<div class="card-head">' +
                         '<span class="card-id">' + escapeHtml(p.id) + '</span>' +
-                        '<span class="' + badgeClass(p.status) + '" id="p-badge-' + p.id + '">' + escapeHtml(p.status) + '</span>' +
+                        '<span class="' + badgeClass(p.status) + '" id="p-badge">' + escapeHtml(p.status) + '</span>' +
                         '</div>' +
                         '<div class="card-title">' + escapeHtml(p.category) + ' (' + escapeHtml(p.quantity) + ')</div>' +
                         '<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">📍 ' + escapeHtml(p.address) + '</div>';
-
-                    if (p.status !== "Completed") {
-                        phtml += '<button type="button" class="action-chip success" id="p-btn-' + p.id + '" onclick="window.completePickup(\'' + p.id + '\')">✓ Complete Pickup</button>';
-                    } else {
-                        phtml += '<div style="font-size:0.82rem;color:var(--ok);font-weight:700;margin-top:8px;">✓ Doorstep collection completed</div>';
-                    }
-                    pcard.innerHTML = phtml;
                     chatWindow.appendChild(pcard);
                 }
-
                 scrollDown();
+
+                // Automated processing after a short pause
+                setTimeout(function() {
+                    addMessage("Reviewing complaint… Assigning Rapid Response Crew #4… Updating status…", "ai");
+                    setTimeout(function() {
+                        fetch("/api/demo/admin-process/", {
+                            method: "POST",
+                            credentials: "same-origin",
+                            headers: { "X-CSRFToken": getCookie("csrftoken") }
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(resData) {
+                            if (!resData.ok) return;
+
+                            var compRes = resData.complaint;
+                            var pickRes = resData.pickup;
+
+                            var bgC = document.getElementById("c-badge");
+                            if (bgC) { bgC.className = "badge badge-resolved"; bgC.textContent = "Resolved"; }
+
+                            var bgP = document.getElementById("p-badge");
+                            if (bgP) { bgP.className = "badge badge-completed"; bgP.textContent = "Completed"; }
+
+                            addMessage("Reviewing pickup request… Assigning EV Eco-Van #12… Doorstep collection completed.", "ai");
+
+                            setTimeout(function() {
+                                addMessage("MUNICIPAL ACTION COMPLETE ✅<br><br>" +
+                                    "• Complaint <span class=\"card-id\">" + escapeHtml(compRes.id) + "</span> → <span class=\"badge badge-resolved\">" + escapeHtml(compRes.status) + "</span><br>" +
+                                    "• Pickup <span class=\"card-id\">" + escapeHtml(pickRes.id) + "</span> → <span class=\"badge badge-completed\">" + escapeHtml(pickRes.status) + "</span><br><br>" +
+                                    "<i>Citizen can now track the updated status. Return to /democitizenai/ to verify.</i>", "ai");
+                            }, 1200);
+                        });
+                    }, 1500);
+                }, 1500);
             });
         }
-
-        window.resolveComplaint = function(id) {
-            fetch("/api/demo/admin-action/", {
-                method: "POST",
-                credentials: "same-origin",
-                headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
-                body: JSON.stringify({ type: "complaint", id: id, status: "RESOLVED" })
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(res) {
-                if (res.ok) {
-                    var btn = document.getElementById("c-btn-" + id);
-                    if (btn) btn.remove();
-                    var bg = document.getElementById("c-badge-" + id);
-                    if (bg) {
-                        bg.className = "badge badge-resolved";
-                        bg.textContent = "Resolved";
-                    }
-                    addMessage("✅ Complaint <b>" + escapeHtml(id) + "</b> status updated to <b>RESOLVED</b> in SQLite database.<br>Created lifecycle updates: ASSIGNED → IN PROGRESS → RESOLVED.", "ai");
-                }
-            });
-        };
-
-        window.completePickup = function(id) {
-            fetch("/api/demo/admin-action/", {
-                method: "POST",
-                credentials: "same-origin",
-                headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
-                body: JSON.stringify({ type: "pickup", id: id, status: "COMPLETED" })
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(res) {
-                if (res.ok) {
-                    var btn = document.getElementById("p-btn-" + id);
-                    if (btn) btn.remove();
-                    var bg = document.getElementById("p-badge-" + id);
-                    if (bg) {
-                        bg.className = "badge badge-completed";
-                        bg.textContent = "Completed";
-                    }
-                    addMessage("✅ Pickup <b>" + escapeHtml(id) + "</b> status updated to <b>COMPLETED</b> in SQLite database.", "ai");
-                }
-            });
-        };
 
         composer.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -365,7 +412,7 @@
             if (!text) return;
             inputEl.value = "";
             addMessage(escapeHtml(text), "user");
-            addMessage("Command processed: " + escapeHtml(text), "ai");
+            addMessage("Command received: " + escapeHtml(text), "ai");
         });
 
         boot();
