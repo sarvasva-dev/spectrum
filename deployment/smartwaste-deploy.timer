@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for SmartWaste Auto Deploy Service
+
+[Timer]
+# Run every 5 minutes
+OnBootSec=5min
+OnUnitActiveSec=5min
+Unit=smartwaste-deploy.service
+
+[Install]
+WantedBy=timers.target
