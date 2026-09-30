@@ -36,6 +36,12 @@ urlpatterns = [
     path('admin-portal/complaint/<str:complaint_id>/', views.admin_complaint_update_view, name='admin_complaint_update'),
     path('admin-portal/pickup/<str:pickup_id>/', views.admin_pickup_update_view, name='admin_pickup_update'),
 
+    # Presentation Demo Pages
+    path('democitizenai/', views.democitizenai_view, name='democitizenai'),
+    path('demoadmin/', views.demoadmin_view, name='demoadmin'),
+    path('api/demo/citizen-sync/', views.api_demo_citizen_sync_view, name='api_demo_citizen_sync'),
+    path('api/demo/admin-action/', views.api_demo_admin_action_view, name='api_demo_admin_action'),
+
     # API Playground & REST Endpoints
     path('visual/', views.api_playground_view, name='api_playground'),
     path('ai/', views.ai_view, name='ai'),

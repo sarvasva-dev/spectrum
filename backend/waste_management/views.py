@@ -1425,3 +1425,145 @@ def api_admin_ai_chat_view(request):
         })
 
     return JsonResponse(result)
+
+
+# PRESENTATION DEMO VIEWS & ENDPOINTS (/democitizenai/ & /demoadmin/)
+# ==============================================================================
+
+@ensure_csrf_cookie
+def democitizenai_view(request):
+    """Renders the presentation demo page for citizens at /democitizenai/."""
+    return render(request, 'misc/democitizenai.html', {
+        'page_title': 'CleanLoop AI Citizen Presentation Demo',
+        'meta_description': 'Interactive presentation demo for CleanLoop AI Citizen Services.',
+    })
+
+
+@ensure_csrf_cookie
+def demoadmin_view(request):
+    """Renders the presentation demo page for municipal admin at /demoadmin/."""
+    return render(request, 'misc/demoadmin.html', {
+        'page_title': 'CleanLoop Municipal Control Presentation Demo',
+        'meta_description': 'Interactive presentation demo for CleanLoop Municipal Operations Control.',
+    })
+
+
+def api_demo_citizen_sync_view(request):
+    """
+    GET /api/demo/citizen-sync/
+    Returns live complaints and pickups for authenticated user for demo tracking.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({'ok': False, 'error': 'Unauthenticated'}, status=401)
+
+    complaints_qs = Complaint.objects.filter(user=request.user).order_by('-created_at')[:10]
+    pickups_qs = PickupRequest.objects.filter(user=request.user).order_by('-created_at')[:10]
+
+    STATUS_STEPS_COMPLAINT = ["Pending", "Assigned", "In Progress", "Resolved"]
+    STATUS_STEPS_PICKUP = ["Requested", "Assigned", "Picked Up", "Completed"]
+
+    complaints_data = []
+    for c in complaints_qs:
+        status_disp = c.get_status_display()
+        step_idx = STATUS_STEPS_COMPLAINT.index(status_disp) if status_disp in STATUS_STEPS_COMPLAINT else 0
+        timeline = [
+            {
+                "status": u.status.replace("_", " ").title(),
+                "note": u.note[:140],
+                "date": u.created_at.strftime("%d %b %Y")
+            }
+            for u in c.timeline_updates.all()[:6]
+        ]
+        complaints_data.append({
+            "id": c.complaint_id,
+            "issue": c.get_issue_type_display(),
+            "description": c.description[:200],
+            "location": c.location or c.address or "",
+            "landmark": c.landmark or "",
+            "status": status_disp,
+            "priority": c.get_priority_display(),
+            "date": c.created_at.strftime("%d %b %Y"),
+            "status_step": step_idx,
+            "status_steps": STATUS_STEPS_COMPLAINT,
+            "timeline": timeline,
+        })
+
+    pickups_data = []
+    for p in pickups_qs:
+        status_disp = p.get_status_display()
+        step_idx = STATUS_STEPS_PICKUP.index(status_disp) if status_disp in STATUS_STEPS_PICKUP else 0
+        pickups_data.append({
+            "id": p.pickup_id,
+            "category": p.get_waste_category_display(),
+            "quantity": p.quantity,
+            "address": p.pickup_address,
+            "date": p.preferred_date.strftime("%d %b %Y") if p.preferred_date else "",
+            "time": p.preferred_time,
+            "status": status_disp,
+            "status_step": step_idx,
+            "status_steps": STATUS_STEPS_PICKUP,
+            "notes": p.notes or "",
+        })
+
+    return JsonResponse({
+        'ok': True,
+        'user': {
+            'username': request.user.username,
+            'name': request.user.first_name or request.user.username,
+            'email': request.user.email,
+        },
+        'complaints': complaints_data,
+        'pickups': pickups_data,
+    })
+
+
+def api_demo_admin_action_view(request):
+    """
+    POST /api/demo/admin-action/
+    Allows demo admin to resolve complaint or complete pickup directly.
+    """
+    if not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser or getattr(getattr(request.user, 'profile', None), 'is_admin_staff', False))):
+        return JsonResponse({'ok': False, 'error': 'Unauthorized admin credentials required.'}, status=403)
+
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'POST required'}, status=405)
+
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        return JsonResponse({'ok': False, 'error': 'Invalid JSON'}, status=400)
+
+    action_type = body.get('type')
+    target_id = body.get('id')
+    new_status = body.get('status')
+    note = body.get('note', '')
+
+    if action_type == 'complaint':
+        complaint = get_object_or_404(Complaint, complaint_id__iexact=target_id)
+        if new_status in [c[0] for c in Complaint.STATUS_CHOICES]:
+            complaint.status = new_status
+            complaint.save()
+            ComplaintUpdate.objects.create(
+                complaint=complaint,
+                status=new_status,
+                note=note or f"Status updated to {complaint.get_status_display()} via Demo Admin Console.",
+                updated_by=request.user,
+            )
+            return JsonResponse({
+                'ok': True,
+                'message': f"Complaint {complaint.complaint_id} updated to {complaint.get_status_display()}.",
+                'status': complaint.get_status_display(),
+            })
+
+    elif action_type == 'pickup':
+        pickup = get_object_or_404(PickupRequest, pickup_id__iexact=target_id)
+        if new_status in [p[0] for p in PickupRequest.STATUS_CHOICES]:
+            pickup.status = new_status
+            pickup.save()
+            return JsonResponse({
+                'ok': True,
+                'message': f"Pickup {pickup.pickup_id} updated to {pickup.get_status_display()}.",
+                'status': pickup.get_status_display(),
+            })
+
+    return JsonResponse({'ok': False, 'error': 'Invalid status or target ID'}, status=400)
