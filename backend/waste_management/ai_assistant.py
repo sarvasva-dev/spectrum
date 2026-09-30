@@ -454,6 +454,45 @@ def llm_answer_awareness(question):
         return None
 
 
+def _freeform_ai_response(request, message):
+    """Answers any conversational, small talk, or general waste management question using Sarvam AI."""
+    api_key = os.environ.get("SARVAM_API_KEY")
+    if not api_key:
+        return None
+    grounding = (
+        "You are CleanLoop AI, an intelligent, helpful waste management assistant for citizens in India.\n"
+        "Respond in a polite, friendly, and natural conversational tone in the language used by the user (English, Hindi, or Hinglish).\n"
+        "If the user greets you or makes casual conversation (e.g. 'aur kya haal', 'kaise ho', 'hi', 'hello', 'sab badiya'), respond warmly and offer to help with waste reporting, doorstep pickups, and tracking.\n"
+        "CleanLoop rules:\n"
+        "- GREEN BIN: organic / wet waste (food scraps, peels, garden waste).\n"
+        "- BLUE BIN: clean & dry recyclables (plastic bottles, paper, cardboard, metal, glass).\n"
+        "- RED/BLACK: hazardous & e-waste (electronics, batteries, medicines) - doorstep pickup available.\n"
+        "- Doorstep pickup time slots: Morning (08:00 AM - 11:00 AM) & Afternoon.\n"
+        "Keep your response concise, under 80 words, friendly, plain text (no markdown format)."
+    )
+    try:
+        resp = requests.post(
+            SARVAM_API_URL,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "model": SARVAM_MODEL,
+                "messages": [
+                    {"role": "system", "content": grounding},
+                    {"role": "user", "content": _clamp_text(message, 500)},
+                ],
+                "temperature": 0.5,
+            },
+            timeout=LLM_TIMEOUT_SECONDS,
+        )
+        if resp.status_code == 200:
+            content = resp.json()["choices"][0]["message"]["content"]
+            if content:
+                return _clamp_text(content, 900)
+    except Exception as exc:
+        logger.warning("Sarvam freeform AI error: %s", exc)
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
@@ -534,8 +573,7 @@ def run_ai_chat(request, message, state):
     if not chosen and message:
         chosen = llm_classify_intent(message, recent)
 
-    # Ambiguous free text during a flow? The LLM may classify short answers
-    # like 'E-Waste' or 'Morning' as UNKNOWN; fall back to the active flow.
+    # Ambiguous free text during a flow?
     if chosen in (None, "UNKNOWN", ""):
         if not message:
             return _greeting(request)
@@ -543,6 +581,11 @@ def run_ai_chat(request, message, state):
             return _complaint_flow(request, message, state)
         if intent == "REQUEST_PICKUP" and step not in ("START", ""):
             return _pickup_flow(request, message, state)
+
+        ai_answer = _freeform_ai_response(request, message)
+        if ai_answer:
+            return _reply(ai_answer, "MAIN_MENU", "START", actions=MAIN_MENU_ACTIONS, state={})
+
         return _fallback_message()
 
     return _dispatch_intent(request, chosen, message)
@@ -719,7 +762,7 @@ def _fallback_message():
 # ---------------------------------------------------------------------------
 
 _RULE_PATTERNS = [
-    (r"^(hi+|hello+|hey+|namaste|namaskar|salam|good (morning|afternoon|evening))\b", "GREETING"),
+    (r"(hi+|hello+|hey+|namaste|namaskar|salam|good (morning|afternoon|evening)|kya haal|kaise ho|sab badiya|kya chal|kya haal hai|kaisa hai|tum kaun ho|who are you)", "GREETING"),
     (r"(complaint karni|complaint karna|complaint darj|kachra report|report (waste|garbage|a complaint)|shikayat)", "REPORT_COMPLAINT"),
     (r"(kachra pada|garbage (on|is|lies)|overflowing|dustbin (is |hai |full)|trash on|safai nahi)", "REPORT_COMPLAINT"),
     (r"(pickup chahiye|pickup karna|pickup request hai|request (a |the )?pickup|pickup karwana)", "REQUEST_PICKUP"),
