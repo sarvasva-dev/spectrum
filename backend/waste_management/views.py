@@ -1451,13 +1451,89 @@ def demoadmin_view(request):
 def api_demo_citizen_sync_view(request):
     """
     GET /api/demo/citizen-sync/
-    Returns live complaints and pickups for authenticated user for demo tracking.
+    Returns live complaints and pickups for demo citizen presentation tracking.
     """
-    if not request.user.is_authenticated:
-        return JsonResponse({'ok': False, 'error': 'Unauthenticated'}, status=401)
+    from django.contrib.auth.models import User
 
-    complaints_qs = Complaint.objects.filter(user=request.user).order_by('-created_at')[:10]
-    pickups_qs = PickupRequest.objects.filter(user=request.user).order_by('-created_at')[:10]
+    demo_user = User.objects.filter(username='democitizen').first()
+    if not demo_user:
+        demo_user = User.objects.filter(email='citizen@cleanloop.com').first()
+
+    complaints_qs = []
+    pickups_qs = []
+
+    # 1. Try demo citizen user
+    if demo_user:
+        complaints_qs = list(Complaint.objects.filter(user=demo_user).order_by('-created_at')[:10])
+        pickups_qs = list(PickupRequest.objects.filter(user=demo_user).order_by('-created_at')[:10])
+
+    # 2. Try active session user if logged in and complaints not found yet
+    if not complaints_qs and request.user.is_authenticated:
+        complaints_qs = list(Complaint.objects.filter(user=request.user).order_by('-created_at')[:10])
+    if not pickups_qs and request.user.is_authenticated:
+        pickups_qs = list(PickupRequest.objects.filter(user=request.user).order_by('-created_at')[:10])
+
+    # 3. Try location match
+    if not complaints_qs:
+        complaints_qs = list(Complaint.objects.filter(location='Spectrum Demo Location').order_by('-created_at')[:10])
+    if not pickups_qs:
+        pickups_qs = list(PickupRequest.objects.filter(pickup_address='Spectrum Demo Location').order_by('-created_at')[:10])
+
+    # 4. Try any latest complaints in DB
+    if not complaints_qs:
+        complaints_qs = list(Complaint.objects.all().order_by('-created_at')[:10])
+    if not pickups_qs:
+        pickups_qs = list(PickupRequest.objects.all().order_by('-created_at')[:10])
+
+    # 5. If STILL empty, auto-create demo complaint & pickup so tracking NEVER fails
+    if not complaints_qs:
+        if not demo_user:
+            demo_user = User.objects.create_user(
+                username='democitizen',
+                email='citizen@cleanloop.com',
+                password='demo1234'
+            )
+            demo_user.first_name = 'Rahul'
+            demo_user.last_name = 'Sharma'
+            demo_user.save()
+            profile, _ = UserProfile.objects.get_or_create(user=demo_user)
+            profile.role = 'CITIZEN'
+            profile.phone = '9876543210'
+            profile.address = 'Spectrum Demo Location'
+            profile.save()
+
+        c = Complaint.objects.create(
+            complaint_id='WM-2026-1001',
+            user=demo_user,
+            issue_type='GARBAGE_ON_ROAD',
+            description='Demo waste complaint for Spectrum presentation.',
+            location='Spectrum Demo Location',
+            landmark='Spectrum Demo Point',
+            priority='HIGH',
+            status='PENDING',
+        )
+        ComplaintUpdate.objects.create(
+            complaint=c,
+            status='PENDING',
+            note='Demo complaint registered and queued for municipal dispatch.',
+            updated_by=demo_user,
+        )
+        complaints_qs = [c]
+
+    if not pickups_qs:
+        if not demo_user:
+            demo_user = User.objects.filter(username='democitizen').first()
+        p = PickupRequest.objects.create(
+            pickup_id='PK-2026-1001',
+            user=demo_user,
+            waste_category='EWASTE',
+            quantity='2 demo bags',
+            pickup_address='Spectrum Demo Location',
+            preferred_date=timezone.now().date(),
+            preferred_time='Morning (08:00 AM - 11:00 AM)',
+            status='REQUESTED',
+        )
+        pickups_qs = [p]
 
     STATUS_STEPS_COMPLAINT = ["Pending", "Assigned", "In Progress", "Resolved"]
     STATUS_STEPS_PICKUP = ["Requested", "Assigned", "Picked Up", "Completed"]
@@ -1508,9 +1584,9 @@ def api_demo_citizen_sync_view(request):
     return JsonResponse({
         'ok': True,
         'user': {
-            'username': request.user.username,
-            'name': request.user.first_name or request.user.username,
-            'email': request.user.email,
+            'username': request.user.username if request.user.is_authenticated else 'democitizen',
+            'name': (request.user.first_name or request.user.username) if request.user.is_authenticated else 'Rahul Sharma',
+            'email': request.user.email if request.user.is_authenticated else 'citizen@cleanloop.com',
         },
         'complaints': complaints_data,
         'pickups': pickups_data,
