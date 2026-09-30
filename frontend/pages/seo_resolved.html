@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ complaint.get_issue_type_display }} resolved at {{ complaint.location }} - CleanLoop</title>
+  
+  <meta name="description" content="Success Story: {{ complaint.get_issue_type_display }} issue reported by {{ complaint.user.get_full_name|default:complaint.user.username }} at {{ complaint.location }} has been successfully resolved by CleanLoop.">
+  <meta name="robots" content="index, follow">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg-light: #f8fafc;
+      --text: #334155;
+      --text-muted: #64748b;
+      --success: #10b981;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-light);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    header h1 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .hero-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #e2e8f0;
+      margin-bottom: 20px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      background: #d1fae5;
+      color: #065f46;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    .details {
+      margin-top: 20px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+    }
+    .details p {
+      margin: 10px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .details strong {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Mobile Responsive */
+    @media(max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 15px;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      .hero-image {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>♻️ CleanLoop Success Story</h1>
+  </header>
+
+  <div class="container">
+    <div class="badge">✅ Successfully Resolved</div>
+    
+    <h2>{{ complaint.get_issue_type_display }} Cleared</h2>
+    
+    {% if complaint.image %}
+      <img src="{{ complaint.image.url }}" alt="Waste Issue at {{ complaint.location }}" class="hero-image">
+    {% else %}
+      <div class="hero-image" style="display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+        No image was provided for this report.
+      </div>
+    {% endif %}
+
+    <div class="details">
+      <p>
+        <strong>Location</strong>
+        {{ complaint.location }}
+      </p>
+      <p>
+        <strong>Reported By Community Hero</strong>
+        {{ complaint.user.get_full_name|default:complaint.user.username }}
+      </p>
+      <p>
+        <strong>Description</strong>
+        {{ complaint.description }}
+      </p>
+      <p>
+        <strong>Resolved On</strong>
+        {{ complaint.resolved_at|date:"F j, Y, g:i a" }}
+      </p>
+    </div>
+
+    <a href="{% url 'landing' %}" class="back-link">← Back to CleanLoop Home</a>
+  </div>
+
+
+<!-- THEME TOGGLE (DARK MODE) UX -->
+<style>
+body.dark-mode {
+  --bg-light: #0f172a;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  background-color: var(--bg-light);
+  color: var(--text);
+}
+body.dark-mode .card, body.dark-mode header, body.dark-mode .navbar, body.dark-mode .dashboard-sidebar {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+body.dark-mode input, body.dark-mode textarea, body.dark-mode select {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+body.dark-mode .leaderboard-card, body.dark-mode .stat-card {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
+}
+body.dark-mode .tracker-icon {
+  background-color: #334155;
+  border-color: #1e293b;
+}
+body.dark-mode .container, body.dark-mode section {
+  background-color: transparent;
+}
+.dark-mode-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+}
+.dark-mode-toggle:hover { transform: scale(1.1); }
+</style>
+<button class="dark-mode-toggle" id="themeToggle" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">🌓</button>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('themeToggle');
+    const body = document.body;
+    if(localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode');
+    }
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if(body.classList.contains('dark-mode')){
+        localStorage.setItem('theme', 'dark');
+      } else {
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
