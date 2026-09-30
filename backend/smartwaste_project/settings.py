@@ -6,6 +6,13 @@ SMART WASTE MANAGEMENT SYSTEM - SPECTRUM HACKATHON
 import os
 from pathlib import Path
 
+# Load .env from project root for local development
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent.parent / '.env')
+except ImportError:
+    pass
+
 # Build paths inside the project: BASE_DIR is backend/
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent

@@ -1,192 +1,886 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CleanLoop AI Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>CleanLoop AI Assistant | Smart Waste Management</title>
+    <meta name="description" content="Use the CleanLoop AI assistant to report waste issues, request pickups and track your CleanLoop services conversationally.">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="canonical" href="https://cleanloop.sarthakml.in/ai/">
     <style>
         :root {
-            --primary: #0284c7;
-            --primary-hover: #0369a1;
-            --bg: #f0f9ff;
-            --white: #ffffff;
-            --text: #1e293b;
-            --gray: #64748b;
-            --light-gray: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #dbeafe;
+            --primary-dark: #1e40af;
+            --secondary: #0284c7;
+            --secondary-light: #e0f2fe;
+            --bg-body: #f0f7ff;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
             --border: #cbd5e1;
+            --border-soft: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.10);
+            --ok: #059669;
+            --ok-bg: #d1fae5;
+            --warn: #b45309;
+            --warn-bg: #fef3c7;
+            --err: #dc2626;
+            --err-bg: #fee2e2;
+            --radius: 14px;
         }
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(180deg, #eaf3ff 0%, var(--bg-body) 40%, #f8fafc 100%);
+            color: var(--text-main);
+            line-height: 1.5;
         }
-        .container {
-            display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto;
-            background-color: var(--white); box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+        /* ---------- App shell ---------- */
+        .ai-app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--surface);
+            box-shadow: 0 0 40px rgba(37, 99, 235, 0.08);
         }
-        header {
-            background-color: var(--primary); color: var(--white);
-            padding: 1rem; text-align: center; font-weight: bold;
-            display: flex; justify-content: space-between; align-items: center;
+
+        /* ---------- Header ---------- */
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            z-index: 5;
         }
-        header a { color: var(--white); text-decoration: none; font-size: 0.9rem; }
+        .ai-avatar {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+        }
+        .ai-brand-logo {
+            width: 42px; height: 42px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.25));
+        }
+        .ai-title-block { flex: 1; min-width: 0; }
+        .ai-title { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; }
+        .ai-subtitle { font-size: 0.78rem; color: var(--text-muted); }
+        .ai-status {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+            padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+        }
+        .ai-status .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .ai-status.ok { background: var(--ok-bg); color: var(--ok); }
+        .ai-status.ok .dot { background: var(--ok); }
+        .ai-status.limited { background: var(--warn-bg); color: var(--warn); }
+        .ai-status.limited .dot { background: var(--warn); }
+        .header-link {
+            font-size: 0.8rem; color: var(--primary); text-decoration: none;
+            font-weight: 600; padding: 6px 8px; border-radius: 8px;
+        }
+        .header-link:hover { background: var(--primary-light); }
+
+        /* ---------- Chat window ---------- */
         #chat-window {
-            flex: 1; overflow-y: auto; padding: 1rem;
-            display: flex; flex-direction: column; gap: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 16px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
-        .message { max-width: 80%; padding: 0.8rem 1rem; border-radius: 1rem; line-height: 1.4; }
-        .message.ai { background-color: var(--bg); align-self: flex-start; border-bottom-left-radius: 0; }
-        .message.user { background-color: var(--primary); color: var(--white); align-self: flex-end; border-bottom-right-radius: 0; }
-        .actions-container {
-            display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;
+        .msg { max-width: 86%; padding: 10px 14px; border-radius: var(--radius); font-size: 0.94rem; box-shadow: var(--shadow-sm); word-wrap: break-word; overflow-wrap: break-word; }
+        .msg.ai {
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border-soft);
+            border-bottom-left-radius: 4px;
         }
+        .msg.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .msg.ai b { color: var(--primary-dark); }
+        .msg-time { display: block; font-size: 0.66rem; opacity: 0.55; margin-top: 4px; }
+
+        /* typing indicator */
+        .typing-msg { display: inline-flex; gap: 4px; align-items: center; padding: 12px 16px; }
+        .typing-msg span {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--primary); opacity: 0.4;
+            animation: blink 1.2s infinite;
+        }
+        .typing-msg span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-msg span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink { 0%, 80%, 100% { opacity: 0.25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
+
+        /* ---------- Quick action chips ---------- */
+        .actions-wrap { display: flex; flex-direction: column; gap: 8px; align-self: stretch; }
+        .actions-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .actions-container { display: flex; flex-wrap: wrap; gap: 8px; }
         .action-chip {
-            background-color: var(--white); border: 1px solid var(--primary); color: var(--primary);
-            padding: 0.5rem 1rem; border-radius: 2rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+            background: var(--surface);
+            border: 1.5px solid var(--primary);
+            color: var(--primary-dark);
+            padding: 9px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.15s ease;
+            min-height: 40px;
         }
-        .action-chip:hover { background-color: var(--primary); color: var(--white); }
+        .action-chip:hover { background: var(--primary); color: #fff; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3); }
+        .action-chip:active { transform: translateY(0); }
+        .action-chip.primary { background: var(--primary); color: #fff; }
+        .action-chip.primary:hover { background: var(--primary-hover); }
+        .action-chip.ghost { border-color: var(--border); color: var(--text-muted); }
+        .action-chip.ghost:hover { background: var(--bg-body); color: var(--text-main); border-color: var(--text-muted); }
+        .action-chip.danger { border-color: var(--err); color: var(--err); }
+        .action-chip.danger:hover { background: var(--err); color: #fff; }
+
+        /* ---------- Cards ---------- */
+        .card {
+            align-self: stretch;
+            background: var(--surface);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 12px 14px;
+            font-size: 0.9rem;
+        }
+        .card + .card { margin-top: 2px; }
+        .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+        .card-title { font-weight: 700; font-size: 0.95rem; }
+        .card-id {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.8rem; font-weight: 700; color: var(--primary-dark);
+            background: var(--primary-light); padding: 2px 8px; border-radius: 6px;
+        }
+        .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; }
+        .badge-pending { background: var(--warn-bg); color: var(--warn); }
+        .badge-assigned { background: var(--primary-light); color: var(--primary-dark); }
+        .badge-inprogress { background: #ede9fe; color: #6d28d9; }
+        .badge-resolved { background: var(--ok-bg); color: var(--ok); }
+        .badge-requested { background: var(--warn-bg); color: var(--warn); }
+        .badge-pickedup { background: #ede9fe; color: #6d28d9; }
+        .badge-completed { background: var(--ok-bg); color: var(--ok); }
+        .badge-low { background: #f1f5f9; color: #475569; }
+        .badge-medium { background: var(--warn-bg); color: var(--warn); }
+        .badge-high { background: #ffedd5; color: #c2410c; }
+        .badge-critical { background: var(--err-bg); color: var(--err); }
+        .card-meta { color: var(--text-muted); font-size: 0.8rem; margin-top: 2px; }
+
+        /* status stepper */
+        .stepper { display: flex; gap: 4px; margin: 10px 0 6px; }
+        .stepper .step {
+            flex: 1; text-align: center; font-size: 0.62rem; font-weight: 700;
+            color: var(--text-muted); padding-top: 6px; position: relative;
+            text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .stepper .step::before {
+            content: ""; display: block; height: 4px; border-radius: 2px;
+            background: var(--border-soft); margin-bottom: 5px;
+        }
+        .stepper .step.done::before, .stepper .step.current::before { background: var(--primary); }
+        .stepper .step.done { color: var(--primary-dark); }
+        .stepper .step.current { color: var(--primary); }
+
+        .timeline { margin-top: 10px; border-top: 1px dashed var(--border-soft); padding-top: 8px; }
+        .timeline-item { display: flex; gap: 8px; padding: 3px 0; font-size: 0.78rem; color: var(--text-muted); }
+        .timeline-item .t-date { flex-shrink: 0; font-weight: 600; color: var(--text-main); min-width: 70px; }
+
+        .review-grid { display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font-size: 0.86rem; }
+        .review-grid dt { font-weight: 700; color: var(--text-muted); }
+        .review-grid dd { color: var(--text-main); word-break: break-word; }
+
+        .card.success { border-color: #a7f3d0; background: linear-gradient(180deg, #f0fdf9 0%, #fff 100%); }
+        .card.success .success-title { color: var(--ok); font-weight: 800; font-size: 0.98rem; margin-bottom: 6px; }
+        .card.error { border-color: #fecaca; background: #fff8f8; }
+
+        .day-group { align-self: center; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); background: var(--bg-body); border: 1px solid var(--border-soft); padding: 3px 12px; border-radius: 999px; margin: 4px 0; }
+
+        /* ---------- Map & photo panels ---------- */
+        .map-panel {
+            align-self: stretch;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+        }
+        .map-panel iframe { width: 100%; height: 320px; border: none; display: block; }
+        .map-actions { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--border-soft); }
+        .map-actions .action-chip { flex: 1; text-align: center; }
+
+        .photo-input-wrap { align-self: stretch; }
+        .photo-input-wrap input[type="file"] { display: none; }
+        .photo-drop {
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            border: 2px dashed var(--border); border-radius: var(--radius);
+            padding: 22px 14px; cursor: pointer; color: var(--text-muted);
+            font-size: 0.88rem; text-align: center; transition: all 0.15s;
+        }
+        .photo-drop:hover { border-color: var(--primary); color: var(--primary); background: #f6faff; }
+        .photo-drop .icon { font-size: 26px; }
+        .photo-preview { margin-top: 8px; font-size: 0.8rem; color: var(--ok); font-weight: 600; }
+
+        /* ---------- Composer ---------- */
         .composer {
-            padding: 1rem; border-top: 1px solid var(--border);
-            display: flex; gap: 0.5rem; background-color: var(--white);
+            display: flex; align-items: flex-end; gap: 8px;
+            padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--border-soft);
+            background: var(--surface);
+            position: relative;
+            z-index: 5;
         }
-        .composer input {
-            flex: 1; padding: 0.8rem; border: 1px solid var(--border);
-            border-radius: 2rem; outline: none;
+        #chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 999px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            background: var(--bg-body);
+            min-width: 0;
+            transition: border-color 0.15s;
         }
-        .composer button {
-            background-color: var(--primary); color: var(--white); border: none;
-            padding: 0 1.2rem; border-radius: 2rem; cursor: pointer; font-weight: bold;
+        #chat-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+        .send-btn {
+            width: 46px; height: 46px; border-radius: 50%;
+            border: none; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+            transition: transform 0.12s, opacity 0.12s;
         }
-        .composer button:hover { background-color: var(--primary-hover); }
-        .typing { display: none; align-self: flex-start; color: var(--gray); font-size: 0.9rem; padding-left: 1rem; }
+        .send-btn:hover { transform: scale(1.05); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .send-btn svg { width: 20px; height: 20px; }
+
+        /* ---------- Scrollbar ---------- */
+        #chat-window::-webkit-scrollbar { width: 6px; }
+        #chat-window::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 3px; }
+
+        /* ---------- Mobile ---------- */
+        @media (max-width: 640px) {
+            .ai-app { max-width: 100%; box-shadow: none; }
+            .msg { max-width: 92%; font-size: 0.92rem; }
+            .action-chip { padding: 10px 14px; }
+            .header-link span { display: none; }
+            .ai-title { font-size: 0.98rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <a href="/">← Back</a>
-            <span>CleanLoop AI</span>
-            <a href="/dashboard/">Dashboard</a>
+    <div class="ai-app">
+        <!-- ======= Header ======= -->
+        <header class="ai-header">
+            <a class="header-link" href="/" aria-label="Back to CleanLoop home">←<span> Home</span></a>
+            <img class="ai-brand-logo" src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop logo" width="42" height="42">
+            <div class="ai-title-block">
+                <div class="ai-title">CleanLoop AI</div>
+                <div class="ai-subtitle">Your CleanLoop citizen assistant</div>
+            </div>
+            <span id="ai-status" class="ai-status limited"><span class="dot"></span><span id="ai-status-text">CHECKING…</span></span>
         </header>
-        <div id="chat-window">
-            <div class="message ai">Initializing connection...</div>
-        </div>
-        <div class="typing" id="typing">AI is typing...</div>
-        <div class="composer">
-            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
-            <button id="send-btn">Send</button>
-        </div>
+
+        <!-- ======= Chat ======= -->
+        <main id="chat-window" aria-live="polite" aria-label="Chat with CleanLoop AI"></main>
+
+        <!-- ======= Composer ======= -->
+        <form class="composer" id="composer" autocomplete="off">
+            <input type="text" id="chat-input" placeholder="Type a message…" enterkeyhint="send"
+                   autocomplete="off" aria-label="Type a message">
+            <button type="submit" class="send-btn" id="send-btn" aria-label="Send message">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </form>
     </div>
 
     <script>
-        let currentState = { intent: 'START', step: 'START', state_data: {} };
-        const chatWindow = document.getElementById('chat-window');
-        const inputEl = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const typingEl = document.getElementById('typing');
+    (function () {
+        "use strict";
 
-        function addMessage(text, sender, requireSecure = false) {
-            const div = document.createElement('div');
-            div.className = 'message ' + sender;
-            div.innerHTML = text;
-            chatWindow.appendChild(div);
-            
-            if (requireSecure && sender === 'ai') {
-                inputEl.type = 'password';
-                inputEl.placeholder = 'Enter password securely...';
-            } else {
-                inputEl.type = 'text';
-                inputEl.placeholder = 'Type a message...';
-            }
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+        // ===================== state =====================
+        var state = { intent: "", step: "START" };
+        var busy = false;
+        var secureMode = false;          // next typed message is a password
+        var pendingPhotoStep = false;    // server asked for a photo upload
+        var pendingPhotoState = null;    // state snapshot to send after upload
+        var recentMessages = [];         // last few user texts for NLU context
+        var geoBusy = false;
+
+        var chatWindow = document.getElementById("chat-window");
+        var inputEl = document.getElementById("chat-input");
+        var sendBtn = document.getElementById("send-btn");
+        var composer = document.getElementById("composer");
+        var statusEl = document.getElementById("ai-status");
+        var statusText = document.getElementById("ai-status-text");
+
+        // ===================== helpers =====================
+        function nowTime() {
+            var d = new Date();
+            return d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
         }
 
+        function scrollDown() {
+            requestAnimationFrame(function () {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            });
+        }
+
+        function addMessage(html, who, isSecure) {
+            var div = document.createElement("div");
+            div.className = "msg " + who;
+            div.innerHTML = html;
+            var t = document.createElement("span");
+            t.className = "msg-time";
+            t.textContent = isSecure ? "•• hidden ••" : nowTime();
+            div.appendChild(t);
+            chatWindow.appendChild(div);
+            scrollDown();
+            return div;
+        }
+
+        function clearOldActions() {
+            var olds = chatWindow.querySelectorAll(".actions-wrap, .map-panel, .photo-input-wrap");
+            olds.forEach(function (el) { el.remove(); });
+        }
+
+        function setSecure(on) {
+            secureMode = !!on;
+            inputEl.type = on ? "password" : "text";
+            inputEl.placeholder = on ? "Enter password (hidden)…" : "Type a message…";
+            inputEl.autocomplete = on ? "new-password" : "off";
+        }
+
+        function setStatus(available) {
+            if (available) {
+                statusEl.className = "ai-status ok";
+                statusText.textContent = "AI AVAILABLE";
+            } else {
+                statusEl.className = "ai-status limited";
+                statusText.textContent = "LIMITED MODE";
+            }
+        }
+
+        function escapeHtml(text) {
+            var d = document.createElement("div");
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function chipLabel(action) {
+            var a = action.toLowerCase();
+            if (a.indexOf("cancel") !== -1 || a === "stop") return "danger";
+            if (a.indexOf("submit") !== -1 || a.indexOf("confirm") !== -1) return "primary";
+            if (a.indexOf("skip") !== -1) return "ghost";
+            return "";
+        }
+
+        // ===================== action chips =====================
         function addActions(actions) {
-            if (!actions || actions.length === 0) return;
-            const container = document.createElement('div');
-            container.className = 'actions-container';
-            actions.forEach(action => {
-                const btn = document.createElement('button');
-                btn.className = 'action-chip';
+            if (!actions || !actions.length) return;
+            var wrap = document.createElement("div");
+            wrap.className = "actions-wrap";
+            var container = document.createElement("div");
+            container.className = "actions-container";
+            actions.forEach(function (action) {
+                var btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "action-chip " + chipLabel(action);
                 btn.textContent = action;
-                btn.onclick = () => {
-                    container.remove();
+                btn.addEventListener("click", function () {
+                    if (busy) return;
+                    var a = action.toLowerCase();
+                    if (a.indexOf("cancel") !== -1) {
+                        clearOldActions();
+                        sendMessage(action);
+                        return;
+                    }
+                    if (a.indexOf("use current location") !== -1 || a.indexOf("try again") !== -1 && state.step && state.step.indexOf("GPS") !== -1) {
+                        clearOldActions();
+                        requestGeolocation();
+                        return;
+                    }
+                    if (a.indexOf("choose on map") !== -1) {
+                        clearOldActions();
+                        openMap();
+                        return;
+                    }
+                    if (a.indexOf("attach photo") !== -1) {
+                        clearOldActions();
+                        sendMessage(action);
+                        return;
+                    }
+                    clearOldActions();
                     sendMessage(action);
-                };
+                });
                 container.appendChild(btn);
             });
-            chatWindow.appendChild(container);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            wrap.appendChild(container);
+            chatWindow.appendChild(wrap);
+            scrollDown();
         }
 
-        async function sendMessage(text) {
-            if (!text.trim()) return;
-            addMessage(inputEl.type === 'password' ? '********' : text, 'user');
-            inputEl.value = '';
-            
-            // Clear actions if they exist in the UI currently to prevent clicking old chips
-            const oldContainers = document.querySelectorAll('.actions-container');
-            oldContainers.forEach(c => c.style.display = 'none');
+        // ===================== cards =====================
+        function badgeClass(status) {
+            return "badge badge-" + status.toLowerCase().replace(/\s+/g, "");
+        }
 
-            typingEl.style.display = 'block';
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+        function addCard(card) {
+            if (!card) return;
+            var el = document.createElement("div");
 
-            if (currentState.require_gps && text === 'USE MY CURRENT LOCATION') {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(async (pos) => {
-                        const coords = pos.coords.latitude + ',' + pos.coords.longitude;
-                        await sendApiRequest(coords);
-                    }, async () => {
-                        await sendApiRequest('0,0'); // fallback
+            if (card.kind === "complaint") {
+                el.className = "card";
+                var head = document.createElement("div");
+                head.className = "card-head";
+                head.innerHTML = '<span class="card-id">' + escapeHtml(card.id) + '</span>' +
+                    '<span class="' + badgeClass(card.status) + '">' + escapeHtml(card.status) + '</span>';
+                el.appendChild(head);
+                el.innerHTML += '<div class="card-title">' + escapeHtml(card.title) + '</div>' +
+                    '<div class="card-meta">📅 ' + escapeHtml(card.date) +
+                    (card.location ? ' • 📍 ' + escapeHtml(card.location) : '') +
+                    (card.priority ? ' • ⚑ ' + escapeHtml(card.priority) : '') + '</div>';
+                if (card.status_steps && typeof card.status_step === "number") {
+                    var steps = card.status_steps, cur = card.status_step;
+                    var st = document.createElement("div");
+                    st.className = "stepper";
+                    steps.forEach(function (s, i) {
+                        var div = document.createElement("div");
+                        div.className = "step " + (i < cur ? "done" : (i === cur ? "current" : ""));
+                        div.textContent = s;
+                        st.appendChild(div);
                     });
-                } else {
-                    await sendApiRequest('0,0');
+                    el.appendChild(st);
                 }
+                if (card.timeline && card.timeline.length) {
+                    var tl = document.createElement("div");
+                    tl.className = "timeline";
+                    card.timeline.forEach(function (u) {
+                        var item = document.createElement("div");
+                        item.className = "timeline-item";
+                        item.innerHTML = '<span class="t-date">' + escapeHtml(u.date) + '</span>' +
+                            '<span>' + escapeHtml(u.status) + (u.note ? ' — ' + escapeHtml(u.note) : '') + '</span>';
+                        tl.appendChild(item);
+                    });
+                    el.appendChild(tl);
+                }
+            }
+
+            if (card.kind === "pickup") {
+                el.className = "card";
+                var phead = document.createElement("div");
+                phead.className = "card-head";
+                phead.innerHTML = '<span class="card-id">' + escapeHtml(card.id) + '</span>' +
+                    '<span class="' + badgeClass(card.status) + '">' + escapeHtml(card.status) + '</span>';
+                el.appendChild(phead);
+                el.innerHTML += '<div class="card-title">' + escapeHtml(card.title) + '</div>' +
+                    '<div class="card-meta">📅 ' + escapeHtml(card.date) +
+                    (card.time ? ' • ⏰ ' + escapeHtml(card.time) : '') +
+                    (card.location ? ' • 📍 ' + escapeHtml(card.location) : '') + '</div>';
+                if (card.status_steps && typeof card.status_step === "number") {
+                    var psteps = card.status_steps, pcur = card.status_step;
+                    var pst = document.createElement("div");
+                    pst.className = "stepper";
+                    psteps.forEach(function (s, i) {
+                        var div = document.createElement("div");
+                        div.className = "step " + (i < pcur ? "done" : (i === pcur ? "current" : ""));
+                        div.textContent = s;
+                        pst.appendChild(div);
+                    });
+                    el.appendChild(pst);
+                }
+            }
+
+            if (card.kind === "review") {
+                el.className = "card";
+                var rtitle = document.createElement("div");
+                rtitle.className = "card-title";
+                rtitle.style.marginBottom = "8px";
+                rtitle.textContent = card.review_type === "pickup" ? "🚛 Pickup Review" : "🗑 Report Review";
+                el.appendChild(rtitle);
+                var grid = document.createElement("dl");
+                grid.className = "review-grid";
+                (card.fields || []).forEach(function (pair) {
+                    var dt = document.createElement("dt");
+                    dt.textContent = pair[0];
+                    var dd = document.createElement("dd");
+                    dd.textContent = pair[1];
+                    grid.appendChild(dt);
+                    grid.appendChild(dd);
+                });
+                el.appendChild(grid);
+            }
+
+            if (card.kind === "success") {
+                el.className = "card success";
+                var stitle = document.createElement("div");
+                stitle.className = "success-title";
+                stitle.textContent = "✓ " + card.title;
+                el.appendChild(stitle);
+                var sid = document.createElement("div");
+                sid.innerHTML = 'ID: <span class="card-id">' + escapeHtml(card.id) + '</span>';
+                el.appendChild(sid);
+                var sgrid = document.createElement("dl");
+                sgrid.className = "review-grid";
+                sgrid.style.marginTop = "6px";
+                (card.rows || []).forEach(function (pair) {
+                    var dt = document.createElement("dt");
+                    dt.textContent = pair[0];
+                    var dd = document.createElement("dd");
+                    dd.textContent = pair[1];
+                    sgrid.appendChild(dt);
+                    sgrid.appendChild(dd);
+                });
+                el.appendChild(sgrid);
+                if (card.track_url) {
+                    var link = document.createElement("a");
+                    link.href = card.track_url;
+                    link.textContent = "View full details →";
+                    link.style.cssText = "display:inline-block;margin-top:8px;font-size:0.82rem;font-weight:600;";
+                    el.appendChild(link);
+                }
+            }
+
+            chatWindow.appendChild(el);
+            scrollDown();
+        }
+
+        // ===================== geolocation =====================
+        function requestGeolocation(retry) {
+            if (geoBusy) return;
+            if (!navigator.geolocation) {
+                addMessage("Geolocation is not supported by this browser.", "ai");
+                sendMessage("__GPS_FAIL__");
                 return;
             }
-
-            await sendApiRequest(text);
+            geoBusy = true;
+            setBusy(true);
+            var typing = showTyping();
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                geoBusy = false;
+                hideTyping(typing);
+                setBusy(false);
+                var coords = pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
+                sendMessage("__GPS_COORDS__:" + coords);
+            }, function (err) {
+                geoBusy = false;
+                hideTyping(typing);
+                setBusy(false);
+                addMessage("I couldn't access your location.", "ai");
+                sendMessage("__GPS_FAIL__");
+            }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 });
         }
 
-        async function sendApiRequest(message) {
-            try {
-                const res = await fetch('/api/ai/chat/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message, state: currentState })
+        // ===================== map (Leafmap/folium inside iframe) =====================
+        function openMap() {
+            setBusy(true);
+            fetch("/ai/map/", { method: "GET", credentials: "same-origin" })
+                .then(function (r) { return r.text(); })
+                .then(function (html) {
+                    setBusy(false);
+                    var panel = document.createElement("div");
+                    panel.className = "map-panel";
+                    panel.innerHTML = html;
+                    var actions = document.createElement("div");
+                    actions.className = "map-actions";
+                    var confirmBtn = document.createElement("button");
+                    confirmBtn.type = "button";
+                    confirmBtn.className = "action-chip primary";
+                    confirmBtn.textContent = "✓ Confirm location";
+                    var cancelBtn = document.createElement("button");
+                    cancelBtn.type = "button";
+                    cancelBtn.className = "action-chip ghost";
+                    cancelBtn.textContent = "Cancel";
+                    actions.appendChild(confirmBtn);
+                    actions.appendChild(cancelBtn);
+                    panel.appendChild(actions);
+                    chatWindow.appendChild(panel);
+                    scrollDown();
+
+                    var selectedCoords = null;
+                    // Poll until Leaflet is ready inside the folium iframe (same pattern as report pages)
+                    var attempts = 0;
+                    var mapObj = null, L = null, marker = null;
+                    var initInterval = setInterval(function () {
+                        attempts++;
+                        if (attempts > 60) { clearInterval(initInterval); return; }
+                        try {
+                            var f = panel.querySelector("iframe");
+                            if (!f || !f.contentWindow || !f.contentWindow.L) return;
+                            L = f.contentWindow.L;
+                            for (var key in f.contentWindow) {
+                                if (key.indexOf("map_") === 0 && typeof f.contentWindow[key] === "object") {
+                                    mapObj = f.contentWindow[key];
+                                    break;
+                                }
+                            }
+                            if (mapObj && L) {
+                                clearInterval(initInterval);
+                                mapObj.on("click", function (e) {
+                                    selectedCoords = e.latlng.lat.toFixed(6) + "," + e.latlng.lng.toFixed(6);
+                                    if (marker) { marker.setLatLng(e.latlng); }
+                                    else { marker = L.marker(e.latlng).addTo(mapObj); }
+                                    confirmBtn.textContent = "✓ Confirm " + selectedCoords;
+                                });
+                            }
+                        } catch (e) { /* iframe not ready yet */ }
+                    }, 200);
+
+                    confirmBtn.addEventListener("click", function () {
+                        if (selectedCoords) {
+                            panel.remove();
+                            sendMessage("__MAP_COORDS__:" + selectedCoords);
+                        } else {
+                            alert("Tap the map first to drop a pin, then press Confirm.");
+                        }
+                    });
+                    cancelBtn.addEventListener("click", function () {
+                        panel.remove();
+                        sendMessage("Cancel");
+                    });
+                })
+                .catch(function () {
+                    setBusy(false);
+                    addMessage("Couldn't load the map. You can use your current location or type an address.", "ai");
                 });
-                const data = await res.json();
-                typingEl.style.display = 'none';
-                
-                if (data.ok) {
-                    currentState = {
-                        intent: data.intent,
-                        step: data.step,
-                        state_data: data.state_data || currentState.state_data
-                    };
-                    if (data.require_gps) {
-                        currentState.require_gps = true;
-                    }
-                    addMessage(data.message, 'ai', data.require_secure_input);
-                    addActions(data.actions);
-                } else {
-                    addMessage('Error communicating with AI.', 'ai');
-                }
-            } catch (err) {
-                typingEl.style.display = 'none';
-                addMessage('Network error. Please try again.', 'ai');
-            }
         }
 
-        sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
-        inputEl.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage(inputEl.value);
+        // ===================== photo upload =====================
+        function addPhotoPicker() {
+            var wrap = document.createElement("div");
+            wrap.className = "photo-input-wrap";
+            var input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/jpeg,image/png,image/webp";
+            var drop = document.createElement("div");
+            drop.className = "photo-drop";
+            drop.innerHTML = '<div class="icon">📷</div><div><b>Tap to attach a photo</b><br>JPG / PNG / WebP, max 5 MB</div>';
+            var preview = document.createElement("div");
+            preview.className = "photo-preview";
+            wrap.appendChild(input);
+            wrap.appendChild(drop);
+            wrap.appendChild(preview);
+            chatWindow.appendChild(wrap);
+            scrollDown();
+
+            drop.addEventListener("click", function () { input.click(); });
+            input.addEventListener("change", function () {
+                var file = input.files && input.files[0];
+                if (!file) return;
+                if (file.size > 5 * 1024 * 1024) {
+                    preview.textContent = "⚠ File is larger than 5 MB — please pick a smaller image.";
+                    preview.style.color = "#dc2626";
+                    return;
+                }
+                preview.textContent = "✓ " + file.name + " — uploading…";
+                preview.style.color = "#059669";
+                uploadPhoto(file, wrap);
+            });
+        }
+
+        function uploadPhoto(file, wrap) {
+            setBusy(true);
+            var fd = new FormData();
+            fd.append("image", file);
+            // state snapshot taken BEFORE sending (photo step holds no coords change)
+            var s = Object.assign({}, state);
+            delete s.recent;
+            fetch("/api/ai/photo/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                body: fd
+            }).then(function (r) { return r.json(); })
+              .then(function (data) {
+                  setBusy(false);
+                  wrap.remove();
+                  addMessage(data.ok ? "Photo attached ✓" : (data.error || "Upload failed."), "user", false);
+                  if (data.ok) {
+                      state = data.state || s;
+                      sendMessage("__PHOTO_DONE__");
+                  }
+              })
+              .catch(function () {
+                  setBusy(false);
+                  wrap.remove();
+                  addMessage("Upload failed — continuing without photo.", "user");
+                  sendMessage("__PHOTO_DONE__");
+              });
+        }
+
+        // ===================== typing + busy =====================
+        function showTyping() {
+            var t = document.createElement("div");
+            t.className = "msg ai typing-msg";
+            t.innerHTML = "<span></span><span></span><span></span>";
+            chatWindow.appendChild(t);
+            scrollDown();
+            return t;
+        }
+        function hideTyping(el) { if (el && el.parentNode) el.remove(); }
+
+        function setBusy(on) {
+            busy = on;
+            sendBtn.disabled = on;
+        }
+
+        // ===================== network =====================
+        function getCookie(name) {
+            var m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+            return m ? m.pop() : "";
+        }
+
+        function postChat(payload) {
+            return fetch("/api/ai/chat/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        function sendMessage(text) {
+            if (busy) return;
+            var isPassword = secureMode;
+            var isSentinel = String(text).indexOf("__") === 0;
+            var display = isPassword ? "••••••••"
+                : (isSentinel ? "📍 " + String(text).replace(/__\w+__:/, "Location ") : text);
+            if (!isSentinel) addMessage(escapeHtml(display), "user", isPassword);
+            if (!isPassword && text && text.indexOf("__") !== 0) {
+                recentMessages.push(String(text).slice(0, 120));
+                if (recentMessages.length > 4) recentMessages.shift();
+            }
+            inputEl.value = "";
+            setSecure(false);
+            setBusy(true);
+            var typing = showTyping();
+
+            var payload = { message: text, state: Object.assign({}, state) };
+            payload.state.recent = recentMessages.slice();
+
+            postChat(payload)
+            .then(function (r) {
+                // After in-chat login Django rotates the CSRF token; retry once with the fresh cookie
+                if (r.status === 403) { return postChat(payload); }
+                return r;
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                hideTyping(typing);
+                setBusy(false);
+                clearOldActions();
+                if (!data.ok) {
+                    addMessage("AI assistance is temporarily unavailable. All CleanLoop pages still work normally.", "ai");
+                    setStatus(false);
+                    addActions(["Report Waste", "Request Pickup", "Track Complaint", "My Complaints"]);
+                    return;
+                }
+                state = data.state || {};
+                state.intent = data.intent;
+                state.step = data.step;
+                setStatus(data.provider_available !== false);
+                setSecure(data.secure_input === true);
+                addMessage(data.message, "ai", false);
+                (data.cards || []).forEach(addCard);
+                if (data.photo_request) { addPhotoPicker(); return; }
+                if (data.map_request) { openMap(); return; }
+                if (data.gps_request) { addActions(["📍 Use Current Location", "🗺 Choose on Map", "✏ Enter Address", "Cancel"]); return; }
+                addActions(data.actions);
+            })
+            .catch(function () {
+                hideTyping(typing);
+                setBusy(false);
+                clearOldActions();
+                addMessage("AI assistance is temporarily unavailable. All CleanLoop pages still work normally.", "ai");
+                setStatus(false);
+                addActions(["Report Waste", "Request Pickup", "Track Complaint", "My Complaints"]);
+            });
+        }
+
+        // ===================== events =====================
+        composer.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var text = inputEl.value.trim();
+            if (!text || busy) return;
+            sendMessage(text);
         });
 
-        // Initialize chat
-        chatWindow.innerHTML = '';
-        sendApiRequest('');
+        // ===================== boot =====================
+        setStatus(false);
+        (function boot() {
+            setBusy(true);
+            var typing = showTyping();
+            fetch("/api/ai/chat/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ message: "", state: {} })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                hideTyping(typing);
+                setBusy(false);
+                if (data.ok) {
+                    state = data.state || {};
+                    state.intent = data.intent;
+                    state.step = data.step;
+                    setStatus(data.provider_available !== false);
+                    addMessage(data.message, "ai", false);
+                    addActions(data.actions);
+                } else {
+                    setStatus(false);
+                    addMessage("Welcome to CleanLoop 👋 How can we help?", "ai");
+                }
+            })
+            .catch(function () {
+                hideTyping(typing);
+                setBusy(false);
+                setStatus(false);
+                addMessage("Couldn't reach the assistant. Please refresh the page.", "ai");
+            });
+        })();
+
+        // Expose for GPS/map internals
+        window.__cleanloopSend = sendMessage;
+        window.__cleanloopGeo = function () { requestGeolocation(); };
+    })();
     </script>
 </body>
 </html>

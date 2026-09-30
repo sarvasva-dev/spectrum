@@ -23,3 +23,12 @@ media/complaints/*
 db.sqlite3
 backend/db.sqlite3
 staticfiles/
+
+# Environment variables (API keys - NEVER commit)
+.env
+.env.local
+.env.production
+.freebuff/
+scratch/
+*.tmp
+

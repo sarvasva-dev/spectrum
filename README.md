@@ -1,20 +1,23 @@
 # CleanLoop — Smart Waste Management
-**Spectrum Hackathon 2026**
+**Spectrum Hackathon 2026** • Team Bug Busters
 
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-blue.svg)](https://www.python.org/)
 [![Django 6.1](https://img.shields.io/badge/Django-6.1-green.svg)](https://www.djangoproject.com/)
+[![Sarvam AI](https://img.shields.io/badge/AI-Sarvam--105B-purple.svg)](https://sarvam.ai/)
 [![Nginx](https://img.shields.io/badge/Nginx-Reverse%20Proxy-brightgreen.svg)](https://nginx.org/)
 [![Gunicorn](https://img.shields.io/badge/Gunicorn-WSGI-orange.svg)](https://gunicorn.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> A centralized waste management and segregation platform for cities, colleges, residential societies, and public spaces.
+> A centralized waste management, pickup logistics and citizen engagement platform for cleaner cities and communities.
 
 ---
 
-## 🌐 Live Deployment
-- **Live Website**: [http://16.171.238.127/](http://16.171.238.127/)
-- **Municipal Admin Portal**: [http://16.171.238.127/admin-portal/](http://16.171.238.127/admin-portal/)
-- **Django Superuser Admin**: [http://16.171.238.127/admin/](http://16.171.238.127/admin/)
+## 🌐 Live Production Domain & Links
+- **Canonical Production Site**: [https://cleanloop.sarthakml.in/](https://cleanloop.sarthakml.in/)
+- **AI Citizen Assistant**: [https://cleanloop.sarthakml.in/ai/](https://cleanloop.sarthakml.in/ai/)
+- **Platform Knowledge Hub / Guide**: [https://cleanloop.sarthakml.in/guide/](https://cleanloop.sarthakml.in/guide/)
+- **Municipal Admin Portal**: [https://cleanloop.sarthakml.in/admin-portal/](https://cleanloop.sarthakml.in/admin-portal/)
+- **System Visualizer & REST API**: [https://cleanloop.sarthakml.in/visual/](https://cleanloop.sarthakml.in/visual/)
 
 ---
 
@@ -28,45 +31,43 @@
 
 ---
 
-## ✨ Core Features
+## ✨ Core Features & Platform Modules
 
-1. **Citizen Portal**:
-   - Simple account registration and login (email or username).
-   - Citizen dashboard with active complaint counters and quick action cards.
-   - Report waste issues (Overflowing bins, Road litter, Illegal dumping, Missed collection, Improper segregation).
-   - Smart priority calculation based on issue severity and location history.
-   - Doorstep pickup requests for segregated recyclables (Plastic, Paper, E-waste, Glass, Metal, Organic, General).
-   - Real-time complaint tracking with step-by-step progress timeline.
+1. **CleanLoop AI Citizen Assistant (`/ai/`)**:
+   - Conversational assistant powered by Sarvam AI (`sarvam-105b`).
+   - Enables natural-language reporting ("kachra pada hai", "pickup chahiye"), status queries ("WM-2026-0025 ka status?"), and complaint/pickup history.
+   - Built with deterministic security: Django handles all DB actions and authentication.
 
-2. **Municipal Administrator Portal**:
-   - Centralized operational statistics (Total complaints, Pending, Resolved, Total pickups).
-   - Interactive complaint management: assign sanitation crews, update lifecycle status, and add dispatch notes.
-   - Doorstep pickup management: assign collection vehicles and mark completed.
-   - **Waste Hotspots Analytics**: Automated location-based aggregation highlighting chronic dumping zones.
-   - Issue category breakdown with visual metric bars.
+2. **Citizen Portal & Gamified Rewards**:
+   - Account registration, login, and personalized citizen dashboard.
+   - Report waste issues with browser GPS coordinates, Leafmap pin selection, address, landmark, and photo.
+   - Smart priority calculation algorithm based on issue severity and geographic complaint density.
+   - Doorstep pickup requests for bulk or segregated waste (Organic, Plastic, Paper, Glass, Metal, E-Waste).
+   - **CleanCoins Incentive System**: Earn +50 CleanCoins for every verified report resolved by sanitation crews.
 
-3. **Waste Awareness & Education**:
-   - Color-coded bin segregation guidelines (Green = Wet/Organic, Blue = Dry/Recyclable, Red/Black = Hazardous/E-Waste).
-   - Practical Do's and Don'ts for community members.
-   - Interactive search lookup for household waste items.
+3. **Municipal Administrator Operations Console (`/admin-portal/`)**:
+   - Executive metrics: Total Users, Total Complaints, Pending/Resolved Breakdown, Pickup Requests.
+   - **Ward Environmental Health Index (EHI 0-100)**: Real-time municipal sanitation score.
+   - **Waste Hotspots & Predictive AI Route Dispatch**: Geographic clustering drawing Nearest-Neighbor AI Driver Route polyline across active stops.
+   - Sanitation crew assignment, vehicle dispatching, and resolution report notes.
 
-4. **Community Recognition (Man of the Month)**:
-   - Identifies the citizen with the highest number of valid waste reports in the current month.
-   - Tied scores are resolved using registration dates.
-   - Fully gamifies participation to keep citizens engaged.
+4. **Guide / Knowledge Hub (`/guide/`) & Waste Awareness (`/awareness/`)**:
+   - Interactive search lookup for 3-color bin segregation rules (Green = Wet, Blue = Dry, Red/Black = E-Waste/Hazardous).
+   - Detailed platform guide with sticky TOC and reading progress indicator.
 
-5. **API / System Visualizer**:
-   - Dedicated dark-themed developer playground.
-   - Allows judges/developers to send live requests to backend endpoints.
-   - **Live WebSocket System Graph** animating HTTP requests flowing through the system.
-   - Visualizes JSON responses, status codes, and latency in real-time.
+5. **Community Champion Recognition (`/man-of-the-month/`)**:
+   - Recognizes citizen champions with highest verified reports in the current month while strictly maintaining data privacy.
+
+6. **System Visualizer & REST API Playground (`/visual/`)**:
+   - Dark developer console with interactive REST API tester (`/api/health/`, `/api/complaints/`).
+   - Live WebSocket event stream animating backend events through Django Channels.
 
 ---
 
 ## 🛠️ Tech Stack & Constraints
-- **Backend**: Python 3.14, Django 6.1, SQLite3
-- **Frontend**: HTML5, Modern Light Theme CSS3 (CSS Variables, No Bootstrap/Tailwind), Vanilla JavaScript (No Node.js/React/Vue)
-- **Deployment**: Nginx 1.28 reverse proxy, Gunicorn 26.2 WSGI server, systemd process daemon (`smartwaste.service`), AWS EC2 Ubuntu 24.04 LTS
+- **Backend**: Python 3.14, Django 6.1, SQLite3, Django Channels, Sarvam AI SDK (`sarvamai`)
+- **Frontend**: Standalone HTML5 pages, Scoped CSS Variables (Light Blue + Navy Theme), Vanilla JavaScript, Leafmap / Folium / Leaflet maps
+- **Deployment Compatibility**: Nginx reverse proxy, Gunicorn WSGI, Daphne ASGI, systemd, AWS EC2 Ubuntu 24.04 LTS
 
 ---
 
@@ -78,33 +79,29 @@ git clone https://github.com/sarvasva-dev/spectrum.git
 cd spectrum
 
 # 2. Create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate
+python -m venv venv
+source venv/bin/activate  # Or venv\Scripts\activate on Windows
 
 # 3. Install dependencies
-pip install django gunicorn pillow sqlparse asgiref
+pip install django gunicorn pillow leafmap folium channels daphne sarvamai python-dotenv
 
 # 4. Apply migrations
-python manage.py migrate
+python backend/manage.py migrate
 
-# 5. Seed demo data (creates admin and sample records)
-python seed_data.py
-
-# 6. Run local server
-python manage.py runserver 0.0.0.0:8000
+# 5. Run local development server
+python backend/manage.py runserver 0.0.0.0:8000
 ```
 
 ---
 
-## 🧪 Testing Suite
+## 🧪 Automated Testing Suite
 
-Run the full automated test suite covering authentication, permissions, workflows, and edge cases:
 ```bash
-python manage.py test
+python backend/manage.py test waste_management
 ```
 
 ---
 
 ## 📖 Additional Documentation
-- [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md): Complete architecture, database schema, user/admin workflows, and security design.
-- [HACKATHON_QA.md](HACKATHON_QA.md): 20 comprehensive questions and answers tailored for hackathon judges.
+- [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md): Complete architecture, schema, user/admin workflows, and security design.
+- [HACKATHON_QA.md](HACKATHON_QA.md): Comprehensive questions and answers for hackathon evaluation.

@@ -145,6 +145,11 @@ class ComplaintForm(forms.ModelForm):
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'auto_priority_toggle'}),
         help_text="Let Smart Waste system calculate urgency automatically"
     )
+    priority = forms.ChoiceField(
+        choices=Complaint.PRIORITY_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'manual_priority_select'})
+    )
 
     class Meta:
         model = Complaint

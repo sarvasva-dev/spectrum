@@ -38,7 +38,9 @@ urlpatterns = [
     # API Playground & REST Endpoints
     path('visual/', views.api_playground_view, name='api_playground'),
     path('ai/', views.ai_view, name='ai'),
+    path('ai/map/', views.ai_map_fragment_view, name='ai_map_fragment'),
     path('api/ai/chat/', views.api_ai_chat_view, name='api_ai_chat'),
+    path('api/ai/photo/', views.api_ai_photo_view, name='api_ai_photo'),
     path('api/health/', views.api_health_view, name='api_health'),
     path('api/complaints/', views.api_complaint_list_create_view, name='api_complaint_list_create'),
     path('api/complaints/<str:complaint_id>/', views.api_complaint_detail_update_delete_view, name='api_complaint_detail_update_delete'),

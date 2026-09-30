@@ -1,67 +1,59 @@
 # CleanLoop Project Documentation
 
 ## Project Overview
-CleanLoop is a localized waste management platform built with Django, targeting cities, residential societies, and public spaces to solve the common issue of manual waste management which leads to overflowing garbage, illegal dumping, and poor segregation. It bridges the gap between citizens reporting issues and municipal bodies acting on them.
+CleanLoop is a localized, intelligent waste management platform built with Django, targeting cities, residential societies, and public spaces to solve manual waste management challenges. It connects citizens, sanitation crews, and municipal administrators through a centralized platform.
 
 **Tagline:** "Smarter Waste Management for Cleaner Communities"
+**Team:** Bug Busters (Spectrum Hackathon 2026)
 
-## Architecture
-This project implements a monolithic web architecture tailored for quick deployment and reliable performance in local environments or basic cloud hosting (like an EC2 instance), aligning with Hackathon requirements.
+## Architecture & Design
+This project implements a modular monolithic web architecture with standalone frontend pages, REST APIs, WebSockets, and AI assistant capabilities.
 
-- **Backend:** Python + Django framework, handling routing, ORM abstractions, security, and authentication.
-- **Frontend:** HTML5, CSS3 (using a customized Blue Light modern theme), and Vanilla JavaScript for mapping.
-- **Database:** SQLite3 for lightweight, zero-configuration local development.
-- **Map Integration:** Leafmap (Python) with Folium/Leaflet rendering backend.
+- **Backend:** Python 3.14 + Django 6.1 framework handling routing, ORM abstractions, security, authentication, and REST APIs.
+- **AI Assistant Integration:** Server-side Sarvam AI SDK (`sarvam-105b`) powering conversational intent classification and natural language queries at `/ai/`.
+- **Frontend:** Standalone HTML5 pages with embedded Light Blue & White CSS design system tokens and Vanilla JavaScript.
+- **Database:** SQLite3 for lightweight, zero-configuration local development and deterministic ORM reads/writes.
+- **Map Integration:** Leafmap (Python) with Folium/Leaflet rendering backend for GPS coordinates and map pin selection.
+- **Real-Time Visualizer:** Django Channels + Daphne WebSocket server broadcasting live system events.
 
 ### Structure
-The codebase has been refactored into a clear separation of concerns:
-1. `backend/`: Contains the Django project (`smartwaste_project/`), apps (`waste_management/`), business logic (`views.py`, `models.py`), and the `manage.py` entry point.
-2. `frontend/`: Contains all static assets (`css/`, `js/`, `img/`) and HTML templates (`pages/`).
-3. `media/`: Stores user uploads like images attached to complaints.
+1. `backend/`: Django project (`smartwaste_project/`), app (`waste_management/`), business logic (`views.py`, `models.py`, `ai_assistant.py`), and `manage.py`.
+2. `frontend/pages/`:
+   - `citizen/`: `dashboard.html`, `report_waste.html`, `pickup_request.html`, `complaint_tracking.html`, `complaint_detail.html`, `pickup_list.html`, `login.html`, `register.html`
+   - `admin/`: `dashboard.html`, `complaint_update.html`, `pickup_update.html`
+   - `misc/`: `ai.html`, `guide.html`, `awareness.html`, `man_of_the_month.html`, `403.html`, `404.html`, `500.html`
+   - Root pages: `landing.html`, `visual.html`
 
 ## Key Features
 
-### Citizen Portal
-- **Dashboard:** At-a-glance view of user-reported issues and requested pickups.
-- **Report Waste:** Users can report illegal dumping or overflowing bins by submitting a photo and tagging the exact location on an interactive map.
-- **Schedule Pickup:** Users can book a doorstep waste pickup for bulk or specialized waste.
-- **Complaint Tracking:** Real-time timeline view of a complaint's status (Pending -> Assigned -> In Progress -> Resolved).
-- **Man of the Month:** A recognition feature incentivizing citizens to report valid waste issues, gamifying the participation process.
+### 1. Citizen AI Assistant (`/ai/`)
+- Natural-language conversational interface supporting English, Hindi, and Hinglish.
+- Quick action chips: Report Waste, Request Pickup, Track Complaint, Track Pickup, My Complaints, My Pickups, Waste Guide.
+- Live database queries for complaint status ("WM-2026-0025 ka status?", "meri complaints dikhao").
+- Conversational complaint and pickup creation with GPS/map pin selection and photo attachment.
+- Graceful fallbacks if AI service is temporarily unavailable.
 
-### Developer & Technical Tools
-- **API Visualizer:** A dark-themed interactive playground located at `/visual/` to demonstrate live JSON API requests (like `/api/complaints/`) and network latencies.
+### 2. Citizen Portal & CleanCoins Rewards
+- Account registration, login (username/email), and profile management.
+- Report waste issues with GPS coordinates, landmark, address, and photo.
+- Automatic rule-based priority calculator (HIGH for illegal dumping/overflowing bins, CRITICAL for chronic hotspots).
+- Doorstep waste pickup booking with preferred date/time slots and categories.
+- **CleanCoins Incentive System**: Citizens earn +50 CleanCoins whenever a verified report is marked RESOLVED by municipal staff.
 
-### Municipal Admin Portal
-- **Dashboard:** Provides aggregate statistics (total reports, pending issues).
-- **Map Visualization:** A city-wide map view plotting all active complaints and automatically identified waste "hotspots" to coordinate resources.
-- **Hotspot Analytics:** Algorithms cluster complaints within a 0.5km radius to identify chronic dumping areas and suggest municipal action (e.g., placing new bins or scheduling patrols).
-- **Complaint Management:** Update the status of reports and assign specific crews.
-- **Logistics Management:** Route doorstep pickup requests to appropriate municipal vehicles.
+### 3. Municipal Admin Operations Console (`/admin-portal/`)
+- Aggregate operational metrics: Total Users, Total Complaints, Pending/Resolved, Pickup Requests.
+- **Ward Environmental Health Index (EHI Score 0-100)**: Dynamic sanitation status score.
+- **Waste Hotspots & Predictive AI Route Dispatch**: Automated geographic clustering (0.5km radius) drawing Nearest-Neighbor AI Driver Route polyline across active stops.
+- Sanitation crew assignment, vehicle dispatching, and resolution report notes.
 
-## Development Setup
+### 4. System Visualizer (`/visual/`)
+- Dark-themed developer playground displaying real-time REST API requests, status codes, latencies, and WebSocket backend event graph.
 
-1. **Prerequisites:** Python 3.9+ installed.
-2. **Virtual Environment:** 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Or venv\Scripts\activate on Windows
-   ```
-3. **Install Dependencies:**
-   ```bash
-   pip install django pillow leafmap folium
-   ```
-4. **Run Server:**
-   ```bash
-   cd backend
-   python manage.py runserver
-   ```
-5. **Access Application:** Visit `http://127.0.0.1:8000` in your web browser.
+### 5. Platform Knowledge Hub (`/guide/`) & Waste Awareness (`/awareness/`)
+- Comprehensive platform guide with sticky TOC, reading progress indicator, and instant search.
+- Color-coded waste segregation rules (Green = Wet/Organic, Blue = Dry/Recyclable, Red/Black = E-Waste/Hazardous).
 
-## Next Steps for Production
-*This iteration is expressly built for LOCAL DEVELOPMENT as per Hackathon scope.* 
-Future iterations will require:
-1. **Production Server:** Gunicorn serving the WSGI application.
-2. **Reverse Proxy:** Nginx for SSL termination and static file serving.
-3. **Database Migration:** Transition from SQLite3 to PostgreSQL.
-4. **Object Storage:** Use AWS S3 or GCP Cloud Storage for media files.
-5. **DNS & HTTPS:** Setting up domain names and Let's Encrypt certificates.
+## Security & Data Privacy
+- **Role Isolation:** Citizens can only view and manage their own complaints/pickups; administrators have separate protected routes.
+- **Credential Protection:** Passwords and API keys are never passed to the LLM or exposed in client state.
+- **CSRF & File Validation:** CSRF token enforcement on all POST/PATCH forms and 5MB image upload size validation.

@@ -2080,9 +2080,16 @@ ul, ol {
 .app-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.55rem;
   text-decoration: none;
   flex-shrink: 0;
+}
+.app-brand-logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.25));
 }
 .app-brand-logo {
   font-size: 1.5rem;
@@ -2245,6 +2252,10 @@ ul, ol {
   .app-nav-link { width: 100%; display: block; padding: 0.75rem 1rem; }
   .app-user-area { width: 100%; flex-direction: column; align-items: flex-start; margin: 0; gap: 1rem; padding: 0 1rem; }
 }
+@media (max-width: 420px) {
+  .app-brand-sub { display: none; }
+  .app-brand-logo-img { width: 30px; height: 30px; }
+}
 </style>
 
   
@@ -2255,8 +2266,11 @@ ul, ol {
   <header class="app-header" role="banner">
   <div class="app-header-container">
     <a href="{% url 'landing' %}" class="app-brand" aria-label="CleanLoop Home">
-      <div class="app-brand-name">Clean<span class="highlight">Loop</span></div>
-      <div class="app-brand-sub">WASTE MANAGEMENT SYSTEM</div>
+      <img class="app-brand-logo-img" src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop logo" width="34" height="34">
+      <div class="app-brand-text">
+        <div class="app-brand-name">Clean<span class="highlight">Loop</span></div>
+        <div class="app-brand-sub">WASTE MANAGEMENT SYSTEM</div>
+      </div>
     </a>
 
     <button class="app-mobile-toggle" id="appMobileToggle" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -2268,12 +2282,13 @@ ul, ol {
     </button>
 
     <div class="app-nav-wrapper" id="appNavWrapper">
-      <nav class="app-nav" aria-label="Primary Navigation">
+            <nav class="app-nav" aria-label="Primary Navigation">
 
-        <a href="{% url 'admin_dashboard' %}" class="app-nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Overview</a>
-        <a href="{% url 'admin_dashboard' %}?section=complaints" class="app-nav-link {% if request.resolver_match.url_name == 'admin_complaint_update' %}active{% endif %}">Complaints</a>
-        <a href="{% url 'admin_dashboard' %}?section=pickups" class="app-nav-link {% if request.resolver_match.url_name == 'admin_pickup_update' %}active{% endif %}">Pickup Requests</a>
-        <a href="{% url 'admin_dashboard' %}?section=hotspots" class="app-nav-link">Hotspots</a>
+        <a href="{% url 'admin_dashboard' %}" class="app-nav-link {% if request.resolver_match.url_name == 'admin_dashboard' and not request.GET.section %}active{% endif %}">Overview</a>
+        <a href="{% url 'admin_dashboard' %}#complaints-section" class="app-nav-link {% if request.resolver_match.url_name == 'admin_complaint_update' or request.GET.section == 'complaints' %}active{% endif %}">Complaints</a>
+        <a href="{% url 'admin_dashboard' %}#pickups-section" class="app-nav-link {% if request.resolver_match.url_name == 'admin_pickup_update' or request.GET.section == 'pickups' %}active{% endif %}">Pickup Requests</a>
+        <a href="{% url 'admin_dashboard' %}#hotspots-section" class="app-nav-link {% if request.GET.section == 'hotspots' %}active{% endif %}">Hotspots</a>
+        <a href="{% url 'admin_dashboard' %}#analytics-section" class="app-nav-link {% if request.GET.section == 'analytics' %}active{% endif %}">Analytics</a>
         <a href="{% url 'api_playground' %}" class="app-nav-link {% if request.resolver_match.url_name == 'api_playground' %}active{% endif %}">Visualizer</a>
         <a href="{% url 'awareness' %}" class="app-nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a>
 
