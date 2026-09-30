@@ -1,6 +1,12 @@
-Django>=4.2,<5.0
+Django>=4.2
 Pillow>=10.0.0
 leafmap>=0.30.0
 folium>=0.14.0
 channels>=4.0.0
 daphne>=4.0.0
+gunicorn>=21.2.0
+sarvamai>=0.1.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+sqlparse>=0.4.4
+asgiref>=3.7.2

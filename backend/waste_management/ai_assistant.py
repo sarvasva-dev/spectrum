@@ -188,25 +188,43 @@ def _match_issue_code_freeform(text):
 
 
 def _norm_date_str(raw):
-    """Accept 'today', 'tomorrow', 'YYYY-MM-DD' or 'DD-MM-YYYY'/'DD/MM/YYYY'."""
+    """Accept 'today', 'tomorrow', 'Tomorrow (01 Oct)', 'YYYY-MM-DD', 'DD-MM-YYYY' or '01 Oct'."""
     raw = _clamp_text(raw, 40).lower().strip()
+    if not raw:
+        return None
     today = timezone.localdate()
-    if raw in ("today", "aaj"):
+    if "today" in raw or "aaj" in raw:
         return today.isoformat()
-    if raw in ("tomorrow", "kal"):
+    if "tomorrow" in raw or "kal" in raw:
         return (today + timedelta(days=1)).isoformat()
-    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})$", raw)
+
+    m = re.search(r"\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b", raw)
     if m:
         try:
             return date(int(m.group(1)), int(m.group(2)), int(m.group(3))).isoformat()
         except ValueError:
-            return None
-    m = re.match(r"^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$", raw)
+            pass
+
+    m = re.search(r"\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})\b", raw)
     if m:
         try:
             return date(int(m.group(3)), int(m.group(2)), int(m.group(1))).isoformat()
         except ValueError:
-            return None
+            pass
+
+    months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+    pattern = r"\b(\d{1,2})\s+(" + "|".join(months) + r")(?:\s+(\d{4}))?\b"
+    m = re.search(pattern, raw)
+    if m:
+        try:
+            day = int(m.group(1))
+            month_str = m.group(2)
+            month_num = months.index(month_str) + 1
+            year = int(m.group(3)) if m.group(3) else today.year
+            return date(year, month_num, day).isoformat()
+        except ValueError:
+            pass
+
     return None
 
 
@@ -658,6 +676,7 @@ def _reply_help():
 
 
 def _dispatch_intent(request, intent, message):
+    low = _clamp_text(message, 60).lower().strip()
     if intent == "GREETING":
         return _greeting(request)
     if intent == "REPORT_COMPLAINT":
@@ -665,8 +684,12 @@ def _dispatch_intent(request, intent, message):
     if intent == "REQUEST_PICKUP":
         return _start_pickup()
     if intent == "TRACK_COMPLAINT":
+        if low in ("track complaint", "📍 track complaint"):
+            return _start_track_complaint()
         return _complaint_status_lookup(request, message)
     if intent == "TRACK_PICKUP":
+        if low in ("track pickup", "📦 track pickup"):
+            return _start_track_pickup()
         return _pickup_status_lookup(request, message)
     if intent == "MY_COMPLAINTS":
         return _list_complaints(request)
@@ -1069,6 +1092,7 @@ def _complaint_flow(request, message, state):
 
 
 def _complaint_review(state):
+    state["step"] = "REVIEW"
     loc = state.get("location") or "Not set"
     latlng = ""
     if state.get("latitude") is not None and state.get("longitude") is not None:
@@ -1347,6 +1371,7 @@ def _pickup_date_question(state, detected=False):
 
 
 def _pickup_review(state):
+    state["step"] = "PICK_REVIEW"
     cat = state.get("pickup_category") or "GENERAL"
     cat_label = dict(PickupRequest.WASTE_CATEGORIES).get(cat, cat)
     card = {
