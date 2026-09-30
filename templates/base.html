@@ -4,33 +4,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Smart Waste Management System{% endblock %}</title>
-  <meta name="description" content="Centralized smart waste reporting, pickup scheduling, hotspot tracking, and segregation platform for clean communities.">
+  <title>{% block title %}SmartWaste — Centralized Waste Management System{% endblock %}</title>
+  
+  <meta name="description" content="{% block meta_description %}SmartWaste is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+  <meta name="author" content="Spectrum Hackathon Team">
+  <meta name="theme-color" content="#10B981">
+
+  <!-- Canonical URL -->
+  {% block canonical %}
+  <link rel="canonical" href="http://16.171.238.127{{ request.path }}">
+  {% endblock %}
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="alternate icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SmartWaste">
+  <meta property="og:title" content="{% block og_title %}SmartWaste — Centralized Waste Management System{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Citizens can report waste issues, request pickups and track resolutions from one centralized platform.{% endblock %}">
+  <meta property="og:url" content="http://16.171.238.127{{ request.path }}">
+  <meta property="og:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}SmartWaste — Centralized Waste Management System{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Citizens can report waste issues, request pickups and track resolutions from one centralized platform.{% endblock %}">
+  <meta name="twitter:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
+
+  <!-- SmartWaste Core Stylesheet -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
 
   <!-- Navigation Bar -->
-  <header class="navbar">
+  <header class="navbar" role="banner">
     <div class="container nav-container">
-      <a href="{% url 'landing' %}" class="brand-logo">
-        <div class="brand-icon">
-          <!-- Recycling Leaf SVG Icon -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/>
-            <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/>
-            <path d="m14 16-3 3 3 3"/>
-            <path d="M8.294 4.5h7.412a1.83 1.83 0 0 1 1.57.882 1.785 1.785 0 0 1 .004 1.784L14.7 11.5"/>
-            <path d="m3 9 3-3-3-3"/>
-          </svg>
+      <a href="{% url 'landing' %}" class="brand-logo" aria-label="SmartWaste Home">
+        <img src="{% static 'images/cleanloop-mark.svg' %}" alt="SmartWaste Mark" width="36" height="36" class="brand-mark-img">
+        <div class="brand-text">
+          <span class="brand-name">Smart<span class="highlight">Waste</span></span>
+          <span class="brand-sub">WASTE MANAGEMENT SYSTEM</span>
         </div>
-        <span>Smart<span class="highlight">Waste</span></span>
       </a>
 
       <!-- Mobile Hamburger Button -->
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -38,7 +61,7 @@
       </button>
 
       <!-- Navigation Links -->
-      <nav>
+      <nav aria-label="Primary Navigation">
         <ul class="nav-menu" id="navMenu">
           <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
           <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
@@ -49,7 +72,7 @@
             <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
             <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
             {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
-              <li><a href="{% url 'admin_dashboard' %}" class="nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}" style="color: #dc2626; font-weight: 700;">Admin Portal</a></li>
+              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
             {% endif %}
           {% endif %}
         </ul>
@@ -58,9 +81,10 @@
       <!-- Right Hand User Actions -->
       <div class="nav-actions">
         {% if user.is_authenticated %}
-          <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 500;">
-            Hi, <strong>{{ user.first_name|default:user.username }}</strong>
-          </span>
+          <div class="user-greeting">
+            <span class="user-avatar-circle" aria-hidden="true">{{ user.first_name|default:user.username|make_list|first|upper }}</span>
+            <span class="user-name-text">Hi, <strong>{{ user.first_name|default:user.username }}</strong></span>
+          </div>
           <a href="{% url 'logout' %}" class="btn btn-outline btn-sm">Logout</a>
         {% else %}
           <a href="{% url 'login' %}" class="btn btn-outline btn-sm">Login</a>
@@ -71,15 +95,15 @@
   </header>
 
   <!-- Main Body Content -->
-  <main class="main-content">
+  <main class="main-content" id="main-content">
     <div class="container">
-      <!-- Flash / Success / Error Messages -->
+      <!-- Flash Messages -->
       {% if messages %}
-        <div class="alert-messages">
+        <div class="alert-messages" role="alert" aria-live="polite">
           {% for message in messages %}
             <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
               <span>{{ message }}</span>
-              <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; cursor:pointer; font-weight:bold; color:inherit;">✕</button>
+              <button type="button" onclick="this.parentElement.remove()" class="alert-close" aria-label="Close notification">✕</button>
             </div>
           {% endfor %}
         </div>
@@ -91,17 +115,71 @@
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-content">
-      <div>
-        <strong style="color: var(--text-main); font-size: 1rem;">SmartWaste Management Platform</strong>
-        <p style="margin-top: 4px; font-size: 0.85rem;">Spectrum Hackathon 2026 • Cleaner Cities, College Campuses & Communities</p>
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-grid">
+      <!-- Column 1: Brand & Tagline -->
+      <div class="footer-brand-col">
+        <div class="footer-brand">
+          <img src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop Mark" width="28" height="28">
+          <span class="footer-brand-name">Clean<span class="highlight">Loop</span></span>
+        </div>
+        <p class="footer-tagline">"Report. Collect. Resolve. Repeat."</p>
+        <p class="footer-subline">Connecting communities, collection teams and administrators for cleaner neighbourhoods.</p>
+        <div class="footer-badge">
+          <span class="badge-dot"></span> Team <strong>BUG BUSTERS</strong> (Team 30)
+        </div>
       </div>
-      <div style="display: flex; gap: 18px; font-size: 0.88rem;">
-        <a href="{% url 'landing' %}">Home</a>
-        <a href="{% url 'report_waste' %}">Report Issue</a>
-        <a href="{% url 'pickup_request' %}">Doorstep Pickup</a>
-        <a href="{% url 'awareness' %}">Segregation Guide</a>
+
+      <!-- Column 2: Navigation Links -->
+      <div class="footer-nav-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="{% url 'landing' %}">Home Overview</a></li>
+          <li><a href="{% url 'report_waste' %}">Report Waste Issue</a></li>
+          <li><a href="{% url 'pickup_request' %}">Schedule Doorstep Pickup</a></li>
+          <li><a href="{% url 'awareness' %}">Waste Segregation Guide</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Citizen & Admin Access -->
+      <div class="footer-nav-col">
+        <h4>Portals</h4>
+        <ul>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'citizen_dashboard' %}">Citizen Dashboard</a></li>
+            <li><a href="{% url 'complaint_tracking' %}">Complaint Tracking</a></li>
+            <li><a href="{% url 'pickup_list' %}">Pickup Requests</a></li>
+            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
+              <li><a href="{% url 'admin_dashboard' %}">Municipal Admin Operations</a></li>
+            {% endif %}
+          {% else %}
+            <li><a href="{% url 'login' %}">Citizen & Staff Login</a></li>
+            <li><a href="{% url 'register' %}">Create Citizen Account</a></li>
+          {% endif %}
+          <li><a href="/robots.txt">robots.txt</a></li>
+          <li><a href="/sitemap.xml">sitemap.xml</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Hackathon Team Members -->
+      <div class="footer-team-col">
+        <h4>Team Bug Busters</h4>
+        <p class="team-subtext">Spectrum Hackathon 2026</p>
+        <ul class="team-list">
+          <li>1. Sarthak Srivastava</li>
+          <li>2. Purvi Gupta</li>
+          <li>3. Samraddhi Gupta</li>
+          <li>4. Prince Mishra</li>
+        </ul>
+        <p class="production-domain">Domain: <code>cleanloop.sarthakml.in</code></p>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright Bar -->
+    <div class="container footer-bottom">
+      <p>© 2026 CleanLoop — Smart Waste Management. Built with pride by Team Bug Busters.</p>
+      <div class="footer-tech-stack">
+        <span>Django</span> • <span>SQLite3</span> • <span>Gunicorn</span> • <span>Nginx</span>
       </div>
     </div>
   </footer>

@@ -1,34 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Smart Waste Management - Cleaner Communities{% endblock %}
+{% block title %}CleanLoop — Smart Waste Management Platform{% endblock %}
+{% block meta_description %}CleanLoop is a smart waste management platform for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section" style="margin-top: -28px; margin-bottom: 36px; border-radius: var(--radius-lg); padding: 48px 36px; border: 1px solid var(--border-color); background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);">
+<!-- ==============================================================================
+     1. HERO SECTION
+     ============================================================================== -->
+<section class="hero-section" aria-labelledby="hero-heading">
   <div class="hero-grid">
     <div class="hero-content">
-      <div style="display: inline-flex; align-items: center; gap: 6px; background: #d1fae5; color: #065f46; padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; margin-bottom: 16px;">
-        <span>🌱</span> SPECTRUM CIVIC TECH INITIATIVE
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span> SMART WASTE MANAGEMENT
       </div>
-      <h1>
+      <h1 id="hero-heading" class="hero-title">
         Smarter Waste Management for <span class="gradient-text">Cleaner Communities</span>
       </h1>
       <p class="hero-desc">
-        A centralized smart platform for citizens, residential societies, colleges, and municipal authorities. Report overflowing bins, schedule doorstep pickups, eliminate dumping hotspots, and track resolutions in real-time.
+        Citizens can report waste issues, request pickups and track resolutions from one centralized platform.
       </p>
       
       <div class="hero-cta">
         <a href="{% url 'report_waste' %}" class="btn btn-primary btn-lg">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
           </svg>
           Report Waste Issue
         </a>
         <a href="{% url 'pickup_request' %}" class="btn btn-outline btn-lg">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="1" y="3" width="15" height="13"></rect>
             <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
             <circle cx="5.5" cy="18.5" r="2.5"></circle>
@@ -38,184 +42,530 @@
         </a>
       </div>
 
-      <div style="display: flex; gap: 24px; color: var(--text-muted); font-size: 0.88rem;">
-        <div>✓ <strong>Zero</strong> manual paperwork</div>
-        <div>✓ <strong>Real-time</strong> status tracking</div>
-        <div>✓ <strong>Auto-priority</strong> routing</div>
+      <div class="hero-badges">
+        <div class="hero-badge-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span><strong>Zero</strong> manual paperwork</span>
+        </div>
+        <div class="hero-badge-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span><strong>Real-time</strong> status tracking</span>
+        </div>
+        <div class="hero-badge-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span><strong>Smart Priority</strong> routing</span>
+        </div>
       </div>
     </div>
 
-    <!-- Clean Vector SVG Illustration -->
+    <!-- Clean Vector SVG Hero Illustration -->
     <div class="hero-illustration">
       <div class="hero-svg-card">
-        <svg viewBox="0 0 400 300" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
-          <!-- Sky / Background -->
-          <rect width="400" height="300" rx="16" fill="#f8fafc"/>
-          <path d="M 0 230 Q 100 210, 200 230 T 400 230 L 400 300 L 0 300 Z" fill="#e2e8f0"/>
-          <path d="M 0 250 Q 120 240, 240 255 T 400 250 L 400 300 L 0 300 Z" fill="#d1fae5"/>
+        <svg viewBox="0 0 460 340" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of a clean city with smart recycling bins, collection electric vehicle, and clean environment">
+          <defs>
+            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#f0fdf4"/>
+              <stop offset="100%" stop-color="#ecfdf5"/>
+            </linearGradient>
+            <linearGradient id="roadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#e2e8f0"/>
+              <stop offset="100%" stop-color="#cbd5e1"/>
+            </linearGradient>
+            <linearGradient id="truckGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#10b981"/>
+              <stop offset="100%" stop-color="#047857"/>
+            </linearGradient>
+          </defs>
 
-          <!-- Clean City Skyline Silhouette -->
-          <rect x="40" y="140" width="40" height="90" rx="4" fill="#cbd5e1" opacity="0.6"/>
-          <rect x="90" y="110" width="50" height="120" rx="4" fill="#94a3b8" opacity="0.6"/>
-          <rect x="150" y="160" width="35" height="70" rx="4" fill="#cbd5e1" opacity="0.6"/>
-          <rect x="290" y="130" width="45" height="100" rx="4" fill="#94a3b8" opacity="0.6"/>
-          <rect x="345" y="150" width="35" height="80" rx="4" fill="#cbd5e1" opacity="0.6"/>
+          <!-- Sky Canvas -->
+          <rect width="460" height="340" rx="16" fill="url(#skyGrad)"/>
+          
+          <!-- Sun / Eco Energy -->
+          <circle cx="80" cy="70" r="28" fill="#fef08a" opacity="0.85"/>
+          <circle cx="80" cy="70" r="18" fill="#facc15"/>
 
-          <!-- Eco Sun / Green Energy -->
-          <circle cx="70" cy="70" r="28" fill="#fef08a" opacity="0.8"/>
-          <circle cx="70" cy="70" r="18" fill="#fde047"/>
-
-          <!-- Green Waste Bin (Smart Bin) -->
-          <rect x="130" y="175" width="55" height="75" rx="6" fill="#10b981"/>
-          <!-- Lid -->
-          <rect x="125" y="168" width="65" height="10" rx="4" fill="#047857"/>
-          <!-- Bin Wheels -->
-          <circle cx="140" cy="252" r="7" fill="#334155"/>
-          <circle cx="175" cy="252" r="7" fill="#334155"/>
-          <!-- Recycle icon on bin -->
-          <circle cx="157" cy="210" r="14" fill="#065f46" opacity="0.5"/>
-          <path d="M154 204 L160 204 L157 210 Z" fill="#ffffff"/>
-          <path d="M162 212 L162 218 L156 215 Z" fill="#ffffff"/>
-          <path d="M152 216 L152 210 L158 213 Z" fill="#ffffff"/>
-
-          <!-- Blue Recycle Bin -->
-          <rect x="210" y="175" width="55" height="75" rx="6" fill="#0284c7"/>
-          <!-- Lid -->
-          <rect x="205" y="168" width="65" height="10" rx="4" fill="#0369a1"/>
-          <!-- Wheels -->
-          <circle cx="220" cy="252" r="7" fill="#334155"/>
-          <circle cx="255" cy="252" r="7" fill="#334155"/>
-          <!-- White text label -->
-          <text x="237" y="215" font-family="sans-serif" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">DRY</text>
-          <text x="157" y="232" font-family="sans-serif" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">WET</text>
+          <!-- City Skyline Silhouettes -->
+          <rect x="50" y="140" width="45" height="110" rx="4" fill="#94a3b8" opacity="0.25"/>
+          <rect x="105" y="110" width="55" height="140" rx="4" fill="#64748b" opacity="0.3"/>
+          <rect x="170" y="150" width="40" height="100" rx="4" fill="#94a3b8" opacity="0.25"/>
+          <rect x="330" y="120" width="50" height="130" rx="4" fill="#64748b" opacity="0.3"/>
+          <rect x="390" y="145" width="45" height="105" rx="4" fill="#94a3b8" opacity="0.25"/>
 
           <!-- Clean Trees -->
-          <polygon points="310,230 330,175 350,230" fill="#059669"/>
-          <rect x="327" y="230" width="6" height="15" fill="#78350f"/>
+          <polygon points="25,250 45,180 65,250" fill="#059669"/>
+          <rect x="42" y="250" width="6" height="15" fill="#78350f"/>
+          <polygon points="415,250 435,180 455,250" fill="#10b981"/>
+          <rect x="432" y="250" width="6" height="15" fill="#78350f"/>
 
-          <!-- Smart IoT Sensor indicator -->
-          <circle cx="157" cy="155" r="5" fill="#10b981"/>
-          <path d="M 152 150 Q 157 144, 162 150" fill="none" stroke="#10b981" stroke-width="2"/>
-          <path d="M 148 145 Q 157 137, 166 145" fill="none" stroke="#10b981" stroke-width="2"/>
+          <!-- Ground / Pavement -->
+          <path d="M 0 250 Q 230 240, 460 250 L 460 340 L 0 340 Z" fill="url(#roadGrad)"/>
+          <path d="M 0 262 L 460 262" stroke="#ffffff" stroke-width="3" stroke-dasharray="16, 12" opacity="0.8"/>
+
+          <!-- Circular Loop Arrows in Sky (CleanLoop Symbolism) -->
+          <g transform="translate(230, 80) scale(0.65)">
+            <circle cx="0" cy="0" r="44" stroke="#10b981" stroke-width="5" stroke-dasharray="45, 20" fill="none" opacity="0.4"/>
+            <circle cx="0" cy="0" r="30" stroke="#059669" stroke-width="4" stroke-dasharray="35, 15" fill="none" opacity="0.6"/>
+            <!-- Leaf in center -->
+            <path d="M 0 -18 C 12 -12 14 6 0 20 C -14 6 -12 -12 0 -18 Z" fill="#10b981"/>
+            <path d="M 0 -14 L 0 16" stroke="#ffffff" stroke-width="2"/>
+          </g>
+
+          <!-- Electric Waste Collection Vehicle -->
+          <g transform="translate(60, 195)">
+            <!-- Truck Cab & Body -->
+            <rect x="0" y="15" width="85" height="48" rx="6" fill="url(#truckGrad)"/>
+            <path d="M 85 28 L 115 38 L 115 63 L 85 63 Z" fill="#059669"/>
+            <!-- Window -->
+            <path d="M 88 32 L 108 40 L 108 50 L 88 50 Z" fill="#e0f2fe"/>
+            <!-- Truck Wheels -->
+            <circle cx="25" cy="65" r="12" fill="#1e293b"/>
+            <circle cx="25" cy="65" r="5" fill="#94a3b8"/>
+            <circle cx="95" cy="65" r="12" fill="#1e293b"/>
+            <circle cx="95" cy="65" r="5" fill="#94a3b8"/>
+            <!-- CleanLoop logo stamp on truck -->
+            <rect x="14" y="24" width="56" height="18" rx="4" fill="#ffffff" opacity="0.9"/>
+            <text x="42" y="37" font-family="sans-serif" font-size="9" font-weight="800" fill="#047857" text-anchor="middle">CLEANLOOP</text>
+            <circle cx="78" cy="48" r="4" fill="#facc15"/>
+          </g>
+
+          <!-- Citizen Reporting with Mobile Phone -->
+          <g transform="translate(230, 175)">
+            <!-- Head -->
+            <circle cx="20" cy="20" r="10" fill="#fbcfe8"/>
+            <!-- Hair -->
+            <path d="M 12 18 C 12 10 28 10 28 18 Z" fill="#334155"/>
+            <!-- Body / Jacket -->
+            <path d="M 8 32 C 8 30 32 30 32 32 L 34 68 L 6 68 Z" fill="#3b82f6"/>
+            <!-- Legs -->
+            <rect x="10" y="68" width="6" height="25" rx="3" fill="#1e293b"/>
+            <rect x="24" y="68" width="6" height="25" rx="3" fill="#1e293b"/>
+            <!-- Phone held in hand -->
+            <rect x="32" y="36" width="10" height="18" rx="2" fill="#0f172a"/>
+            <rect x="33" y="38" width="8" height="14" rx="1" fill="#10b981"/>
+            <!-- Signal beam to cloud -->
+            <path d="M 37 32 Q 42 22 55 24" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="3, 2"/>
+          </g>
+
+          <!-- Smart Waste Bins (Wet, Dry, Recyclables) -->
+          <g transform="translate(320, 190)">
+            <!-- Green Bin (Wet) -->
+            <rect x="0" y="20" width="34" height="50" rx="5" fill="#10b981"/>
+            <rect x="-3" y="15" width="40" height="7" rx="3" fill="#047857"/>
+            <circle cx="7" cy="71" r="5" fill="#334155"/>
+            <circle cx="27" cy="71" r="5" fill="#334155"/>
+            <text x="17" y="48" font-family="sans-serif" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle">WET</text>
+
+            <!-- Blue Bin (Dry) -->
+            <rect x="42" y="20" width="34" height="50" rx="5" fill="#0284c7"/>
+            <rect x="39" y="15" width="40" height="7" rx="3" fill="#0369a1"/>
+            <circle cx="49" cy="71" r="5" fill="#334155"/>
+            <circle cx="69" cy="71" r="5" fill="#334155"/>
+            <text x="59" y="48" font-family="sans-serif" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle">DRY</text>
+
+            <!-- IoT Smart Sensor Waves -->
+            <circle cx="17" cy="8" r="3" fill="#10b981"/>
+            <path d="M 12 4 Q 17 0, 22 4" stroke="#10b981" stroke-width="1.8" fill="none"/>
+            <circle cx="59" cy="8" r="3" fill="#0284c7"/>
+            <path d="M 54 4 Q 59 0, 64 4" stroke="#0284c7" stroke-width="1.8" fill="none"/>
+          </g>
         </svg>
-        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: 8px;">
-          IoT-Ready Smart Bins & Automated Dispatch
+        <div class="hero-caption">
+          <span>🌿</span> Real-time civic waste dispatch and community cleanliness loop
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Live Impact Metrics -->
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-icon green">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-    </div>
-    <div>
-      <div class="stat-value">{{ resolved_complaints }}</div>
-      <div class="stat-label">Issues Resolved</div>
-    </div>
+<!-- ==============================================================================
+     2. TRUST / DYNAMIC METRICS SECTION
+     ============================================================================== -->
+<section class="metrics-section" aria-label="Platform Statistics">
+  <div class="section-header text-center">
+    <div class="section-tag">LIVE PLATFORM DATA</div>
+    <h2 class="section-title">Measurable Community Impact</h2>
+    <p class="section-desc">Real-time statistics directly calculated from our municipal database.</p>
   </div>
 
-  <div class="stat-card">
-    <div class="stat-icon blue">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-    </div>
-    <div>
-      <div class="stat-value">{{ total_pickups }}</div>
-      <div class="stat-label">Doorstep Pickups</div>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon purple">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-    </div>
-    <div>
-      <div class="stat-value">{{ resolution_rate }}%</div>
-      <div class="stat-label">Average Resolution Rate</div>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon green">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-    </div>
-    <div>
-      <div class="stat-value">{{ total_complaints }}</div>
-      <div class="stat-label">Complaints Logged</div>
-    </div>
-  </div>
-</div>
-
-<!-- Key Pillars / Feature Cards -->
-<div style="margin: 40px 0;">
-  <div style="text-align: center; margin-bottom: 30px;">
-    <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">Comprehensive Waste Management</h2>
-    <p style="color: var(--text-muted); max-width: 600px; margin: 6px auto 0;">Everything required to keep neighborhoods clean, segregated, and accountable.</p>
-  </div>
-
-  <div class="actions-grid">
-    <a href="{% url 'report_waste' %}" class="action-card">
-      <div class="action-card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  <div class="stats-grid">
+    <!-- Stat 1: Reports Managed -->
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
       </div>
-      <h3>Report Waste Issues</h3>
-      <p>Report overflowing bins, road littering, and illegal dumping with photo uploads and precise locations.</p>
-    </a>
-
-    <a href="{% url 'pickup_request' %}" class="action-card">
-      <div class="action-card-icon" style="background: var(--secondary-light); color: var(--secondary);">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+      <div>
+        <div class="stat-value">{{ total_complaints }}</div>
+        <div class="stat-label">Reports Managed</div>
       </div>
-      <h3>Doorstep Waste Pickup</h3>
-      <p>Schedule convenient pickups for e-waste, bulk recyclables, scrap metal, and organic waste.</p>
-    </a>
-
-    <a href="{% url 'complaint_tracking' %}" class="action-card">
-      <div class="action-card-icon" style="background: var(--status-progress-bg); color: var(--status-progress);">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-      </div>
-      <h3>Live Status Tracking</h3>
-      <p>Watch complaint status update from Pending to Assigned, In Progress, and Resolved with crew notes.</p>
-    </a>
-
-    <a href="{% url 'awareness' %}" class="action-card">
-      <div class="action-card-icon" style="background: #fef3c7; color: #d97706;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-      </div>
-      <h3>Waste Awareness & Bins</h3>
-      <p>Learn wet vs dry segregation, Do's & Don'ts, and safe disposal methods for hazardous e-waste.</p>
-    </a>
-  </div>
-</div>
-
-<!-- 3-Step Workflow -->
-<div class="card" style="margin-bottom: 40px; padding: 36px 24px;">
-  <div style="text-align: center; margin-bottom: 28px;">
-    <h3 style="font-size: 1.4rem; font-weight: 800;">How It Works</h3>
-    <p style="color: var(--text-muted); font-size: 0.92rem;">Three simple steps to cleaner streets and societies.</p>
-  </div>
-
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; text-align: center;">
-    <div style="padding: 16px;">
-      <div style="width: 52px; height: 52px; border-radius: 50%; background: #d1fae5; color: #065f46; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; margin-bottom: 12px;">1</div>
-      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 6px;">Spot & Report</h4>
-      <p style="font-size: 0.9rem; color: var(--text-muted);">Snap a picture, choose the issue type, and submit in seconds. System auto-generates a tracking code.</p>
     </div>
 
-    <div style="padding: 16px;">
-      <div style="width: 52px; height: 52px; border-radius: 50%; background: #dbeafe; color: #1e40af; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; margin-bottom: 12px;">2</div>
-      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 6px;">Smart Priority Routing</h4>
-      <p style="font-size: 0.9rem; color: var(--text-muted);">Urgent hazards and repeat hotspots are elevated to High/Critical priority and dispatched to local crews.</p>
+    <!-- Stat 2: Pickup Requests -->
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ total_pickups }}</div>
+        <div class="stat-label">Pickup Requests</div>
+      </div>
     </div>
 
-    <div style="padding: 16px;">
-      <div style="width: 52px; height: 52px; border-radius: 50%; background: #ede9fe; color: #5b21b6; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; margin-bottom: 12px;">3</div>
-      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 6px;">Resolution & Verification</h4>
-      <p style="font-size: 0.9rem; color: var(--text-muted);">Sanitation teams clear the site, update completion status, and notify the reporting citizen.</p>
+    <!-- Stat 3: Resolved Issues -->
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ resolved_complaints }}</div>
+        <div class="stat-label">Resolved Issues</div>
+      </div>
+    </div>
+
+    <!-- Stat 4: Active Locations -->
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="stat-value">{{ active_locations }}</div>
+        <div class="stat-label">Active Locations</div>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<!-- ==============================================================================
+     3. PRODUCT SHOWCASE: "Everything connected in one loop."
+     ============================================================================== -->
+<section class="showcase-section" aria-labelledby="showcase-heading">
+  <div class="section-header text-center">
+    <div class="section-tag">UNIFIED ECOSYSTEM</div>
+    <h2 id="showcase-heading" class="section-title">Everything connected in one loop.</h2>
+    <p class="section-desc">
+      A single seamless interface connecting everyday citizens, collection drivers, and sanitation superintendents.
+    </p>
+  </div>
+
+  <div class="showcase-grid">
+    <!-- Showcase Card 1: Citizen Dashboard -->
+    <div class="showcase-card">
+      <div class="showcase-header">
+        <span class="showcase-step-tag">REPORT</span>
+        <span class="showcase-badge">Citizen Portal</span>
+      </div>
+      <div class="showcase-preview">
+        <!-- Mock UI Component -->
+        <div class="mock-browser">
+          <div class="mock-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="mock-title">citizen / dashboard</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-greeting">
+              <div><strong>Welcome, Priya! 👋</strong></div>
+              <span class="mock-pill green">Active</span>
+            </div>
+            <div class="mock-stat-row">
+              <div class="mock-stat-box"><strong>3</strong><span>Complaints</span></div>
+              <div class="mock-stat-box"><strong>2</strong><span>Pickups</span></div>
+              <div class="mock-stat-box"><strong>100%</strong><span>Resolved</span></div>
+            </div>
+            <div class="mock-action-btn">+ File New Waste Report</div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-info">
+        <h3>Citizen Dashboard</h3>
+        <p>Personalized hub to view filing history, schedule doorstep bulk collection, and access segregation guidance.</p>
+      </div>
+    </div>
+
+    <!-- Showcase Card 2: Report Waste -->
+    <div class="showcase-card">
+      <div class="showcase-header">
+        <span class="showcase-step-tag">TRACK</span>
+        <span class="showcase-badge">Issue Filing</span>
+      </div>
+      <div class="showcase-preview">
+        <div class="mock-browser">
+          <div class="mock-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="mock-title">cleanloop / report</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-form-field">
+              <span class="mock-label">Issue Category</span>
+              <span class="mock-val">Overflowing Public Bin</span>
+            </div>
+            <div class="mock-form-field">
+              <span class="mock-label">Location</span>
+              <span class="mock-val">Sector 4 Market • Landmark: Bank ATM</span>
+            </div>
+            <div class="mock-priority-badge">
+              <span class="dot-urgent"></span> Auto Priority: <strong>HIGH</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-info">
+        <h3>Report Waste</h3>
+        <p>Geo-tagged reporting with smart auto-priority calculation and instant unique tracking ID generation.</p>
+      </div>
+    </div>
+
+    <!-- Showcase Card 3: Pickup Request -->
+    <div class="showcase-card">
+      <div class="showcase-header">
+        <span class="showcase-step-tag">COLLECT</span>
+        <span class="showcase-badge">Doorstep Service</span>
+      </div>
+      <div class="showcase-preview">
+        <div class="mock-browser">
+          <div class="mock-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="mock-title">cleanloop / pickup</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-form-field">
+              <span class="mock-label">Waste Category</span>
+              <span class="mock-val">⚡ E-Waste (Batteries, Laptops)</span>
+            </div>
+            <div class="mock-form-field">
+              <span class="mock-label">Preferred Date</span>
+              <span class="mock-val">Tomorrow (Morning 08:00 - 11:00 AM)</span>
+            </div>
+            <div class="mock-vehicle-badge">
+              <span>🚚 Dispatch: Eco Van #03 Assigned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-info">
+        <h3>Doorstep Pickup</h3>
+        <p>Convenient segregated doorstep pickups for recyclables, paper, e-waste, and hazardous bulk items.</p>
+      </div>
+    </div>
+
+    <!-- Showcase Card 4: Admin Operations -->
+    <div class="showcase-card">
+      <div class="showcase-header">
+        <span class="showcase-step-tag">RESOLVE</span>
+        <span class="showcase-badge">Municipal HQ</span>
+      </div>
+      <div class="showcase-preview">
+        <div class="mock-browser">
+          <div class="mock-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="mock-title">admin-portal / ops</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-admin-kpi">
+              <span class="kpi-mini">Hotspot Detection: Active</span>
+              <span class="kpi-count">Main Gate (4 Reports)</span>
+            </div>
+            <div class="mock-admin-row">
+              <span>WM-2026-0001</span>
+              <span class="mock-pill green">RESOLVED</span>
+            </div>
+            <div class="mock-admin-row">
+              <span>WM-2026-0003</span>
+              <span class="mock-pill blue">IN PROGRESS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-info">
+        <h3>Admin Operations</h3>
+        <p>Command center for municipal supervisors to allocate crews, inspect hotspot analytics, and update live statuses.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================================================================
+     4. HOW CLEANLOOP WORKS
+     ============================================================================== -->
+<section class="how-it-works-section" aria-labelledby="workflow-heading">
+  <div class="section-header text-center">
+    <div class="section-tag">STEP-BY-STEP WORKFLOW</div>
+    <h2 id="workflow-heading" class="section-title">How CleanLoop Works</h2>
+    <p class="section-desc">A transparent 4-stage lifecycle from initial citizen notification to confirmed resolution.</p>
+  </div>
+
+  <div class="workflow-grid">
+    <!-- Step 1 -->
+    <div class="workflow-card">
+      <div class="workflow-num">01</div>
+      <div class="workflow-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <h3>01 REPORT</h3>
+      <p>Citizen reports a waste issue with location details, category, and optional photographic proof.</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="workflow-card">
+      <div class="workflow-num">02</div>
+      <div class="workflow-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+      </div>
+      <h3>02 PRIORITIZE</h3>
+      <p>The system categorizes and prioritizes the issue automatically based on hazard type and repeat hotspot frequency.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="workflow-card">
+      <div class="workflow-num">03</div>
+      <div class="workflow-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+      </div>
+      <h3>03 COLLECT</h3>
+      <p>Collection teams handle the assigned request with designated electric trucks, sanitation units, and schedule windows.</p>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="workflow-card">
+      <div class="workflow-num">04</div>
+      <div class="workflow-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h3>04 RESOLVE</h3>
+      <p>Citizen can track the resolution in real time with an immutable audit timeline and municipal confirmation notes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================================================================
+     5. KEY FEATURES
+     ============================================================================== -->
+<section class="features-section" aria-labelledby="features-heading">
+  <div class="section-header text-center">
+    <div class="section-tag">COMPREHENSIVE CAPABILITIES</div>
+    <h2 id="features-heading" class="section-title">Built for Modern Civic Operations</h2>
+    <p class="section-desc">Everything needed to run cleaner neighbourhoods and maintain high accountability.</p>
+  </div>
+
+  <div class="features-grid">
+    <!-- Feature 1 -->
+    <div class="feature-card">
+      <div class="feature-icon green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+      </div>
+      <h3>Waste Issue Reporting</h3>
+      <p>Citizens file issues in seconds with precise location, landmark, and description to eliminate communication gaps.</p>
+    </div>
+
+    <!-- Feature 2 -->
+    <div class="feature-card">
+      <div class="feature-icon blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+      </div>
+      <h3>Doorstep Pickup Requests</h3>
+      <p>Schedule pickups for e-waste, cardboard cartons, plastics, and recyclables right from residential societies.</p>
+    </div>
+
+    <!-- Feature 3 -->
+    <div class="feature-card">
+      <div class="feature-icon purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+      </div>
+      <h3>Complaint Tracking</h3>
+      <p>Transparent progress stepper (Pending ➔ Assigned ➔ In Progress ➔ Resolved) with full timestamped audit logs.</p>
+    </div>
+
+    <!-- Feature 4 -->
+    <div class="feature-card">
+      <div class="feature-icon amber">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      </div>
+      <h3>Smart Priority</h3>
+      <p>Algorithmic urgency evaluation elevates chronic hotspots and hazardous waste dumps to High and Critical priority.</p>
+    </div>
+
+    <!-- Feature 5 -->
+    <div class="feature-card">
+      <div class="feature-icon danger">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+      </div>
+      <h3>Waste Hotspot Analytics</h3>
+      <p>Municipal spatial aggregation pinpoints recurrent illegal dumping sites for targeted surveillance and bin placement.</p>
+    </div>
+
+    <!-- Feature 6 -->
+    <div class="feature-card">
+      <div class="feature-icon green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+      </div>
+      <h3>Admin Operations</h3>
+      <p>Role-based operational dashboard for fleet dispatch, sanitation crew allocation, and supervisory notes.</p>
+    </div>
+
+    <!-- Feature 7 -->
+    <div class="feature-card">
+      <div class="feature-icon blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      </div>
+      <h3>Waste Awareness</h3>
+      <p>Interactive color-coded segregation guide for Wet, Dry, Recyclable, and Hazardous waste with DOs and DON'Ts.</p>
+    </div>
+
+    <!-- Feature 8 -->
+    <div class="feature-card">
+      <div class="feature-icon purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+      </div>
+      <h3>Photo-based Issue Reporting</h3>
+      <p>Secure client-side and server-side image upload with format validation ensuring clean operational evidence.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================================================================
+     6. CALL TO ACTION / HACKATHON TEAM BANNER
+     ============================================================================== -->
+<section class="cta-banner-section">
+  <div class="cta-banner-card">
+    <div class="cta-banner-content">
+      <div class="cta-team-tag">TEAM BUG BUSTERS • TEAM 30</div>
+      <h2>Ready to build cleaner neighbourhoods together?</h2>
+      <p>Join citizens and sanitation supervisors already using CleanLoop to transform urban waste management.</p>
+      <div class="cta-actions">
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started as Citizen</a>
+        <a href="{% url 'login' %}" class="btn btn-outline btn-lg">Login to Portal</a>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

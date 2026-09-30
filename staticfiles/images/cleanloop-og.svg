@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" fill="none">
+  <defs>
+    <linearGradient id="ogBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+    <linearGradient id="ogLoopGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="ogLoopGrad2" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="ogLeafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#ogBg)" />
+
+  <!-- Subtle Decorative Circles -->
+  <circle cx="1100" cy="120" r="300" fill="#10B981" opacity="0.06" />
+  <circle cx="100" cy="550" r="220" fill="#059669" opacity="0.05" />
+
+  <!-- Outer Border -->
+  <rect x="24" y="24" width="1152" height="582" rx="20" stroke="#bbf7d0" stroke-width="2" fill="none" />
+
+  <!-- Top Header / Team & Hackathon Badge -->
+  <g transform="translate(80, 80)">
+    <rect width="260" height="42" rx="21" fill="#d1fae5" />
+    <circle cx="24" cy="21" r="10" fill="#10B981" />
+    <path d="M 21 21 L 23 23 L 27 19" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
+    <text x="44" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#065f46" letter-spacing="1.2">BUG BUSTERS • TEAM 30</text>
+  </g>
+
+  <!-- Brand Lockup -->
+  <g transform="translate(80, 150)">
+    <!-- Brand Icon -->
+    <g transform="scale(1.1)">
+      <circle cx="50" cy="50" r="46" fill="#ECFDF5" />
+      <path d="M 50 14 A 36 36 0 0 1 86 50 A 36 36 0 0 1 75 73" stroke="url(#ogLoopGrad1)" stroke-width="7" stroke-linecap="round" fill="none" />
+      <polygon points="70,64 81,76 66,78" fill="#059669" />
+      <path d="M 50 86 A 36 36 0 0 1 14 50 A 36 36 0 0 1 25 27" stroke="url(#ogLoopGrad2)" stroke-width="7" stroke-linecap="round" fill="none" />
+      <polygon points="30,36 19,24 34,22" fill="#10B981" />
+      <path d="M 50 28 C 65 34 68 54 50 72 C 32 54 35 34 50 28 Z" fill="url(#ogLeafGrad)" />
+      <path d="M 50 33 Q 50 50 50 67" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.85" />
+      <path d="M 50 44 Q 57 41 61 43" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.85" />
+      <path d="M 50 53 Q 43 50 39 52" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.85" />
+    </g>
+
+    <!-- Typography -->
+    <text x="135" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="58" font-weight="900" letter-spacing="-1">
+      <tspan fill="#0f172a">Clean</tspan><tspan fill="#10B981">Loop</tspan>
+    </text>
+    <text x="138" y="98" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#059669" letter-spacing="3.5">SMART WASTE MANAGEMENT</text>
+  </g>
+
+  <!-- Tagline & Narrative -->
+  <g transform="translate(80, 310)">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="800" fill="#0f172a">
+      "Report. Collect. Resolve. Repeat."
+    </text>
+    <text x="0" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="500" fill="#475569">
+      Connecting communities, collection teams and administrators for cleaner neighbourhoods.
+    </text>
+  </g>
+
+  <!-- Feature Pills -->
+  <g transform="translate(80, 420)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="180" height="44" rx="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="90" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">01 REPORT</text>
+
+    <!-- Pill 2 -->
+    <rect x="195" y="0" width="180" height="44" rx="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="285" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">02 PRIORITIZE</text>
+
+    <!-- Pill 3 -->
+    <rect x="390" y="0" width="180" height="44" rx="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="480" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">03 COLLECT</text>
+
+    <!-- Pill 4 -->
+    <rect x="585" y="0" width="180" height="44" rx="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="675" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">04 RESOLVE</text>
+  </g>
+
+  <!-- Right Visual Mockup Card -->
+  <g transform="translate(840, 160)">
+    <rect width="280" height="340" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" filter="drop-shadow(0 10px 15px rgba(0,0,0,0.06))" />
+    <!-- Header of card -->
+    <rect width="280" height="48" rx="16" fill="#065f46" />
+    <rect y="32" width="280" height="16" fill="#065f46" />
+    <text x="20" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#ffffff">MUNICIPAL OPERATIONS</text>
+    
+    <!-- Mini KPI -->
+    <rect x="18" y="66" width="116" height="56" rx="8" fill="#ecfdf5" />
+    <text x="28" y="90" font-family="sans-serif" font-size="20" font-weight="800" fill="#065f46">98%</text>
+    <text x="28" y="108" font-family="sans-serif" font-size="10" font-weight="600" fill="#059669">Resolution</text>
+
+    <rect x="146" y="66" width="116" height="56" rx="8" fill="#f0f9ff" />
+    <text x="156" y="90" font-family="sans-serif" font-size="20" font-weight="800" fill="#0284c7">Auto</text>
+    <text x="156" y="108" font-family="sans-serif" font-size="10" font-weight="600" fill="#0284c7">Priority Hotspots</text>
+
+    <!-- Mini Progress list -->
+    <rect x="18" y="138" width="244" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" />
+    <circle cx="34" cy="158" r="6" fill="#10B981" />
+    <text x="50" y="163" font-family="sans-serif" font-size="11" font-weight="700" fill="#0f172a">WM-2026-0001</text>
+    <text x="195" y="163" font-family="sans-serif" font-size="10" font-weight="700" fill="#059669">RESOLVED</text>
+
+    <rect x="18" y="188" width="244" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" />
+    <circle cx="34" cy="208" r="6" fill="#3b82f6" />
+    <text x="50" y="213" font-family="sans-serif" font-size="11" font-weight="700" fill="#0f172a">PK-2026-0003</text>
+    <text x="195" y="213" font-family="sans-serif" font-size="10" font-weight="700" fill="#2563eb">ASSIGNED</text>
+
+    <rect x="18" y="238" width="244" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" />
+    <circle cx="34" cy="258" r="6" fill="#f59e0b" />
+    <text x="50" y="263" font-family="sans-serif" font-size="11" font-weight="700" fill="#0f172a">WM-2026-0004</text>
+    <text x="195" y="263" font-family="sans-serif" font-size="10" font-weight="700" fill="#d97706">PENDING</text>
+    
+    <text x="140" y="315" font-family="sans-serif" font-size="11" font-weight="700" fill="#059669" text-anchor="middle">Live Hotspot Dispatch Engine</text>
+  </g>
+
+  <!-- Bottom Metadata Bar -->
+  <g transform="translate(80, 550)">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#0f172a">
+      Production Domain: <tspan fill="#10B981">cleanloop.sarthakml.in</tspan>
+    </text>
+    <text x="1040" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#64748b" text-anchor="end">
+      Spectrum Hackathon 2026
+    </text>
+  </g>
+</svg>

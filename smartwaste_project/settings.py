@@ -19,8 +19,9 @@ SECRET_KEY = os.environ.get(
 # DEBUG is controlled via DJANGO_DEBUG environment variable (default False for production security)
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('true', '1')
 
-# Allowed hosts for EC2 public IP and local reverse proxy access
+# Allowed hosts for domain, EC2 public IP and local reverse proxy access
 ALLOWED_HOSTS = [
+    'cleanloop.sarthakml.in',
     '16.171.238.127',
     'localhost',
     '127.0.0.1',
@@ -28,8 +29,10 @@ ALLOWED_HOSTS = [
     '*',  # Permissive for hackathon demo to ensure external judges can connect without host header mismatch
 ]
 
-# CSRF trusted origins for web forms submitted from the public IP
+# CSRF trusted origins for web forms submitted from cleanloop domain & public IP
 CSRF_TRUSTED_ORIGINS = [
+    'https://cleanloop.sarthakml.in',
+    'http://cleanloop.sarthakml.in',
     'http://16.171.238.127',
     'http://localhost',
     'http://127.0.0.1',

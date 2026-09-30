@@ -5,6 +5,7 @@ to help Python beginners understand every step.
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
@@ -44,13 +45,15 @@ def is_staff_or_admin(user):
 
 def landing_view(request):
     """
-    Public landing page for Smart Waste Management System.
-    Displays hero section, mission statement, platform metrics, and quick action links.
+    Public landing page for CleanLoop — Smart Waste Management.
+    Displays hero section, product showcase, 4-step workflow,
+    dynamic platform metrics from SQLite3 database, key features, and team information.
     """
     # Calculate live public stats to showcase on landing page
     total_complaints = Complaint.objects.count()
     resolved_complaints = Complaint.objects.filter(status='RESOLVED').count()
     total_pickups = PickupRequest.objects.count()
+    active_locations = Complaint.objects.values('location').distinct().count()
     
     # Calculate resolution rate percentage safely
     resolution_rate = int((resolved_complaints / total_complaints * 100)) if total_complaints > 0 else 98
@@ -59,6 +62,7 @@ def landing_view(request):
         'total_complaints': total_complaints,
         'resolved_complaints': resolved_complaints,
         'total_pickups': total_pickups,
+        'active_locations': active_locations,
         'resolution_rate': resolution_rate,
     }
     return render(request, 'waste_management/landing.html', context)
@@ -67,11 +71,65 @@ def landing_view(request):
 def waste_awareness_view(request):
     """
     Educational waste awareness page explaining:
-    - Segregation rules (Green Bin, Blue Bin, Hazardous/E-Waste)
+    - Segregation rules (Green Bin, Blue Bin, Yellow/Teal Recyclables, Red/Black Hazardous & E-Waste)
     - Deep dive on Plastics, Paper, Glass, Metal, Electronics
-    - Do's and Don'ts for community members
+    - Community DO's and DON'Ts
+    - Interactive waste search guide
     """
     return render(request, 'waste_management/awareness.html')
+
+
+def robots_txt_view(request):
+    """
+    Search engine crawler directives:
+    - Allows public indexable pages (Landing, Awareness, Login, Register)
+    - Disallows private user dashboards, complaints, and municipal administration portal
+    - Points to canonical sitemap.xml
+    """
+    lines = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Disallow: /admin-portal/",
+        "Disallow: /dashboard/",
+        "Disallow: /tracking/",
+        "Disallow: /complaint/",
+        "Disallow: /pickup/",
+        "Disallow: /media/",
+        "Allow: /",
+        "Allow: /awareness/",
+        "Allow: /login/",
+        "Allow: /register/",
+        "Allow: /static/",
+        "",
+        "Sitemap: https://cleanloop.sarthakml.in/sitemap.xml",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def sitemap_xml_view(request):
+    """
+    Search engine sitemap for CleanLoop:
+    Provides XML format URLs for all public-facing indexable pages.
+    """
+    domain = "https://cleanloop.sarthakml.in"
+    pages = [
+        {'loc': f"{domain}/", 'changefreq': 'daily', 'priority': '1.0'},
+        {'loc': f"{domain}/awareness/", 'changefreq': 'weekly', 'priority': '0.8'},
+        {'loc': f"{domain}/login/", 'changefreq': 'monthly', 'priority': '0.5'},
+        {'loc': f"{domain}/register/", 'changefreq': 'monthly', 'priority': '0.5'},
+    ]
+    xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    ]
+    for p in pages:
+        xml.append('  <url>')
+        xml.append(f'    <loc>{p["loc"]}</loc>')
+        xml.append(f'    <changefreq>{p["changefreq"]}</changefreq>')
+        xml.append(f'    <priority>{p["priority"]}</priority>')
+        xml.append('  </url>')
+    xml.append('</urlset>')
+    return HttpResponse("\n".join(xml), content_type="application/xml")
 
 
 # ==============================================================================
@@ -95,7 +153,7 @@ def register_view(request):
             user = form.save()
             # Log the new citizen in immediately
             login(request, user)
-            messages.success(request, f"Welcome to Smart Waste Management, {user.first_name or user.username}! Your account is now active.")
+            messages.success(request, f"Welcome to CleanLoop, {user.first_name or user.username}! Your account is now active.")
             return redirect('citizen_dashboard')
         else:
             messages.error(request, "Please correct the errors below to register.")

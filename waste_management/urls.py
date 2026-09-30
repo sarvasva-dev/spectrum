@@ -10,6 +10,8 @@ urlpatterns = [
     # Public Pages
     path('', views.landing_view, name='landing'),
     path('awareness/', views.waste_awareness_view, name='awareness'),
+    path('robots.txt', views.robots_txt_view, name='robots_txt'),
+    path('sitemap.xml', views.sitemap_xml_view, name='sitemap_xml'),
 
     # Authentication
     path('register/', views.register_view, name='register'),

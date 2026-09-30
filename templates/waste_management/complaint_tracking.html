@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}Complaint Tracking - Smart Waste Management{% endblock %}
+{% block title %}Complaint Tracking — CleanLoop{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<div>
-  <!-- Header & Filters -->
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+<div class="tracking-page-container">
+  <!-- Header & Action -->
+  <div class="page-header-row">
     <div>
-      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
-        My Waste Complaints
+      <h1 class="page-title">
+        Complaint Tracking
       </h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem;">
-        Track resolution workflows from submission to crew cleanup.
+      <p class="page-subtitle">
+        Monitor real-time resolution workflows from report submission to collection completion.
       </p>
     </div>
     <div>
@@ -22,9 +23,9 @@
   </div>
 
   <!-- Filter Pills -->
-  <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+  <div class="filter-pills-bar">
     <a href="{% url 'complaint_tracking' %}" class="btn btn-sm {% if not selected_status %}btn-primary{% else %}btn-outline{% endif %}">
-      All Complaints
+      All Reports
     </a>
     <a href="{% url 'complaint_tracking' %}?status=PENDING" class="btn btn-sm {% if selected_status == 'PENDING' %}btn-primary{% else %}btn-outline{% endif %}">
       Pending
@@ -42,13 +43,13 @@
 
   <!-- Complaint List -->
   {% if complaints %}
-    <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="complaints-list-stack">
       {% for complaint in complaints %}
-        <div class="card" style="padding: 20px 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+        <div class="card complaint-item-card">
+          <div class="item-header-row">
             <div>
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-                <span style="font-size: 1.15rem; font-weight: 800; color: var(--primary);">
+              <div class="badge-cluster">
+                <span class="item-id-tag">
                   {{ complaint.complaint_id }}
                 </span>
                 <span class="badge badge-priority-{{ complaint.priority|lower }}">
@@ -58,30 +59,28 @@
                   {{ complaint.get_status_display }}
                 </span>
               </div>
-              <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+              <h3 class="item-title">
                 {{ complaint.get_issue_type_display }}
               </h3>
             </div>
 
-            <div style="text-align: right;">
-              <span style="font-size: 0.85rem; color: var(--text-muted);">
-                Reported on {{ complaint.created_at|date:"M d, Y • h:i A" }}
-              </span>
+            <div class="item-meta-date">
+              <span>Reported: {{ complaint.created_at|date:"M d, Y • h:i A" }}</span>
             </div>
           </div>
 
-          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 14px; line-height: 1.5;">
+          <p class="item-description">
             {{ complaint.description|truncatewords:35 }}
           </p>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border-color); font-size: 0.88rem; color: var(--text-muted);">
-            <div>
+          <div class="item-footer-row">
+            <div class="item-location-info">
               📍 <strong>Location:</strong> {{ complaint.location }}
               {% if complaint.landmark %} • <em>Near {{ complaint.landmark }}</em>{% endif %}
             </div>
             <div>
               <a href="{% url 'complaint_detail' complaint.complaint_id %}" class="btn btn-outline-primary btn-sm">
-                View Full Tracking Timeline →
+                View Full Timeline →
               </a>
             </div>
           </div>
@@ -93,15 +92,15 @@
       <div class="empty-state-icon">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
       </div>
-      <h3>No complaints found</h3>
+      <h3>No waste reports yet</h3>
       <p>
         {% if selected_status %}
           No complaints match the filter "<strong>{{ selected_status }}</strong>".
         {% else %}
-          You haven't submitted any complaints yet. Notice waste or an overflowing bin?
+          Your community is clean so far. If you spot an issue, report it here.
         {% endif %}
       </p>
-      <a href="{% url 'report_waste' %}" class="btn btn-primary">File a Waste Report</a>
+      <a href="{% url 'report_waste' %}" class="btn btn-primary">Report a Waste Issue</a>
     </div>
   {% endif %}
 </div>

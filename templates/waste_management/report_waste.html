@@ -1,24 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Report Waste Issue - Smart Waste Management{% endblock %}
+{% block title %}Report Waste Issue — CleanLoop{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<div style="max-width: 760px; margin: 0 auto;">
+<div class="form-page-container">
 
   <!-- Form Header -->
-  <div style="margin-bottom: 24px;">
-    <a href="{% url 'citizen_dashboard' %}" style="font-size: 0.88rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+  <div class="form-header">
+    <a href="{% url 'citizen_dashboard' %}" class="back-link">
       ← Back to Dashboard
     </a>
-    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+    <h1 class="page-title">
       Report a Waste Issue
     </h1>
-    <p style="color: var(--text-muted); font-size: 0.95rem;">
-      Help municipal sanitation teams locate, prioritize, and clear waste hazards quickly.
+    <p class="page-subtitle">
+      Help CleanLoop collection teams locate, prioritize, and clear waste hazards quickly.
     </p>
   </div>
 
-  <div class="card" style="padding: 32px;">
+  <div class="card form-card">
     <form method="POST" action="{% url 'report_waste' %}" enctype="multipart/form-data" novalidate>
       {% csrf_token %}
 
@@ -42,8 +43,8 @@
       </div>
 
       <!-- Dynamic Smart Priority Hint Box (Managed via main.js) -->
-      <div id="priorityTipBox" style="display: none; background: #fef3c7; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 18px; font-size: 0.88rem; color: #92400e;">
-        <span style="font-weight: 700;">⚡ System Assessment:</span> <span id="priorityTipText"></span>
+      <div id="priorityTipBox" class="priority-hint-box" style="display: none;">
+        <span class="priority-hint-title">⚡ CleanLoop Urgency Engine:</span> <span id="priorityTipText"></span>
       </div>
 
       <!-- Location / Street -->
@@ -84,41 +85,41 @@
       <!-- Image Upload -->
       <div class="form-group">
         <label class="form-label" for="{{ form.image.id_for_label }}">
-          Upload Photo (Optional, JPG/PNG, Max 5MB)
+          Upload Photo (Optional, JPG/PNG/WebP, Max 5MB)
         </label>
         {{ form.image }}
-        <div class="form-text">A photo drastically accelerates sanitation team dispatch.</div>
+        <div class="form-text">A photo drastically accelerates sanitation team dispatch and verification.</div>
         {% if form.image.errors %}
           <div class="field-error">{{ form.image.errors.0 }}</div>
         {% endif %}
       </div>
 
       <!-- Smart Priority Toggle & Manual Override -->
-      <div style="background: var(--bg-alt); padding: 18px; border-radius: var(--radius-md); margin-bottom: 24px;">
-        <div class="form-check" style="margin-bottom: 12px;">
+      <div class="smart-priority-panel">
+        <div class="form-check">
           {{ form.auto_priority }}
-          <label for="auto_priority_toggle" style="font-weight: 600; font-size: 0.92rem; cursor: pointer;">
+          <label for="auto_priority_toggle" class="form-check-label">
             Enable Smart Rule-Based Urgency Engine
           </label>
         </div>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-left: 28px; margin-bottom: 10px;">
-          Automatically elevates reports to <strong>HIGH</strong> or <strong>CRITICAL</strong> for illegal dumping, overflowing bins, and repeated hotspot areas.
+        <p class="panel-subtext">
+          CleanLoop automatically evaluates reports to <strong>HIGH</strong> or <strong>CRITICAL</strong> priority for illegal dumping, overflowing bins, and repeat hotspot areas.
         </p>
 
-        <div id="manualPrioritySection" style="margin-left: 28px; margin-top: 10px;">
-          <label class="form-label" for="{{ form.priority.id_for_label }}" style="font-size: 0.85rem;">
+        <div id="manualPrioritySection" class="manual-priority-row">
+          <label class="form-label" for="{{ form.priority.id_for_label }}">
             Or specify manual priority:
           </label>
-          <div style="max-width: 220px;">
+          <div style="max-width: 240px;">
             {{ form.priority }}
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div style="display: flex; gap: 14px; align-items: center;">
+      <div class="form-actions-row">
         <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
-          Submit Waste Complaint
+          Submit Waste Report
         </button>
         <a href="{% url 'citizen_dashboard' %}" class="btn btn-outline btn-lg">
           Cancel

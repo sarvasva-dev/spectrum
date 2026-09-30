@@ -1,25 +1,35 @@
 {% extends 'base.html' %}
 
-{% block title %}Citizen Dashboard - Smart Waste Management{% endblock %}
+{% block title %}Citizen Dashboard — CleanLoop{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<div>
+<div class="dashboard-wrapper">
   <!-- Welcome Greeting Banner -->
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
+  <div class="dashboard-greeting-bar">
     <div>
-      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+      <h1 class="page-title">
         Welcome, {{ user.first_name|default:user.username }}! 👋
       </h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
-        Manage waste complaints, schedule doorstep pickups, and track municipal actions.
+      <p class="page-subtitle">
+        Manage your waste reports, schedule doorstep pickups, and track community resolutions.
       </p>
     </div>
-    <div style="display: flex; gap: 10px;">
+    <div class="greeting-actions">
       <a href="{% url 'report_waste' %}" class="btn btn-primary">
-        <span>+</span> Report Issue
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Report Issue
       </a>
       <a href="{% url 'pickup_request' %}" class="btn btn-outline-primary">
-        <span>🚚</span> Request Pickup
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+        Request Pickup
       </a>
     </div>
   </div>
@@ -28,7 +38,7 @@
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-icon green">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
       </div>
       <div>
         <div class="stat-value">{{ total_complaints }}</div>
@@ -38,27 +48,27 @@
 
     <div class="stat-card">
       <div class="stat-icon amber">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
       </div>
       <div>
         <div class="stat-value">{{ pending_complaints }}</div>
-        <div class="stat-label">Pending / In Progress</div>
+        <div class="stat-label">Pending Complaints</div>
       </div>
     </div>
 
     <div class="stat-card">
       <div class="stat-icon green">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
       </div>
       <div>
         <div class="stat-value">{{ resolved_complaints }}</div>
-        <div class="stat-label">Resolved Issues</div>
+        <div class="stat-label">Resolved Complaints</div>
       </div>
     </div>
 
     <div class="stat-card">
       <div class="stat-icon blue">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
       </div>
       <div>
         <div class="stat-value">{{ total_pickups }}</div>
@@ -68,36 +78,36 @@
   </div>
 
   <!-- Quick Action Navigation Cards -->
-  <div style="margin-bottom: 32px;">
-    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; color: var(--text-main);">Quick Actions</h3>
-    <div class="actions-grid" style="margin-bottom: 0;">
+  <div class="section-container">
+    <h2 class="sub-heading">Quick Actions</h2>
+    <div class="actions-grid">
       <a href="{% url 'report_waste' %}" class="action-card">
-        <div class="action-card-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <div class="action-card-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
         </div>
         <h3>1. Report Waste</h3>
         <p>File reports for overflowing bins, roadside dumping, or missed collection.</p>
       </a>
 
       <a href="{% url 'pickup_request' %}" class="action-card">
-        <div class="action-card-icon" style="background: var(--secondary-light); color: var(--secondary);">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        <div class="action-card-icon blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
         </div>
         <h3>2. Request Pickup</h3>
         <p>Book convenient doorstep collection for e-waste, recyclables, or bulk items.</p>
       </a>
 
       <a href="{% url 'complaint_tracking' %}" class="action-card">
-        <div class="action-card-icon" style="background: var(--status-progress-bg); color: var(--status-progress);">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        <div class="action-card-icon purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
         </div>
         <h3>3. Track Complaints</h3>
         <p>Monitor real-time workflow status, assigned crews, and resolution notes.</p>
       </a>
 
       <a href="{% url 'awareness' %}" class="action-card">
-        <div class="action-card-icon" style="background: #fef3c7; color: #d97706;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <div class="action-card-icon amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </div>
         <h3>4. Waste Awareness</h3>
         <p>Learn 3-color bin segregation, recycling guidelines, and Do's & Don'ts.</p>
@@ -106,12 +116,12 @@
   </div>
 
   <!-- Two Column Layout: Recent Complaints & Recent Pickups -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;">
+  <div class="dashboard-split-grid">
     <!-- Recent Complaints -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">My Recent Complaints</h3>
-        <a href="{% url 'complaint_tracking' %}" style="font-size: 0.85rem; font-weight: 600;">View All →</a>
+        <a href="{% url 'complaint_tracking' %}" class="view-all-link">View All →</a>
       </div>
 
       {% if recent_complaints %}
@@ -156,9 +166,9 @@
           <div class="empty-state-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
           </div>
-          <h3>No complaints reported yet</h3>
-          <p>Your area is currently clean! Spot any waste or overflowing bins? File a quick report.</p>
-          <a href="{% url 'report_waste' %}" class="btn btn-primary btn-sm">Report Waste Issue</a>
+          <h3>No waste reports yet</h3>
+          <p>Your community is clean so far. If you spot an issue, report it here.</p>
+          <a href="{% url 'report_waste' %}" class="btn btn-primary btn-sm">Report a Waste Issue</a>
         </div>
       {% endif %}
     </div>
@@ -167,7 +177,7 @@
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">My Doorstep Pickups</h3>
-        <a href="{% url 'pickup_list' %}" style="font-size: 0.85rem; font-weight: 600;">View All →</a>
+        <a href="{% url 'pickup_list' %}" class="view-all-link">View All →</a>
       </div>
 
       {% if recent_pickups %}
@@ -204,7 +214,7 @@
           </div>
           <h3>No pickup requests yet</h3>
           <p>Have bulky recyclables or e-waste piling up at home? Schedule an on-demand doorstep pickup.</p>
-          <a href="{% url 'pickup_request' %}" class="btn btn-secondary btn-sm">Request Pickup</a>
+          <a href="{% url 'pickup_request' %}" class="btn btn-secondary btn-sm">Request a Pickup</a>
         </div>
       {% endif %}
     </div>

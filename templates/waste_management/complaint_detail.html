@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Complaint {{ complaint.complaint_id }} - Tracking{% endblock %}
+{% block title %}Complaint {{ complaint.complaint_id }} — CleanLoop{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<div style="max-width: 900px; margin: 0 auto;">
+<div class="detail-page-container">
 
   <!-- Back Link & Header -->
-  <div style="margin-bottom: 20px;">
-    <a href="{% url 'complaint_tracking' %}" style="font-size: 0.88rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+  <div class="detail-header-bar">
+    <a href="{% url 'complaint_tracking' %}" class="back-link">
       ← Back to My Complaints
     </a>
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div class="detail-title-flex">
       <div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 12px;">
+        <h1 class="detail-id-heading">
           <span>{{ complaint.complaint_id }}</span>
           <span class="badge badge-priority-{{ complaint.priority|lower }}">{{ complaint.get_priority_display }} Priority</span>
         </h1>
-        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+        <p class="detail-sub-meta">
           {{ complaint.get_issue_type_display }} • Submitted on {{ complaint.created_at|date:"F d, Y at h:i A" }}
         </p>
       </div>
@@ -30,8 +31,8 @@
   </div>
 
   <!-- Visual Workflow Timeline -->
-  <div class="card" style="padding: 28px; margin-bottom: 24px;">
-    <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">
+  <div class="card timeline-card">
+    <h3 class="timeline-title">
       Resolution Lifecycle
     </h3>
 
@@ -70,9 +71,9 @@
     </div>
 
     <!-- Active Status Banner -->
-    <div style="background: var(--bg-alt); padding: 14px 18px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+    <div class="status-summary-bar">
       <div>
-        <strong style="color: var(--text-main);">Current Status:</strong>
+        <strong>Current Status:</strong>
         <span class="badge badge-{{ complaint.status|lower }}" style="margin-left: 6px;">{{ complaint.get_status_display }}</span>
       </div>
       {% if complaint.assigned_crew %}
@@ -89,21 +90,21 @@
   </div>
 
   <!-- Complaint Details & Photo Grid -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px;">
+  <div class="details-photo-grid">
     <!-- Details Card -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Report Details</h3>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.93rem;">
+      <div class="details-body-stack">
         <div>
-          <span style="color: var(--text-muted); display: block; font-size: 0.82rem; font-weight: 600;">ISSUE CATEGORY</span>
-          <strong style="font-size: 1.05rem;">{{ complaint.get_issue_type_display }}</strong>
+          <span class="detail-label">ISSUE CATEGORY</span>
+          <strong class="detail-strong">{{ complaint.get_issue_type_display }}</strong>
         </div>
 
         <div>
-          <span style="color: var(--text-muted); display: block; font-size: 0.82rem; font-weight: 600;">PRIMARY LOCATION</span>
+          <span class="detail-label">PRIMARY LOCATION</span>
           <strong>{{ complaint.location }}</strong>
           {% if complaint.landmark %}
             <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
@@ -113,16 +114,16 @@
         </div>
 
         <div>
-          <span style="color: var(--text-muted); display: block; font-size: 0.82rem; font-weight: 600;">CITIZEN DESCRIPTION</span>
-          <p style="margin-top: 4px; line-height: 1.5; color: var(--text-secondary);">
+          <span class="detail-label">CITIZEN DESCRIPTION</span>
+          <p class="detail-paragraph">
             {{ complaint.description }}
           </p>
         </div>
 
         {% if complaint.admin_notes %}
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 12px;">
-            <span style="color: #047857; display: block; font-size: 0.82rem; font-weight: 700;">MUNICIPAL DISPATCH NOTE</span>
-            <p style="margin-top: 4px; font-size: 0.9rem; color: #065f46;">
+          <div class="admin-dispatch-box">
+            <span class="admin-dispatch-label">MUNICIPAL DISPATCH NOTE</span>
+            <p class="admin-dispatch-text">
               {{ complaint.admin_notes }}
             </p>
           </div>
@@ -137,11 +138,11 @@
       </div>
 
       {% if complaint.image %}
-        <div style="text-align: center;">
+        <div style="text-align: center; padding: 16px;">
           <img 
             src="{{ complaint.image.url }}" 
-            alt="Complaint site photo" 
-            style="max-width: 100%; max-height: 280px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-color);"
+            alt="Complaint site evidence photo" 
+            class="evidence-img"
           >
           <div style="margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);">
             Uploaded during complaint submission
@@ -166,18 +167,18 @@
     </div>
 
     {% if updates %}
-      <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div class="timeline-log-stack">
         {% for update in updates %}
-          <div style="display: flex; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color);">
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">
+          <div class="timeline-log-item">
+            <div class="timeline-log-dot">
               ✓
             </div>
             <div style="flex: 1;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <div class="timeline-log-header">
                 <span class="badge badge-{{ update.status|lower }}">{{ update.status }}</span>
                 <span style="font-size: 0.82rem; color: var(--text-muted);">{{ update.created_at|date:"M d, Y • h:i A" }}</span>
               </div>
-              <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 0;">
+              <p class="timeline-log-note">
                 {{ update.note|default:"Status updated." }}
               </p>
             </div>
@@ -185,7 +186,7 @@
         {% endfor %}
       </div>
     {% else %}
-      <p style="color: var(--text-muted); font-size: 0.9rem;">No updates logged yet.</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; padding: 20px;">No updates logged yet.</p>
     {% endif %}
   </div>
 

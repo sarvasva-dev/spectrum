@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
 
-{% block title %}My Doorstep Pickups - Smart Waste Management{% endblock %}
+{% block title %}My Doorstep Pickups — CleanLoop{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<div>
+<div class="tracking-page-container">
   <!-- Header & Actions -->
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+  <div class="page-header-row">
     <div>
-      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">
+      <h1 class="page-title">
         My Doorstep Waste Pickups
       </h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem;">
-        Track scheduled collection vehicles and completion status.
+      <p class="page-subtitle">
+        Track scheduled collection vehicles, time windows, and completion status.
       </p>
     </div>
     <div>
-      <a href="{% url 'pickup_request' %}" class="btn btn-secondary">
+      <a href="{% url 'pickup_request' %}" class="btn btn-primary">
         <span>+</span> Schedule New Pickup
       </a>
     </div>
@@ -23,27 +24,27 @@
 
   <!-- Pickup Cards List -->
   {% if pickups %}
-    <div style="display: flex; flex-direction: column; gap: 18px;">
+    <div class="complaints-list-stack">
       {% for pickup in pickups %}
-        <div class="card" style="padding: 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div class="card complaint-item-card">
+          <div class="item-header-row">
             <div>
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-                <span style="font-size: 1.15rem; font-weight: 800; color: var(--secondary);">
+              <div class="badge-cluster">
+                <span class="item-id-tag">
                   {{ pickup.pickup_id }}
                 </span>
                 <span class="badge badge-{{ pickup.status|lower }}">
                   {{ pickup.get_status_display }}
                 </span>
               </div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">
+              <h3 class="item-title">
                 {{ pickup.get_waste_category_display }}
               </h3>
             </div>
 
-            <div style="text-align: right;">
-              <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">
-                📅 Scheduled: {{ pickup.preferred_date|date:"F d, Y" }}
+            <div class="item-meta-date text-right">
+              <div style="font-weight: 700; color: var(--text-main);">
+                📅 {{ pickup.preferred_date|date:"F d, Y" }}
               </div>
               <div style="font-size: 0.82rem; color: var(--text-muted);">
                 ⏰ {{ pickup.preferred_time }}
@@ -52,23 +53,23 @@
           </div>
 
           <!-- Pickup Progress Steps -->
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; background: var(--bg-alt); padding: 12px 14px; border-radius: var(--radius-md); text-align: center; font-size: 0.82rem;">
-            <div style="{% if pickup.status == 'REQUESTED' or pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}font-weight: 700; color: var(--primary);{% else %}color: var(--text-muted);{% endif %}">
+          <div class="pickup-stepper-grid">
+            <div class="{% if pickup.status == 'REQUESTED' or pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}step-active{% else %}step-inactive{% endif %}">
               1. REQUESTED ✓
             </div>
-            <div style="{% if pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}font-weight: 700; color: var(--primary);{% else %}color: var(--text-muted);{% endif %}">
+            <div class="{% if pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}step-active{% else %}step-inactive{% endif %}">
               2. ASSIGNED {% if pickup.status == 'ASSIGNED' or pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}✓{% endif %}
             </div>
-            <div style="{% if pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}font-weight: 700; color: var(--primary);{% else %}color: var(--text-muted);{% endif %}">
+            <div class="{% if pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}step-active{% else %}step-inactive{% endif %}">
               3. PICKED UP {% if pickup.status == 'PICKED_UP' or pickup.status == 'COMPLETED' %}✓{% endif %}
             </div>
-            <div style="{% if pickup.status == 'COMPLETED' %}font-weight: 700; color: #065f46;{% else %}color: var(--text-muted);{% endif %}">
+            <div class="{% if pickup.status == 'COMPLETED' %}step-active step-finished{% else %}step-inactive{% endif %}">
               4. COMPLETED {% if pickup.status == 'COMPLETED' %}✓{% endif %}
             </div>
           </div>
 
           <!-- Details Grid -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; font-size: 0.88rem; color: var(--text-muted); padding-top: 12px; border-top: 1px solid var(--border-color);">
+          <div class="pickup-meta-grid">
             <div>
               <strong>Quantity:</strong> {{ pickup.quantity }}
             </div>
@@ -94,9 +95,9 @@
       <div class="empty-state-icon" style="background: var(--secondary-light); color: var(--secondary);">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
       </div>
-      <h3>No doorstep pickups scheduled</h3>
-      <p>Need bulky recyclables, appliances, cartons, or segregated scrap cleared from your home?</p>
-      <a href="{% url 'pickup_request' %}" class="btn btn-secondary">Schedule a Doorstep Pickup</a>
+      <h3>No pickup requests yet</h3>
+      <p>Have bulky recyclables, appliances, cartons, or segregated scrap piled up? Schedule an on-demand doorstep pickup.</p>
+      <a href="{% url 'pickup_request' %}" class="btn btn-primary">Schedule a Doorstep Pickup</a>
     </div>
   {% endif %}
 </div>
