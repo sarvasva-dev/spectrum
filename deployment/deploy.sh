@@ -9,8 +9,8 @@ echo "Starting deployment at $(date)"
 # Go to project directory
 cd $PROJECT_DIR || exit
 
-# Stash any accidental local changes on server to prevent merge conflicts
-git stash
+# Stash any accidental local changes on server to prevent merge conflicts (except deploy.sh)
+git stash push -- :!deployment/deploy.sh
 
 # Pull latest code from GitHub
 echo "Pulling latest code from Git..."
@@ -25,10 +25,11 @@ pip install -r requirements.txt
 # Run migrations (using the new backend/ structure)
 echo "Running migrations..."
 cd backend
+python manage.py makemigrations
 python manage.py migrate
 
 # Collect static files (if configured)
-# python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 
 # Restart Gunicorn service
 echo "Restarting Gunicorn (smartwaste)..."
