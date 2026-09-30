@@ -17,8 +17,8 @@ SECRET_KEY = os.environ.get(
     'django-insecure-smartwaste-hackathon-spectrum-2026-secure-key-ec2-deployment'
 )
 
-# DEBUG is controlled via DJANGO_DEBUG environment variable (default False for production security)
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('true', '1')
+# DEBUG is True by default for local dev. Production should set DJANGO_DEBUG=False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1')
 
 # Allowed hosts for domain, EC2 public IP and local reverse proxy access
 ALLOWED_HOSTS = [

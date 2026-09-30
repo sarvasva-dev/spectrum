@@ -1,14 +1,1097 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Doorstep Waste Pickup — CleanLoop</title>
+  
+  <meta name="description" content="SmartWaste is a centralized waste management system for reporting waste issues, scheduling pickups, tracking complaints and improving community cleanliness.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="author" content="Spectrum Hackathon Team">
+  <meta name="theme-color" content="#10B981">
 
-{% block title %}Schedule Doorstep Waste Pickup — CleanLoop{% endblock %}
-{% block meta_robots %}noindex, nofollow{% endblock %}
+  <!-- Canonical URL -->
+  
+  <link rel="canonical" href="http://16.171.238.127{{ request.path }}">
+  
 
-{% block extra_head %}
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="alternate icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SmartWaste">
+  <meta property="og:title" content="SmartWaste — Centralized Waste Management System">
+  <meta property="og:description" content="Citizens can report waste issues, request pickups and track resolutions from one centralized platform.">
+  <meta property="og:url" content="http://16.171.238.127{{ request.path }}">
+  <meta property="og:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SmartWaste — Centralized Waste Management System">
+  <meta name="twitter:description" content="Citizens can report waste issues, request pickups and track resolutions from one centralized platform.">
+  <meta name="twitter:image" content="http://16.171.238.127{% static 'images/cleanloop-og.png' %}">
+
+  <!-- SmartWaste Core Stylesheet -->
+  <style>
+/* ==========================================================================
+   SMART WASTE MANAGEMENT SYSTEM - STYLESHEET
+   Light Theme Modern Hackathon UI
+   Clean, Professional, Accessible, Responsive
+   ========================================================================== */
+
+:root {
+  /* Color Palette — LIGHT BLUE THEME (Blue Primary) */
+  --primary: #2563eb;          /* Royal Blue Primary */
+  --primary-hover: #1d4ed8;    /* Darker Blue on Hover */
+  --primary-light: #dbeafe;    /* Light Blue Accent / Cards */
+  --primary-dark: #1e40af;     /* Deep Navy Blue */
+  
+  --secondary: #0284c7;        /* Ocean / Sky Blue */
+  --secondary-light: #e0f2fe;
+  
+  --bg-body: #f8fafc;          /* Light blue-gray background */
+  --background: #f8fafc;
+  --bg-card: #ffffff;          /* Pure white card surface */
+  --surface: #ffffff;
+  --bg-alt: #f1f5f9;           /* Soft muted section background */
+  
+  --text-main: #0f172a;        /* Dark navy text */
+  --text: #0f172a;
+  --text-muted: #475569;       /* Secondary neutral text */
+  --text-light: #94a3b8;
+  
+  --border-color: #cbd5e1;     /* Light blue-gray borders */
+  --border-focus: #2563eb;
+  
+  /* Status Colors */
+  --status-pending: #f59e0b;       /* Amber */
+  --status-pending-bg: #fef3c7;
+  --status-assigned: #2563eb;      /* Blue */
+  --status-assigned-bg: #dbeafe;
+  --status-progress: #7c3aed;      /* Violet */
+  --status-progress-bg: #ede9fe;
+  --status-resolved: #059669;      /* Success Green */
+  --status-resolved-bg: #d1fae5;
+  --status-danger: #dc2626;        /* Critical Red */
+  --status-danger-bg: #fee2e2;
+
+  /* Elevation Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+
+  /* Geometry */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Reset & Typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.5;
+  font-size: 15px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 28px;
+  padding-bottom: 60px;
+}
+
+/* Modern Navigation Bar */
+.navbar {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-xs);
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-main);
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary) 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.brand-logo span.highlight {
+  color: var(--primary);
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: var(--text-main);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.35);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: #ffffff !important;
+}
+
+.btn-secondary:hover {
+  background-color: #0369a1;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  background-color: var(--bg-alt);
+  border-color: var(--text-light);
+}
+
+.btn-outline-primary {
+  background-color: transparent;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-danger {
+  background-color: var(--status-danger);
+  color: #ffffff !important;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  padding: 13px 26px;
+  font-size: 1.05rem;
+}
+
+/* Alert Banners */
+.alert-messages {
+  margin-bottom: 24px;
+}
+
+.alert {
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+}
+
+.alert-success {
+  background-color: var(--primary-light);
+  border-color: #a7f3d0;
+  color: var(--primary-dark);
+}
+
+.alert-error, .alert-danger {
+  background-color: var(--status-danger-bg);
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.alert-info {
+  background-color: var(--secondary-light);
+  border-color: #bae6fd;
+  color: #075985;
+}
+
+.alert-warning {
+  background-color: var(--status-pending-bg);
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+/* Cards */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Metric / Stat Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon.green {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.stat-icon.amber {
+  background-color: var(--status-pending-bg);
+  color: var(--status-pending);
+}
+
+.stat-icon.blue {
+  background-color: var(--status-assigned-bg);
+  color: var(--status-assigned);
+}
+
+.stat-icon.purple {
+  background-color: var(--status-progress-bg);
+  color: var(--status-progress);
+}
+
+.stat-icon.red {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger);
+}
+
+.stat-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-main);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Quick Action Grid */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.action-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-decoration: none;
+  display: block;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--primary);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.action-card:hover::before {
+  opacity: 1;
+}
+
+.action-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.action-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.action-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Status Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-pending, .badge-requested {
+  background-color: var(--status-pending-bg);
+  color: #92400e;
+}
+
+.badge-assigned {
+  background-color: var(--status-assigned-bg);
+  color: #1e40af;
+}
+
+.badge-in_progress, .badge-picked_up {
+  background-color: var(--status-progress-bg);
+  color: #5b21b6;
+}
+
+.badge-resolved, .badge-completed {
+  background-color: var(--status-resolved-bg);
+  color: #065f46;
+}
+
+.badge-danger {
+  background-color: var(--status-danger-bg);
+  color: #991b1b;
+}
+
+.badge-warning {
+  background-color: var(--status-pending-bg);
+  color: #92400e;
+}
+
+.badge-info {
+  background-color: var(--secondary-light);
+  color: #0369a1;
+}
+
+/* Priority Badges */
+.badge-priority-low {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+.badge-priority-medium {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+.badge-priority-high {
+  background-color: #fed7aa;
+  color: #9a3412;
+}
+.badge-priority-critical {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+.table th {
+  background-color: var(--bg-alt);
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Modern Form Elements */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.form-control, .form-select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: #ffffff;
+  color: var(--text-main);
+  transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.form-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.form-check-input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.field-error {
+  color: var(--status-danger);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+/* Auth Cards */
+.auth-wrapper {
+  max-width: 480px;
+  margin: 20px auto 40px;
+}
+
+.auth-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-md);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-header h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* Status Workflow Timeline Component */
+.timeline-workflow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin: 30px 0;
+  padding: 0 10px;
+}
+
+.timeline-workflow::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  right: 40px;
+  height: 4px;
+  background-color: var(--border-color);
+  z-index: 1;
+}
+
+.timeline-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.timeline-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.timeline-step.completed .timeline-circle {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.timeline-step.current .timeline-circle {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.timeline-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.timeline-step.completed .timeline-label,
+.timeline-step.current .timeline-label {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* Empty State Card */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto 20px;
+  font-size: 0.92rem;
+}
+
+/* Landing Page Hero Section */
+.hero-section {
+  padding: 50px 0 60px;
+  background: linear-gradient(180deg, #ffffff 0%, var(--bg-body) 100%);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-content h1 {
+  font-size: 2.7rem;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  margin-bottom: 18px;
+}
+
+.hero-content h1 span.gradient-text {
+  color: var(--primary);
+}
+
+.hero-content p.hero-desc {
+  font-size: 1.12rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.hero-illustration {
+  text-align: center;
+}
+
+.hero-svg-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Waste Segregation Visual Cards */
+.segregation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  margin: 28px 0;
+}
+
+.bin-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.bin-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.bin-card.green-bin {
+  border-color: #10b981;
+  background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.bin-card.blue-bin {
+  border-color: #0284c7;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+}
+
+.bin-card.red-bin {
+  border-color: #ef4444;
+  background: linear-gradient(180deg, #ffffff 0%, #fef2f2 100%);
+}
+
+.bin-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.bin-pill {
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.bin-pill.green { background: #d1fae5; color: #065f46; }
+.bin-pill.blue { background: #dbeafe; color: #1e40af; }
+.bin-pill.red { background: #fee2e2; color: #991b1b; }
+
+.bin-card ul {
+  padding-left: 20px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.bin-card li {
+  margin-bottom: 6px;
+}
+
+/* Dos and Don'ts Grid */
+.dos-donts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 28px 0;
+}
+
+.dos-card {
+  background: #ffffff;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.donts-card {
+  background: #ffffff;
+  border: 1px solid #fecaca;
+  border-left: 5px solid var(--status-danger);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+/* Hotspot Analytics Table / Progress Bars */
+.progress-bar-container {
+  background-color: var(--bg-alt);
+  height: 8px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
+}
+
+/* Footer */
+.footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--border-color);
+  padding: 36px 0;
+  margin-top: auto;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero-cta {
+    justify-content: center;
+  }
+  .dos-donts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-toggle {
+    display: block;
+  }
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    flex-direction: column;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+  }
+  .nav-menu.show {
+    display: flex;
+  }
+  .timeline-workflow {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .timeline-workflow::before {
+    display: none;
+  }
+}
+
+</style>
+  
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-{% endblock %}
 
-{% block content %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" role="banner">
+    <div class="container nav-container">
+      <a href="{% url 'landing' %}" class="brand-logo" aria-label="SmartWaste Home">
+        <img src="{% static 'images/cleanloop-mark.svg' %}" alt="SmartWaste Mark" width="36" height="36" class="brand-mark-img">
+        <div class="brand-text">
+          <span class="brand-name">Smart<span class="highlight">Waste</span></span>
+          <span class="brand-sub">WASTE MANAGEMENT SYSTEM</span>
+        </div>
+      </a>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Navigation Links -->
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}">Home</a></li>
+          <li><a href="{% url 'report_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'report_waste' %}active{% endif %}">Report Waste</a></li>
+          <li><a href="{% url 'pickup_request' %}" class="nav-link {% if request.resolver_match.url_name == 'pickup_request' %}active{% endif %}">Pickup Request</a></li>
+          <li><a href="{% url 'awareness' %}" class="nav-link {% if request.resolver_match.url_name == 'awareness' %}active{% endif %}">Awareness</a></li>
+          
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'citizen_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'citizen_dashboard' %}active{% endif %}">My Dashboard</a></li>
+            <li><a href="{% url 'complaint_tracking' %}" class="nav-link {% if request.resolver_match.url_name == 'complaint_tracking' %}active{% endif %}">Track</a></li>
+            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
+              <li><a href="{% url 'admin_dashboard' %}" class="nav-link admin-nav-link {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">Admin Portal</a></li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- Right Hand User Actions -->
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <div class="user-greeting">
+            <span class="user-avatar-circle" aria-hidden="true">{{ user.first_name|default:user.username|make_list|first|upper }}</span>
+            <span class="user-name-text">Hi, <strong>{{ user.first_name|default:user.username }}</strong></span>
+          </div>
+          <a href="{% url 'logout' %}" class="btn btn-outline btn-sm">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-outline btn-sm">Login</a>
+          <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="main-content" id="main-content">
+    <div class="container">
+      <!-- Flash Messages -->
+      {% if messages %}
+        <div class="alert-messages" role="alert" aria-live="polite">
+          {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+              <span>{{ message }}</span>
+              <button type="button" onclick="this.parentElement.remove()" class="alert-close" aria-label="Close notification">✕</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      
 <div class="form-page-container">
 
   <!-- Form Header -->
@@ -145,9 +1228,330 @@
     </form>
   </div>
 </div>
-{% endblock %}
 
-{% block extra_scripts %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-grid">
+      <!-- Column 1: Brand & Tagline -->
+      <div class="footer-brand-col">
+        <div class="footer-brand">
+          <img src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop Mark" width="28" height="28">
+          <span class="footer-brand-name">Clean<span class="highlight">Loop</span></span>
+        </div>
+        <p class="footer-tagline">"Report. Collect. Resolve. Repeat."</p>
+        <p class="footer-subline">Connecting communities, collection teams and administrators for cleaner neighbourhoods.</p>
+        <div class="footer-badge">
+          <span class="badge-dot"></span> Team <strong>BUG BUSTERS</strong> (Team 30)
+        </div>
+      </div>
+
+      <!-- Column 2: Navigation Links -->
+      <div class="footer-nav-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="{% url 'landing' %}">Home Overview</a></li>
+          <li><a href="{% url 'report_waste' %}">Report Waste Issue</a></li>
+          <li><a href="{% url 'pickup_request' %}">Schedule Doorstep Pickup</a></li>
+          <li><a href="{% url 'awareness' %}">Waste Segregation Guide</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Citizen & Admin Access -->
+      <div class="footer-nav-col">
+        <h4>Portals</h4>
+        <ul>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'citizen_dashboard' %}">Citizen Dashboard</a></li>
+            <li><a href="{% url 'complaint_tracking' %}">Complaint Tracking</a></li>
+            <li><a href="{% url 'pickup_list' %}">Pickup Requests</a></li>
+            {% if user.is_staff or user.profile.is_admin_staff or user.is_superuser %}
+              <li><a href="{% url 'admin_dashboard' %}">Municipal Admin Operations</a></li>
+            {% endif %}
+          {% else %}
+            <li><a href="{% url 'login' %}">Citizen & Staff Login</a></li>
+            <li><a href="{% url 'register' %}">Create Citizen Account</a></li>
+          {% endif %}
+          <li><a href="/robots.txt">robots.txt</a></li>
+          <li><a href="/sitemap.xml">sitemap.xml</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Hackathon Team Members -->
+      <div class="footer-team-col">
+        <h4>Team Bug Busters</h4>
+        <p class="team-subtext">Spectrum Hackathon 2026</p>
+        <ul class="team-list">
+          <li>1. Sarthak Srivastava</li>
+          <li>2. Purvi Gupta</li>
+          <li>3. Samraddhi Gupta</li>
+          <li>4. Prince Mishra</li>
+        </ul>
+        <p class="production-domain">Domain: <code>cleanloop.sarthakml.in</code></p>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright Bar -->
+    <div class="container footer-bottom">
+      <p>© 2026 CleanLoop — Smart Waste Management. Built with pride by Team Bug Busters.</p>
+      <div class="footer-tech-stack">
+        <span>Django</span> • <span>SQLite3</span> • <span>Gunicorn</span> • <span>Nginx</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+/**
+ * SMART WASTE MANAGEMENT SYSTEM - VANILLA JAVASCRIPT
+ * Lightweight, zero-framework, clean interactions
+ */
+
+document.addEventListener('DOMContentLoaded', function () {
+  // 1. Mobile Navigation Menu Toggle
+  const mobileToggle = document.getElementById('mobileToggle');
+  const navMenu = document.getElementById('navMenu');
+
+  if (mobileToggle && navMenu) {
+    mobileToggle.addEventListener('click', function () {
+      navMenu.classList.toggle('show');
+    });
+  }
+
+  // 2. Auto-dismiss Alert Messages after 6 seconds
+  const alerts = document.querySelectorAll('.alert');
+  alerts.forEach(function (alert) {
+    setTimeout(function () {
+      alert.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      alert.style.opacity = '0';
+      alert.style.transform = 'translateY(-10px)';
+      setTimeout(function () {
+        alert.remove();
+      }, 400);
+    }, 6000);
+  });
+
+  // 3. Dynamic Waste Category Guidance on Pickup Page
+  const categorySelect = document.getElementById('pickup_category_select');
+  const categoryGuidanceBox = document.getElementById('categoryGuidanceBox');
+  const categoryGuidanceText = document.getElementById('categoryGuidanceText');
+
+  const guidanceMap = {
+    'ORGANIC': '🌿 Wet/Organic: Keep separate from plastics. Use compostable bags or green bins. Includes food scraps, peels, leaves.',
+    'PLASTIC': '♻️ Plastic: Rinse food containers and squeeze bottles to reduce bulk. Remove caps. Recyclable.',
+    'PAPER': '📦 Paper & Cardboard: Flatten cardboard boxes. Keep dry. Clean paper only; no oil-soaked wrappers.',
+    'E_WASTE': '⚡ E-Waste: Handle with care! Keep batteries separate from regular solid trash. Prevent water exposure.',
+    'GLASS': '🍾 Glass: Wrap broken glass carefully to protect sanitation crew. Rinse glass jars.',
+    'METAL': '🔩 Metal: Scrap iron, aluminum cans, copper wires. Separate sharp edges safely.',
+    'GENERAL': '🗑️ General: Mixed non-recyclable solid domestic waste.',
+    'OTHER': 'ℹ️ Miscellaneous: Please describe specific waste characteristics in the notes field.'
+  };
+
+  if (categorySelect && categoryGuidanceBox && categoryGuidanceText) {
+    function updateGuidance() {
+      const selected = categorySelect.value;
+      if (guidanceMap[selected]) {
+        categoryGuidanceText.textContent = guidanceMap[selected];
+        categoryGuidanceBox.style.display = 'block';
+      } else {
+        categoryGuidanceBox.style.display = 'none';
+      }
+    }
+    categorySelect.addEventListener('change', updateGuidance);
+    updateGuidance();
+  }
+
+  // 4. Smart Priority Preview on Report Waste Page
+  const issueSelect = document.getElementById('issue_type_select');
+  const priorityTipBox = document.getElementById('priorityTipBox');
+  const priorityTipText = document.getElementById('priorityTipText');
+
+  const priorityHints = {
+    'OVERFLOWING_BIN': 'Urgent: Overflowing bins attract pests and will be prioritized as HIGH or CRITICAL.',
+    'GARBAGE_ON_ROAD': 'Public Hazard: Road waste obstructs traffic and will be assigned HIGH priority.',
+    'ILLEGAL_DUMPING': 'Violation: Illegal dumping poses environmental risks and triggers HIGH priority.',
+    'MISSED_COLLECTION': 'Standard: Missed collection triggers a re-route notification (MEDIUM priority).',
+    'IMPROPER_SEGREGATION': 'Quality: Segregation violation flagged for inspection (MEDIUM priority).',
+    'OTHER': 'General: Assessed by municipal dispatch coordinator.'
+  };
+
+  if (issueSelect && priorityTipBox && priorityTipText) {
+    function updatePriorityHint() {
+      const issue = issueSelect.value;
+      if (priorityHints[issue]) {
+        priorityTipText.textContent = priorityHints[issue];
+        priorityTipBox.style.display = 'block';
+      } else {
+        priorityTipBox.style.display = 'none';
+      }
+    }
+    issueSelect.addEventListener('change', updatePriorityHint);
+    updatePriorityHint();
+  }
+
+  // 5. Interactive Awareness Waste Search
+  const searchInput = document.getElementById('wasteSearchInput');
+  const searchResultBox = document.getElementById('wasteSearchResult');
+
+  const wasteLookupDB = [
+    { item: 'Banana Peel / Fruit Scraps', bin: 'Green Bin (Wet / Organic)', tip: 'Compostable naturally.' },
+    { item: 'Plastic Water Bottle', bin: 'Blue Bin (Dry / Recyclable)', tip: 'Rinse and crush.' },
+    { item: 'Milk Packet / Pouch', bin: 'Blue Bin (Dry / Recyclable)', tip: 'Rinse with water before binning.' },
+    { item: 'Newspaper / Cardboard', bin: 'Blue Bin (Dry / Recyclable)', tip: 'Keep dry and flat.' },
+    { item: 'Mobile Phone Battery', bin: 'Red/Black Bin (Hazardous / E-Waste)', tip: 'Never discard in municipal bins.' },
+    { item: 'Medicine Blister Pack', bin: 'Red/Black Bin (Hazardous)', tip: 'Expired medicines require medical drop-off.' },
+    { item: 'Glass Jam Jar', bin: 'Blue Bin (Dry / Recyclable)', tip: 'Wash and keep separate.' },
+    { item: 'Soda Can / Tin Can', bin: 'Blue Bin (Dry / Recyclable)', tip: 'Recyclable metal.' },
+    { item: 'Food Leftovers / Rice / Bread', bin: 'Green Bin (Wet / Organic)', tip: 'Decomposes into compost.' },
+    { item: 'Fluorescent Bulb / CFL', bin: 'Red/Black Bin (Hazardous)', tip: 'Contains mercury vapors; do not break.' }
+  ];
+
+  if (searchInput && searchResultBox) {
+    searchInput.addEventListener('input', function () {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        searchResultBox.innerHTML = '';
+        searchResultBox.style.display = 'none';
+        return;
+      }
+
+      const matches = wasteLookupDB.filter(entry => 
+        entry.item.toLowerCase().includes(query) || entry.bin.toLowerCase().includes(query)
+      );
+
+      if (matches.length > 0) {
+        let html = '<div class="card" style="padding: 14px; margin-top: 10px;">';
+        matches.forEach(m => {
+          html += `
+            <div style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+              <strong>${m.item}</strong> ➔ <span class="badge ${m.bin.includes('Green') ? 'badge-resolved' : m.bin.includes('Blue') ? 'badge-assigned' : 'badge-danger'}">${m.bin}</span>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">${m.tip}</p>
+            </div>
+          `;
+        });
+        html += '</div>';
+        searchResultBox.innerHTML = html;
+        searchResultBox.style.display = 'block';
+      } else {
+        searchResultBox.innerHTML = `
+          <div class="card" style="padding: 12px; margin-top: 10px; color: var(--text-muted); font-size: 0.9rem;">
+            No direct match found for "<strong>${searchInput.value}</strong>". If dry and clean, use <strong>Blue Bin</strong>; if wet/food, use <strong>Green Bin</strong>.
+          </div>
+        `;
+        searchResultBox.style.display = 'block';
+      }
+    });
+  }
+});
+
+</script>
+  
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="{% static 'js/map.js' %}"></script>
-{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mapContainers = document.querySelectorAll('.folium-map-container');
+    
+    if (mapContainers.length === 0) return;
+
+    mapContainers.forEach(container => {
+        const isReadOnly = container.hasAttribute('data-readonly');
+        const latInput = document.getElementById('id_latitude');
+        const lngInput = document.getElementById('id_longitude');
+        const geoBtn = document.getElementById('btn-geolocate');
+        
+        // Find the iframe generated by leafmap/folium
+        const iframe = container.querySelector('iframe');
+        if (!iframe) return;
+
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        iframe.style.borderRadius = '8px';
+
+        iframe.onload = function() {
+            const iframeWin = iframe.contentWindow;
+            let mapObj = null;
+            let L = iframeWin.L;
+
+            // Folium assigns map variables starting with map_
+            for (let key in iframeWin) {
+                if (key.startsWith('map_')) {
+                    mapObj = iframeWin[key];
+                    break;
+                }
+            }
+
+            if (!mapObj || !L) return;
+
+            let marker = null;
+
+            // Initialize marker from hidden inputs if they exist (form re-render)
+            if (!isReadOnly && latInput && lngInput && latInput.value && lngInput.value) {
+                const savedLat = parseFloat(latInput.value);
+                const savedLng = parseFloat(lngInput.value);
+                if (!isNaN(savedLat) && !isNaN(savedLng)) {
+                    marker = L.marker([savedLat, savedLng]).addTo(mapObj);
+                    mapObj.setView([savedLat, savedLng], 15);
+                }
+            }
+
+            if (!isReadOnly) {
+                // Click to place marker
+                mapObj.on('click', function(e) {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(mapObj);
+                    }
+
+                    if (latInput && lngInput) {
+                        latInput.value = lat.toFixed(6);
+                        lngInput.value = lng.toFixed(6);
+                    }
+                });
+
+                // Geolocation button
+                if (geoBtn) {
+                    geoBtn.addEventListener('click', function() {
+                        if ("geolocation" in navigator) {
+                            geoBtn.textContent = "📍 Locating...";
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+                                
+                                const newLatLng = new L.LatLng(lat, lng);
+                                mapObj.setView(newLatLng, 15);
+                                
+                                if (marker) {
+                                    marker.setLatLng(newLatLng);
+                                } else {
+                                    marker = L.marker(newLatLng).addTo(mapObj);
+                                }
+
+                                if (latInput && lngInput) {
+                                    latInput.value = lat.toFixed(6);
+                                    lngInput.value = lng.toFixed(6);
+                                }
+                                geoBtn.textContent = "📍 Use My Current Location";
+                            }, function(error) {
+                                alert("Could not get your location. Please check browser permissions.");
+                                geoBtn.textContent = "📍 Use My Current Location";
+                            });
+                        } else {
+                            alert("Geolocation is not supported by your browser");
+                        }
+                    });
+                }
+            }
+        };
+    });
+});
+
+</script>
+
+</body>
+</html>
