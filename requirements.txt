@@ -2,3 +2,5 @@ Django>=4.2,<5.0
 Pillow>=10.0.0
 leafmap>=0.30.0
 folium>=0.14.0
+channels>=4.0.0
+daphne>=4.0.0

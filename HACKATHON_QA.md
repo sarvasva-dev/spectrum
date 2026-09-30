@@ -35,3 +35,17 @@ We built a dedicated dark-themed API Visualizer to demonstrate how frontend inte
 
 ## 7. What is the Man of the Month feature (`/man-of-the-month/`)?
 To gamify and incentivize community participation, CleanLoop includes a 'Man of the Month' (Community Contributor) feature. It dynamically queries the Django ORM to identify the citizen with the highest number of valid (non-rejected) waste reports in the current month. The backend includes sophisticated tie-breaking logic (falling back to earliest registration date) while ensuring admin/staff accounts are excluded from the competition.
+
+
+Q: Is the graph animation fake?
+
+A:
+No. Events are broadcast from the actual Django request lifecycle
+through Django Channels to connected visualizer clients.
+
+Q: Why WebSockets?
+
+A:
+HTTP requests are ordinary request/response operations, while
+WebSockets provide a persistent connection so the dashboard can
+receive backend events immediately without polling or refreshing.

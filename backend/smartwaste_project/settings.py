@@ -44,6 +44,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -85,6 +87,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'smartwaste_project.wsgi.application'
+ASGI_APPLICATION = 'smartwaste_project.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Database
 # Using SQLite3 as strictly required by tech constraints

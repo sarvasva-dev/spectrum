@@ -58,6 +58,7 @@
 5. **API / System Visualizer**:
    - Dedicated dark-themed developer playground.
    - Allows judges/developers to send live requests to backend endpoints.
+   - **Live WebSocket System Graph** animating HTTP requests flowing through the system.
    - Visualizes JSON responses, status codes, and latency in real-time.
 
 ---
