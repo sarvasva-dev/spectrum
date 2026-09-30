@@ -10,7 +10,7 @@ import urllib.parse
 import http.cookiejar
 from io import BytesIO
 
-BASE_URL = "http://16.171.238.127"
+BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://cleanloop.sarthakml.in"
 
 def run_tests():
     print(f"==================================================")
@@ -132,6 +132,8 @@ def run_tests():
             'description': 'Heavy illegal construction waste dumped overnight blocking pedestrian pathway.',
             'auto_priority': 'on',
             'priority': 'LOW',
+            'latitude': '28.6139',
+            'longitude': '77.2090',
         })
         assert status == 200
         match = re.search(r'WM-\d{4}-\d{4}', html)
@@ -165,6 +167,8 @@ def run_tests():
             'preferred_date': '2026-10-05',
             'preferred_time': 'Morning (08:00 AM - 11:00 AM)',
             'notes': 'Please ring intercom 401 on arrival.',
+            'latitude': '28.6139',
+            'longitude': '77.2090',
         })
         assert status == 200
         match = re.search(r'PK-\d{4}-\d{4}', html)
@@ -332,6 +336,8 @@ def run_tests():
         add_field('description', 'Test report with uploaded photographic evidence.')
         add_field('auto_priority', 'on')
         add_field('priority', 'MEDIUM')
+        add_field('latitude', '28.6139')
+        add_field('longitude', '77.2090')
 
         # Add file
         body.append(f'--{boundary}\r\n'.encode('utf-8'))
