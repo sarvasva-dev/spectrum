@@ -488,8 +488,10 @@ def _freeform_ai_response(request, message):
             content = resp.json()["choices"][0]["message"]["content"]
             if content:
                 return _clamp_text(content, 900)
+        else:
+            logger.error("Sarvam API call failed: HTTP %s - %s", resp.status_code, resp.text)
     except Exception as exc:
-        logger.warning("Sarvam freeform AI error: %s", exc)
+        logger.error("Sarvam freeform AI exception: %s", exc, exc_info=True)
     return None
 
 
@@ -721,6 +723,9 @@ def _reply_help():
 def _dispatch_intent(request, intent, message):
     low = _clamp_text(message, 60).lower().strip()
     if intent == "GREETING":
+        ai_ans = _freeform_ai_response(request, message)
+        if ai_ans:
+            return _reply(ai_ans, "MAIN_MENU", "START", actions=MAIN_MENU_ACTIONS, state={})
         return _greeting(request)
     if intent == "REPORT_COMPLAINT":
         return _start_complaint()

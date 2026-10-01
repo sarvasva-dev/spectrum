@@ -224,7 +224,47 @@ def run_admin_ai_chat(request, message, state):
     if classified == "HELP":
         return _reply_help(request)
 
+    ai_resp = _freeform_ai_response(request, message)
+    if ai_resp:
+        return _reply(f"🤖 <b>CleanLoop Municipal AI</b>:<br>{ai_resp}", "ADMIN_MAIN", "START", actions=ADMIN_MENU_ACTIONS, state={})
+
     return _greeting(request)
+
+
+def _freeform_ai_response(request, message):
+    """Answers freeform municipal administration or waste management questions using Sarvam AI."""
+    api_key = os.environ.get("SARVAM_API_KEY")
+    if not api_key:
+        return None
+    grounding = (
+        "You are CleanLoop Municipal Control AI Assistant for city sanitation officers in India.\n"
+        "Provide professional, concise, municipal operations & waste management guidance in English or Hinglish.\n"
+        "Help officers with waste management policies, vehicle dispatching advice, hotspot mitigation, and public safety.\n"
+        "Keep responses under 90 words, plain text (no markdown format), polite and authoritative."
+    )
+    try:
+        resp = requests.post(
+            SARVAM_API_URL,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "model": SARVAM_MODEL,
+                "messages": [
+                    {"role": "system", "content": grounding},
+                    {"role": "user", "content": _clamp_text(message, 500)},
+                ],
+                "temperature": 0.3,
+            },
+            timeout=LLM_TIMEOUT_SECONDS,
+        )
+        if resp.status_code == 200:
+            content = resp.json()["choices"][0]["message"]["content"]
+            if content:
+                return _clamp_text(content, 900)
+        else:
+            logger.error("Sarvam Admin API call failed: HTTP %s - %s", resp.status_code, resp.text)
+    except Exception as exc:
+        logger.error("Sarvam admin freeform AI exception: %s", exc, exc_info=True)
+    return None
 
 
 def _greeting(request):
