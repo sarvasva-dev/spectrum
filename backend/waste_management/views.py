@@ -224,32 +224,22 @@ def ensure_demo_accounts():
             profile.role = 'ADMIN'
             profile.is_admin_staff = True
             profile.save()
-        else:
-            if not admin1.check_password('admin1234') and not admin1.check_password('adminpassword') and not admin1.check_password('demo1234'):
-                admin1.set_password('admin1234')
-                admin1.save()
 
-        # 2. Legacy/Secondary Admin (admin@smartwaste.org / admin1234)
-        admin2 = User.objects.filter(email='admin@smartwaste.org').first() or User.objects.filter(username='admin@smartwaste.org').first()
-        if not admin2:
-            admin2 = User.objects.create_superuser(
-                username='admin@smartwaste.org',
-                email='admin@smartwaste.org',
-                password='admin1234'
-            )
-            admin2.first_name = 'Municipal'
-            admin2.last_name = 'Officer'
-            admin2.save()
-            profile, _ = UserProfile.objects.get_or_create(user=admin2)
-            profile.role = 'ADMIN'
-            profile.is_admin_staff = True
-            profile.save()
-        else:
-            if not admin2.check_password('admin1234') and not admin2.check_password('adminpassword') and not admin2.check_password('demo1234'):
-                admin2.set_password('admin1234')
-                admin2.save()
+        # Ensure password for all admin email/username variants is set to admin1234
+        admin_variants = ['admin', 'admin@cleanloop.sarthakml.in', 'admin@smartwaste.org', 'admin@gmail.com', 'admin@cleanloop.com']
+        for target in admin_variants:
+            u = User.objects.filter(username__iexact=target).first() or User.objects.filter(email__iexact=target).first()
+            if u:
+                u.is_staff = True
+                u.is_superuser = True
+                u.set_password('admin1234')
+                u.save()
+                prof, _ = UserProfile.objects.get_or_create(user=u)
+                prof.role = 'ADMIN'
+                prof.is_admin_staff = True
+                prof.save()
 
-        # 3. Primary Citizen User (citizen / citizen@cleanloop.sarthakml.in / demo1234)
+        # 2. Primary Citizen User (citizen / citizen@cleanloop.sarthakml.in / demo1234)
         cit1 = User.objects.filter(username='citizen').first() or User.objects.filter(email='citizen@cleanloop.sarthakml.in').first()
         if not cit1:
             cit1 = User.objects.create_user(
@@ -265,31 +255,18 @@ def ensure_demo_accounts():
             profile.phone = '9876543210'
             profile.address = 'Civil Lines, Kanpur'
             profile.save()
-        else:
-            if not cit1.check_password('demo1234'):
-                cit1.set_password('demo1234')
-                cit1.save()
 
-        # 4. Legacy/Secondary Citizen (citizen@smartwaste.org / demo1234)
-        cit2 = User.objects.filter(email='citizen@smartwaste.org').first() or User.objects.filter(username='citizen@smartwaste.org').first()
-        if not cit2:
-            cit2 = User.objects.create_user(
-                username='citizen@smartwaste.org',
-                email='citizen@smartwaste.org',
-                password='demo1234'
-            )
-            cit2.first_name = 'Demo'
-            cit2.last_name = 'Citizen'
-            cit2.save()
-            profile, _ = UserProfile.objects.get_or_create(user=cit2)
-            profile.role = 'CITIZEN'
-            profile.phone = '9876543211'
-            profile.address = 'Sector 18, Kanpur'
-            profile.save()
-        else:
-            if not cit2.check_password('demo1234'):
-                cit2.set_password('demo1234')
-                cit2.save()
+        # Ensure password for all citizen email/username variants is set to demo1234
+        citizen_variants = ['citizen', 'citizen@cleanloop.sarthakml.in', 'citizen@smartwaste.org', 'citizen@cleanloop.com', 'democitizen']
+        for target in citizen_variants:
+            u = User.objects.filter(username__iexact=target).first() or User.objects.filter(email__iexact=target).first()
+            if u:
+                u.set_password('demo1234')
+                u.save()
+                prof, _ = UserProfile.objects.get_or_create(user=u)
+                if prof.role != 'ADMIN':
+                    prof.role = 'CITIZEN'
+                    prof.save()
     except Exception:
         pass
 
