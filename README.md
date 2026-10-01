@@ -104,6 +104,7 @@ python backend/manage.py test waste_management
 
 ## 📖 Comprehensive Documentation Hub
 All project documentation is organized inside the [`docs/`](docs/) directory:
+- [docs/COMPLETE_FEATURES_SPECIFICATION.md](docs/COMPLETE_FEATURES_SPECIFICATION.md): Exhaustive feature specifications & testing protocols.
 - [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md): Complete architecture, schema, user/admin workflows, and security design.
 - [docs/HACKATHON_QA.md](docs/HACKATHON_QA.md): Comprehensive Q&A for hackathon evaluation.
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md): AWS EC2 continuous deployment guide.
