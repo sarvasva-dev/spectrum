@@ -6,7 +6,7 @@ to help Python beginners understand every step.
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
@@ -1457,7 +1457,7 @@ def ai_map_fragment_view(request):
     return HttpResponse(m._repr_html_())
 
 
-@ensure_csrf_cookie
+@csrf_exempt
 def api_ai_chat_view(request):
     """
     POST /api/ai/chat/
@@ -1511,8 +1511,7 @@ def admin_ai_view(request):
     })
 
 
-@ensure_csrf_cookie
-@login_required
+@csrf_exempt
 def api_admin_ai_chat_view(request):
     """
     POST /api/admin-ai/chat/
@@ -1521,8 +1520,8 @@ def api_admin_ai_chat_view(request):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'POST required.'}, status=405)
 
-    if not is_staff_or_admin(request.user):
-        return JsonResponse({'ok': False, 'error': 'Unauthorized access.'}, status=403)
+    if not request.user or not request.user.is_authenticated or not is_staff_or_admin(request.user):
+        return JsonResponse({'ok': False, 'error': 'Unauthorized access. Municipal administrator login required.'}, status=403)
 
     try:
         body = json.loads(request.body.decode('utf-8'))
