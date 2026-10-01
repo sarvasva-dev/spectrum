@@ -1,55 +1,40 @@
 # CleanLoop Presentation Script (Team Bug Busters)
 
-> **Instructions for the Team:** 
-> - This script is perfectly synchronized with the actual flow of the CleanLoop web pages.
-> - **Main Presenter (You)** will navigate the screen in this exact order: Landing Page -> Login -> Dashboard -> AI Assistant -> Report Waste -> Admin Portal.
-> - The Introduction is short. The remaining team members (Speakers 1, 2, and 3) will speak in sequence while you click through the screens.
+> **Team Instructions:**
+> - **Screen Controller (You):** You will solely focus on handling the laptop/computer and driving the flow silently. You do not need to speak.
+> - **Speakers:** Purvi Gupta, Samridhi Gupta, and the 3rd Team Member will handle all the speaking.
+> - The presentation is strictly broken down into 4 sequential phases matching your screen movements.
 
 ---
 
-## Phase 1: Quick Introduction
+## Phase 1: Greetings & Introduction
+*(Screen: CleanLoop Landing Page - Top Section)*
 
-**Speaker 1:**
-"Good morning everyone, we are Team Bug Busters. Today we present **CleanLoop**, our Smart Waste Management System. Our goal is to bridge the communication gap between citizens and municipal bodies, gamify cleanliness, and integrate AI to guide people on proper waste segregation."
-
----
-
-## Phase 2: Live Demo (Working Manual)
-*(Main Presenter navigates silently on screen while the team speaks)*
-
-### Step 1: Landing Page & Login
-*(Main Presenter is on the Landing page, scrolls quickly to show metrics, then clicks Login and enters Citizen credentials)*
-
-**Speaker 2:**
-"Starting at our Home page, you can see live platform metrics and our core features. Let’s log into the portal as a Citizen. The authentication is seamless, bringing the user directly into their personalized environment."
-
-### Step 2: Citizen Dashboard & Gamification
-*(Main Presenter lands on Citizen Dashboard, hovers over CleanCoins and the Community Champion Leaderboard)*
-
-**Speaker 3:**
-"Once logged in, the Citizen Dashboard appears. Here, we track user activity. To keep citizens motivated, we built a gamified 'CleanCoins' reward system. Every verified waste report earns coins. You can also see our Community Champion Leaderboard, which highlights top contributors in the city—fully driven by real user data without dummy test accounts."
-
-### Step 3: AI Assistant (Waste Segregation)
-*(Main Presenter clicks on "AI Assistant" from the navigation bar, types a query like "How to dispose of batteries?")*
-
-**Speaker 1:**
-"Next, we have the AI Assistant. A major issue in waste management is improper segregation. If a citizen doesn’t know how to dispose of e-waste or medical waste, they simply ask our AI. It instantly provides safe, localized disposal guidelines, making awareness interactive."
-
-### Step 4: Report Waste Issue
-*(Main Presenter clicks on "Report Waste", fills out a dummy location/description, and clicks submit)*
-
-**Speaker 2:**
-"Now, let's look at the core feature: Reporting Waste. When a citizen spots an overflowing bin or illegal dumping, they come here. The system automatically fetches their GPS coordinates and allows them to attach a photo. This gives the municipal team the exact location and severity of the issue."
-
-### Step 5: Admin Dashboard & Resolution
-*(Main Presenter logs out, logs back in as Admin, goes to Admin Dashboard, and resolves the pending complaint)*
-
-**Speaker 3:**
-"Finally, switching over to the Municipal Admin Portal. The admin gets a bird's-eye view of all incoming complaints. They can immediately dispatch a sanitation team. Once the area is cleaned, the admin updates the status to 'Resolved', and the citizen is rewarded with CleanCoins. The loop is complete."
+**Purvi Gupta:**
+"Good morning everyone! We are Team Bug Busters. Have you ever walked past an overflowing garbage bin and felt powerless to fix it? Today, we are celebrating a solution to that exact problem. We proudly present **CleanLoop**, our Smart Waste Management System. Our platform bridges the gap between citizens and the municipality, utilizing AI and gamification to keep our city clean."
 
 ---
 
-## Phase 3: Conclusion
+## Phase 2: Dashboard & Platform Overview
+*(Screen: Presenter scrolls through Landing page metrics, then opens the Citizen Dashboard)*
 
-**Speaker 1:**
-"In just three simple steps—Report, Resolve, and Reward—CleanLoop creates a cleaner city powered by AI and community engagement. Thank you! We are now open to questions."
+**Samridhi Gupta:**
+"Let's look at the Dashboard. When a user lands here, they instantly see a clear overview of the city's cleanliness metrics. To drive community participation, we've introduced a gamification system called 'CleanCoins'. Citizens earn coins for their verified waste reports. Here on our Community Champion Leaderboard, you can see our top contributors, creating a positive, community-driven loop for a better environment."
+
+---
+
+## Phase 3: The Citizen Workflow (Login, Complaint & AI)
+*(Screen: Presenter demonstrates logging in as a Citizen, interacting with the AI Assistant, and filling out the 'Report Waste' form)*
+
+**Speaker 3 (or Purvi):**
+"Now, let's look at the actual workflow. A citizen easily logs into the portal. If they have a doubt—for example, how to safely dispose of electronic waste—our integrated AI Assistant provides instant, localized guidelines. 
+When they spot a waste issue, they simply click 'Report Waste'. The system automatically fetches their exact GPS location and attaches a photo, ensuring the municipal team receives highly accurate data without any manual typing."
+
+---
+
+## Phase 4: Admin Panel Resolution & Wrap-up
+*(Screen: Presenter logs out, logs into the Admin Panel, and marks the pending complaint as 'Resolved')*
+
+**Samridhi Gupta (or Speaker 3):**
+"Finally, the issue reaches the Municipal Admin Panel. The admin has a real-time, bird's-eye view of all incoming complaints. They dispatch a sanitation team, and once the bin is cleared, the admin simply clicks 'Resolve'. Immediately, the citizen receives their CleanCoins reward, and the issue is closed. 
+In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop delivers a complete ecosystem. Thank you, we are now open to questions!"
