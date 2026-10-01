@@ -102,6 +102,11 @@ python backend/manage.py test waste_management
 
 ---
 
-## 📖 Additional Documentation
-- [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md): Complete architecture, schema, user/admin workflows, and security design.
-- [HACKATHON_QA.md](HACKATHON_QA.md): Comprehensive questions and answers for hackathon evaluation.
+## 📖 Comprehensive Documentation Hub
+All project documentation is organized inside the [`docs/`](docs/) directory:
+- [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md): Complete architecture, schema, user/admin workflows, and security design.
+- [docs/HACKATHON_QA.md](docs/HACKATHON_QA.md): Comprehensive Q&A for hackathon evaluation.
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md): AWS EC2 continuous deployment guide.
+- [docs/STORAGE_AND_ASSETS_GUIDE.md](docs/STORAGE_AND_ASSETS_GUIDE.md): Media uploads & static asset architecture guide.
+- [backend/BACKEND_ARCHITECTURE.md](backend/BACKEND_ARCHITECTURE.md): Full backend file-by-file module guide.
+- [deployment/DEPLOYMENT_ARCHITECTURE.md](deployment/DEPLOYMENT_ARCHITECTURE.md): Auto-deployment pipeline guide.
