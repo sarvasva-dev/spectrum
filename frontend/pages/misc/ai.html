@@ -306,6 +306,9 @@
                 <div class="ai-title">CleanLoop AI</div>
                 <div class="ai-subtitle">Your CleanLoop citizen assistant</div>
             </div>
+            {% if user.is_staff or user.is_superuser or user.profile.is_admin_staff or user.profile.role == 'ADMIN' %}
+              <a href="{% url 'admin_ai' %}" style="background: #0284c7; color: #fff; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">⚙️ Control AI</a>
+            {% endif %}
             <span id="ai-status" class="ai-status limited"><span class="dot"></span><span id="ai-status-text">CHECKING…</span></span>
         </header>
 
