@@ -40,3 +40,7 @@ When they spot a waste issue, they simply click 'Report Waste'. The system autom
 In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop turns community care into a smart action..."
 
 
+
+
+> "a cleaner city begins with a responsible citizen and becomes possible when technology turns responsibility into action"
+
