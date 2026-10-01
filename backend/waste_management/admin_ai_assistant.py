@@ -132,7 +132,7 @@ def llm_classify_intent(message):
                 "model": SARVAM_MODEL,
                 "messages": [
                     {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": message},
+                    {"role": "user", "content": message or "."},
                 ],
                 "temperature": 0.1,
             },
@@ -255,7 +255,7 @@ def _freeform_ai_response(request, message):
                 "model": SARVAM_MODEL,
                 "messages": [
                     {"role": "system", "content": grounding},
-                    {"role": "user", "content": _clamp_text(message, 500)},
+                    {"role": "user", "content": _clamp_text(message, 500) or "."},
                 ],
                 "temperature": 0.3,
             },

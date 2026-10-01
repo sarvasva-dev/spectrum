@@ -390,7 +390,7 @@ def llm_classify_intent(message, recent):
                 "model": SARVAM_MODEL,
                 "messages": [
                     {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_content},
+                    {"role": "user", "content": user_content or "."},
                 ],
                 "temperature": 0.1,
             },
@@ -440,7 +440,7 @@ def llm_answer_awareness(question):
                 "model": SARVAM_MODEL,
                 "messages": [
                     {"role": "system", "content": grounding},
-                    {"role": "user", "content": _clamp_text(question, 500)},
+                    {"role": "user", "content": _clamp_text(question, 500) or "."},
                 ],
                 "temperature": 0.4,
             },
@@ -478,7 +478,7 @@ def _freeform_ai_response(request, message):
                 "model": SARVAM_MODEL,
                 "messages": [
                     {"role": "system", "content": grounding},
-                    {"role": "user", "content": _clamp_text(message, 500)},
+                    {"role": "user", "content": _clamp_text(message, 500) or "."},
                 ],
                 "temperature": 0.5,
             },
