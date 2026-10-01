@@ -39,8 +39,23 @@ When they spot a waste issue, they simply click 'Report Waste'. The system autom
 "Finally, the issue reaches the Municipal Admin Panel. Here, the admin gets a live view of every report on the scene, dispatching sanitation teams fast to keep our city clean! With just a single click on 'Resolve', the bin is cleared, the citizen receives their CleanCoins reward, and the loop is closed. 
 In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop turns community care into a smart action..."
 
+---
+
+## Phase 5: Our Unique Selling Propositions (USPs) & Future Scope
+*(Screen: Keep Admin Dashboard open or transition to a conclusion)*
+
+**Purvi Gupta (or Speaker 3):**
+"Before we conclude, we want to highlight the **3 Core USPs** that make CleanLoop truly unique compared to traditional systems:
+
+1. **Geo-Smart Hotspot Detection:** 
+   Our system doesn't just display a list of complaints; it analyzes geographic patterns. If multiple citizens report waste from the exact same street or intersection, CleanLoop automatically clusters these reports and flags the location as a 'High-Priority Hotspot' on the Admin Dashboard. 
+   **Why this matters:** It prevents the municipality from dispatching 5 different vehicles for 5 complaints in the same area. It optimizes routes, saves massive amounts of fuel, and reduces the city's carbon footprint while clearing the waste faster.
+
+2. **Action-Oriented AI Automation (Beyond Chatbots):**
+   Most platforms use AI just as a basic FAQ guide, but our AI operates as a true digital municipal assistant. It actively reads live complaints, analyzes the severity based on text and images, and automates operational guidance for the admin. It doesn't just say 'clean the waste'—it suggests *how many* trucks are needed, identifies hazardous materials, and automatically drafts the dispatch orders. We are automating the workflow, not just answering questions.
+
+3. **Future Vision - 24/7 AI Helpline Integration:**
+   Our goal is 100% inclusivity. Moving forward, we plan to implement a WhatsApp-based and IVR toll-free 24/7 helpline. We understand that not everyone—especially the elderly or daily wage workers—can download or navigate a new app. In the future, a citizen can simply call our toll-free number or drop a photo on WhatsApp. Our AI will automatically extract their location and generate a ticket in the admin panel seamlessly."
 
 
-
-> "a cleaner city begins with a responsible citizen and becomes possible when technology turns responsibility into action"
-
+> "A cleaner city begins with a responsible citizen and becomes possible when technology turns responsibility into action."
