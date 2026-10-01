@@ -1,61 +1,76 @@
-# 🎤 CleanLoop - Master Pitch Script (Hackathon 2025)
+# 🎤 CleanLoop - Final Master Pitch Script (Hackathon 2025)
 
-> **Instructions:** This script is a continuous narrative. It blends real-world impact with deep technical sophistication. The person controlling the laptop should sync their clicks with the bolded screen cues. 
-
----
-
-**[Speaker 1: Purvi Gupta - The Hook & The Architecture]**
-*(On Screen: CleanLoop Landing Page)*
-
-"Good morning, respected judges and fellow innovators. We are **Team Bug Busters**, and today we present **CleanLoop**—a Smart, AI-driven Waste Management Ecosystem. 
-
-Waste management fails because the loop between citizen reporting and municipal action is broken, delayed, and manual. CleanLoop fixes this by completely automating the workflow. 
-
-But CleanLoop isn't just a basic web app; it is a highly scalable, real-time platform. Under the hood, it’s powered by a robust **Django backend** and **Daphne ASGI server**. To ensure that our Admin Dashboard updates live without any page reloads, we integrated **WebSockets via Django Channels**, allowing instantaneous, two-way communication between the citizen and the municipality.
-
-To ensure our application is bulletproof, we discarded outdated testing tools and implemented end-to-end testing using **Microsoft Playwright**, giving us modern, reliable, and lightning-fast test execution.
-
-Let me hand it over to Samridhi to show you the user experience."
+> **Instructions for Team:**
+> - **Screen Controller:** Match your clicks with the bolded **[On Screen]** cues.
+> - **Speakers:** Learn the story, not the words. Eye contact with judges is mandatory.
+> - **Total Time:** ~4 Minutes.
 
 ---
 
-**[Speaker 2: Samridhi Gupta - Gamification & Deep AI Automation]**
-*(On Screen: Scroll down Landing page, then open 'Citizen Dashboard')*
+## 👤 Speaker 1: Purvi Gupta — The Problem & Architecture
 
-"Thank you, Purvi. Welcome to the **CleanLoop Citizen Dashboard**. 
+**[On Screen: CleanLoop Landing Page]**
 
-To drive mass adoption, we gamified civic duty. Citizens earn **'CleanCoins'** for verified waste reports, turning complaints into a community competition visible on our Leaderboard.
+"Good morning, respected judges and fellow innovators. We are **Team Bug Busters**, and today we present **CleanLoop**—a Smart, AI-driven Waste Management Ecosystem.
 
-*(On Screen: Open the AI Assistant chat window)*
+Have you ever walked past an overflowing garbage bin, taken a photo, but had no idea where to report it? Or reported it somewhere and never heard back? That broken loop is exactly what we are solving today.
 
-But our biggest breakthrough is our **End-to-End Chat Automation**. This isn’t a basic FAQ bot. Integrated with **Sarvam AI**, our assistant handles the *entire* lifecycle. From the moment a user logs in, the AI can guide them on segregation, auto-capture their GPS location, process uploaded images to determine the waste type, and automatically generate a municipal ticket. 
+But CleanLoop is not just a complaint form. It is a full-stack, enterprise-grade platform. Let me explain what's running under the hood, because our architecture itself is a USP.
 
-*(On Screen: Open 'Report Waste', show auto-filled GPS and photo upload)*
+Our backend is built on **Django 4.2** with an **ASGI server powered by Daphne**. To make data move in real-time—without any page refresh—we integrated **WebSockets using Django Channels**. This means the moment a citizen submits a complaint, it appears live on the Admin Dashboard. That is the power of **`ws://`** over **`http://`**.
 
-The AI literally automates the complaint from start to finish. In just 3 clicks, the citizen uploads a photo, the GPS is pinned seamlessly, and the data is fired to the backend."
+We also have a health API endpoint and a **WebSocket connection test** that we've written to verify our real-time pipeline is always alive.
+
+I'll now hand it over to Samridhi to show you the citizen's experience."
 
 ---
 
-**[Speaker 3 - Admin Panel, Hotspots & Future Vision]**
-*(On Screen: Log out of Citizen, Log in as Admin, go to Admin Dashboard, click 'Resolve')*
+## 👤 Speaker 2: Samridhi Gupta — Citizen Journey & The AI Brain
 
-"Once that data hits the backend, the magic happens on the **Municipal Admin Panel**. 
+**[On Screen: Scroll down Landing page → open Citizen Dashboard]**
 
-Because of our WebSocket integration, the admin sees the complaint pop up in real-time. With a single click on 'Resolve', the sanitation team is dispatched, the bin is cleared, and the citizen receives their CleanCoins. 
+"Thank you, Purvi. Welcome to the CleanLoop Citizen Dashboard.
 
-*(On Screen: Keep Admin Dashboard open or show Hotspots/Analytics)*
+To make people *want* to participate, we gamified civic responsibility. Citizens earn **'CleanCoins'** for every verified waste report they submit. On the Community Champion Leaderboard, you can see who is keeping the city clean—turning a duty into a community competition.
 
-To wrap up, here are the **3 Technical USPs** that make CleanLoop enterprise-ready:
+**[On Screen: Open AI Assistant chat window]**
 
-**First: Geo-Smart Hotspot Detection.** 
-If 5 people report waste from the exact same location, our algorithms automatically cluster them into a single 'High-Priority Hotspot'. This prevents duplicate dispatches and optimizes truck routes, saving massive amounts of municipal fuel and reducing carbon emissions.
+But what if a citizen is confused about—say—how to dispose of hazardous e-waste? That's where our **Sarvam AI-powered Assistant** steps in. This is not a basic FAQ bot. The AI handles the *entire lifecycle of an interaction*, from guiding the citizen on segregation, to reading their complaint, analyzing the uploaded image for waste type, and finally automating the ticket creation process. Start to finish.
 
-**Second: Complete AI-Driven Operations.** 
-Our Sarvam AI integration acts as a digital municipal assistant. It analyzes severity from images and suggests exactly how many trucks are needed. We aren't just answering questions; we are automating complex municipal operations.
+**[On Screen: Click 'Report Waste' → show GPS auto-capture + photo upload]**
 
-**Third: A Future of 100% Inclusivity.** 
-Our future vision includes integrating a **WhatsApp and IVR toll-free helpline**. Citizens won't even need our app; they can simply drop a photo on WhatsApp, and our AI will automatically parse the data, extract the location, and generate a ticket on this dashboard. 
+When they are ready to report an issue, it takes 3 clicks. They upload a photo, and CleanLoop **automatically captures their GPS coordinates using the browser's Geolocation API**. The system then calls our `calculate_smart_priority()` function, which uses the **Haversine formula** to measure if other active complaints exist within a **500-meter radius**. If yes, the complaint is auto-escalated to **CRITICAL priority**. No human judgment needed."
 
-CleanLoop proves that a cleaner city begins with a responsible citizen, but it is achieved when advanced technology—from WebSockets to AI—turns that responsibility into automated action.
+---
 
-Thank you! We are now open for your questions."
+## 👤 Speaker 3 — Admin Panel, Testing & Future Vision
+
+**[On Screen: Log out → Log in as Admin → Admin Dashboard → click 'Resolve']**
+
+"So the citizen has filed the complaint. What happens next?
+
+Because of our WebSocket integration, the complaint appears live on the Admin Dashboard—instantly. The admin sees a bird's-eye view of every ward in the city. Complaints from the same area are automatically **clustered as Hotspots**, so the admin sends one truck instead of five.
+
+With one click on 'Resolve', the sanitation crew is dispatched, the citizen receives their CleanCoins reward, and the loop is closed.
+
+**Report. Assign. Resolve. Reward.** That is CleanLoop.
+
+**[On Screen: Keep Admin Dashboard visible]**
+
+Now, here's what makes our engineering stand out:
+
+**First — Geo-Smart Hotspot Detection with Haversine Algorithm.**
+Our `Complaint` model runs a real-time geo-query using the Haversine distance formula. If 2 or more complaints exist within 500 meters, priority auto-escalates to CRITICAL. This is real algorithmic intelligence, not a manual flag.
+
+**Second — End-to-End AI Automation via Sarvam AI.**
+Sarvam AI's `sarvam-105b` model runs the entire chat workflow—from greeting a citizen at login, analyzing their query, reading complaint images, and assisting the admin in operational decisions. It is an automated municipal assistant, not just a chatbot.
+
+**Third — Professional Test Suite with Django & WebSocket Testing.**
+We have written **9 comprehensive unit and integration tests** covering authentication, security isolation, complaint workflows, pickup scheduling, admin controls, smart priority, and hotspot elevation. We also have a dedicated **WebSocket connection test script** that validates our real-time pipeline on every deployment.
+
+**Fourth — Future Vision — 100% Inclusivity.**
+Our next step is a **WhatsApp and IVR toll-free 24/7 helpline**. Citizens who can't use apps—the elderly, daily wage workers—can simply drop a photo on WhatsApp or call a number. Our AI will parse the data, extract the location, and auto-generate a ticket on this dashboard.
+
+To conclude: A cleaner city begins with a responsible citizen... but it is truly achieved when a real-time, AI-powered platform turns that responsibility into automated action.
+
+**Thank you! We are now open for your questions.**"
