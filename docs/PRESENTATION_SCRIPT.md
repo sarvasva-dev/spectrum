@@ -37,5 +37,6 @@ When they spot a waste issue, they simply click 'Report Waste'. The system autom
 
 **Samridhi Gupta (or Speaker 3):**
 "Finally, the issue reaches the Municipal Admin Panel. Here, the admin gets a live view of every report on the scene, dispatching sanitation teams fast to keep our city clean! With just a single click on 'Resolve', the bin is cleared, the citizen receives their CleanCoins reward, and the loop is closed. 
-In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop turns community care into a smart action. Thank you, we are now open to questions!"
+In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop turns community care into a smart action..."
+
 
