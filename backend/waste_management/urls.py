@@ -8,7 +8,6 @@ from . import views
 
 urlpatterns = [
     # Public Pages
-
     path('man-of-the-month/', views.man_of_the_month_view, name='man_of_the_month'),
     path('man-of-the-month/<slug:slug>/', views.man_of_the_month_view, name='man_of_the_month_slug'),
     path('', views.landing_view, name='landing'),
@@ -17,24 +16,35 @@ urlpatterns = [
     path('robots.txt', views.robots_txt_view, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml_view, name='sitemap_xml'),
 
-    # Authentication
+    # Authentication (with /auth/ aliases)
     path('register/', views.register_view, name='register'),
+    path('auth/register/', views.register_view),
     path('login/', views.login_view, name='login'),
+    path('auth/login/', views.login_view),
     path('logout/', views.logout_view, name='logout'),
+    path('auth/logout/', views.logout_view),
 
-    # Citizen Dashboard & Actions
+    # Citizen Dashboard & Actions (with /citizen/ & /track/ aliases)
     path('dashboard/', views.citizen_dashboard_view, name='citizen_dashboard'),
+    path('citizen/dashboard/', views.citizen_dashboard_view),
     path('report/', views.report_waste_view, name='report_waste'),
+    path('citizen/', views.report_waste_view),
     path('tracking/', views.complaint_tracking_view, name='complaint_tracking'),
+    path('track/', views.complaint_tracking_view),
     path('complaint/<str:complaint_id>/', views.complaint_detail_view, name='complaint_detail'),
+    path('complaints/<str:complaint_id>/', views.complaint_detail_view),
     path('pickup/', views.pickup_request_view, name='pickup_request'),
     path('pickup/list/', views.pickup_list_view, name='pickup_list'),
 
-    # Municipal Admin Portal & Actions
+    # Municipal Admin Portal & Actions (with /admin-dashboard/ & /admin-ai/ aliases)
     path('admin-portal/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('admin-dashboard/', views.admin_dashboard_view),
     path('admin-portal/ai/', views.admin_ai_view, name='admin_ai'),
+    path('admin-ai/', views.admin_ai_view),
     path('admin-portal/complaint/<str:complaint_id>/', views.admin_complaint_update_view, name='admin_complaint_update'),
+    path('admin/complaints/<str:complaint_id>/update/', views.admin_complaint_update_view),
     path('admin-portal/pickup/<str:pickup_id>/', views.admin_pickup_update_view, name='admin_pickup_update'),
+    path('admin/pickups/<str:pickup_id>/update/', views.admin_pickup_update_view),
 
     # Presentation Demo Pages
     path('democitizenai/', views.democitizenai_view, name='democitizenai'),
