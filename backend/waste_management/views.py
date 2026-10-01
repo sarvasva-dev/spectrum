@@ -412,8 +412,20 @@ def citizen_dashboard_view(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
     clean_coins = profile.clean_coins
 
-    # Community Champion Leaderboard (top 5 users by clean_coins)
-    leaderboard = UserProfile.objects.select_related('user').order_by('-clean_coins')[:5]
+    # Community Champion Leaderboard (top 5 users by clean_coins, excluding fake/admin data)
+    leaderboard = UserProfile.objects.select_related('user').filter(
+        user__is_staff=False,
+        user__is_superuser=False,
+        is_admin_staff=False
+    ).exclude(
+        user__username__icontains='admin'
+    ).exclude(
+        user__username__icontains='demo'
+    ).exclude(
+        user__username__icontains='test'
+    ).exclude(
+        user__username__exact='citizen'
+    ).order_by('-clean_coins')[:5]
 
     context = {
         'total_complaints': total_complaints,
@@ -1327,14 +1339,24 @@ def man_of_the_month_view(request, slug=None):
     current_month = now.month
     current_year = now.year
 
-    # Exclude dummy/test data
+    # Exclude dummy/test data and admin/fake users
     valid_complaints = Complaint.objects.filter(
         created_at__year=current_year,
-        created_at__month=current_month
+        created_at__month=current_month,
+        user__is_staff=False,
+        user__is_superuser=False
     ).exclude(
         location__icontains='test'
     ).exclude(
         description__icontains='test'
+    ).exclude(
+        user__username__icontains='admin'
+    ).exclude(
+        user__username__icontains='demo'
+    ).exclude(
+        user__username__icontains='test'
+    ).exclude(
+        user__username__exact='citizen'
     )
 
     complaint_counts = {}
