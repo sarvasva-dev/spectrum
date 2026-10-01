@@ -27,14 +27,15 @@
 *(Screen: Presenter demonstrates logging in as a Citizen, interacting with the AI Assistant, and filling out the 'Report Waste' form)*
 
 **Speaker 3 (or Purvi):**
-"Now, let's look at the actual workflow. A citizen easily logs into the portal. If they have a doubt—for example, how to safely dispose of electronic waste—our integrated AI Assistant provides instant, localized guidelines. 
+"Now, let's look at the actual workflow. A citizen easily logs in to the portal. If they have a doubt—for example, how to safely dispose of electronic waste—our integrated AI Assistant provides instant, localized guidelines. 
 When they spot a waste issue, they simply click 'Report Waste'. The system automatically fetches their exact GPS location and attaches a photo, ensuring the municipal team receives highly accurate data without any manual typing."
 
 ---
 
 ## Phase 4: Admin Panel Resolution & Wrap-up
-*(Screen: Presenter logs out, logs into the Admin Panel, and marks the pending complaint as 'Resolved')*
+*(Screen: Presenter logs out, logs in to the Admin Panel, and marks the pending complaint as 'Resolved')*
 
 **Samridhi Gupta (or Speaker 3):**
-"Finally, the issue reaches the Municipal Admin Panel. The admin has a real-time, bird's-eye view of all incoming complaints. They dispatch a sanitation team, and once the bin is cleared, the admin simply clicks 'Resolve'. Immediately, the citizen receives their CleanCoins reward, and the issue is closed. 
-In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop delivers a complete ecosystem. Thank you, we are now open to questions!"
+"Finally, the issue reaches the Municipal Admin Panel. Here, the admin gets a live view of every report on the scene, dispatching sanitation teams fast to keep our city clean! With just a single click on 'Resolve', the bin is cleared, the citizen receives their CleanCoins reward, and the loop is closed. 
+In four simple steps—Report, Assign, Resolve, and Reward—CleanLoop turns community care into a smart action. Thank you, we are now open to questions!"
+
