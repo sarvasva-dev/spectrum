@@ -17,12 +17,14 @@ This project implements a modular monolithic web architecture with standalone fr
 - **Real-Time Visualizer:** Django Channels + Daphne WebSocket server broadcasting live system events.
 
 ### Structure
-1. `backend/`: Django project (`smartwaste_project/`), app (`waste_management/`), business logic (`views.py`, `models.py`, `ai_assistant.py`), and `manage.py`.
+1. `backend/`: Django project (`smartwaste_project/`), app (`waste_management/`), business logic (`views.py`, `models.py`, `ai_assistant.py`), architecture guide (`BACKEND_ARCHITECTURE.md`), and `manage.py`.
 2. `frontend/pages/`:
    - `citizen/`: `dashboard.html`, `report_waste.html`, `pickup_request.html`, `complaint_tracking.html`, `complaint_detail.html`, `pickup_list.html`, `login.html`, `register.html`
    - `admin/`: `dashboard.html`, `complaint_update.html`, `pickup_update.html`
    - `misc/`: `ai.html`, `guide.html`, `awareness.html`, `man_of_the_month.html`, `403.html`, `404.html`, `500.html`
    - Root pages: `landing.html`, `visual.html`
+3. `media/`: Persistent storage directory for user-uploaded waste complaint photos (`MEDIA_ROOT`).
+4. `staticfiles/`: Target production directory where `collectstatic` compiles assets served directly by Nginx on EC2 (`STATIC_ROOT`). See `docs/STORAGE_AND_ASSETS_GUIDE.md`.
 
 ## Key Features
 
