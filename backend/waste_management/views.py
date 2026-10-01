@@ -198,12 +198,105 @@ def register_view(request):
     return render(request, 'citizen/register.html', {'form': form})
 
 
+def ensure_demo_accounts():
+    """
+    Ensures that default demo citizen and administrator accounts exist in DB
+    with expected credentials so demo logins never fail.
+    """
+    try:
+        # 1. Primary Municipal Admin (admin / admin@cleanloop.sarthakml.in / admin1234)
+        admin1 = User.objects.filter(username='admin').first() or User.objects.filter(email='admin@cleanloop.sarthakml.in').first()
+        if not admin1:
+            admin1 = User.objects.create_superuser(
+                username='admin',
+                email='admin@cleanloop.sarthakml.in',
+                password='admin1234'
+            )
+            admin1.first_name = 'Municipal'
+            admin1.last_name = 'Admin'
+            admin1.save()
+            profile, _ = UserProfile.objects.get_or_create(user=admin1)
+            profile.role = 'ADMIN'
+            profile.is_admin_staff = True
+            profile.save()
+        else:
+            if not admin1.check_password('admin1234') and not admin1.check_password('adminpassword') and not admin1.check_password('demo1234'):
+                admin1.set_password('admin1234')
+                admin1.save()
+
+        # 2. Legacy/Secondary Admin (admin@smartwaste.org / admin1234)
+        admin2 = User.objects.filter(email='admin@smartwaste.org').first() or User.objects.filter(username='admin@smartwaste.org').first()
+        if not admin2:
+            admin2 = User.objects.create_superuser(
+                username='admin@smartwaste.org',
+                email='admin@smartwaste.org',
+                password='admin1234'
+            )
+            admin2.first_name = 'Municipal'
+            admin2.last_name = 'Officer'
+            admin2.save()
+            profile, _ = UserProfile.objects.get_or_create(user=admin2)
+            profile.role = 'ADMIN'
+            profile.is_admin_staff = True
+            profile.save()
+        else:
+            if not admin2.check_password('admin1234') and not admin2.check_password('adminpassword') and not admin2.check_password('demo1234'):
+                admin2.set_password('admin1234')
+                admin2.save()
+
+        # 3. Primary Citizen User (citizen / citizen@cleanloop.sarthakml.in / demo1234)
+        cit1 = User.objects.filter(username='citizen').first() or User.objects.filter(email='citizen@cleanloop.sarthakml.in').first()
+        if not cit1:
+            cit1 = User.objects.create_user(
+                username='citizen',
+                email='citizen@cleanloop.sarthakml.in',
+                password='demo1234'
+            )
+            cit1.first_name = 'Rahul'
+            cit1.last_name = 'Sharma'
+            cit1.save()
+            profile, _ = UserProfile.objects.get_or_create(user=cit1)
+            profile.role = 'CITIZEN'
+            profile.phone = '9876543210'
+            profile.address = 'Civil Lines, Kanpur'
+            profile.save()
+        else:
+            if not cit1.check_password('demo1234'):
+                cit1.set_password('demo1234')
+                cit1.save()
+
+        # 4. Legacy/Secondary Citizen (citizen@smartwaste.org / demo1234)
+        cit2 = User.objects.filter(email='citizen@smartwaste.org').first() or User.objects.filter(username='citizen@smartwaste.org').first()
+        if not cit2:
+            cit2 = User.objects.create_user(
+                username='citizen@smartwaste.org',
+                email='citizen@smartwaste.org',
+                password='demo1234'
+            )
+            cit2.first_name = 'Demo'
+            cit2.last_name = 'Citizen'
+            cit2.save()
+            profile, _ = UserProfile.objects.get_or_create(user=cit2)
+            profile.role = 'CITIZEN'
+            profile.phone = '9876543211'
+            profile.address = 'Sector 18, Kanpur'
+            profile.save()
+        else:
+            if not cit2.check_password('demo1234'):
+                cit2.set_password('demo1234')
+                cit2.save()
+    except Exception:
+        pass
+
+
 def login_view(request):
     """
     Handles citizen & administrator authentication.
     Accepts either email or username with password.
     Redirects staff to admin dashboard or citizens to their personal dashboard.
     """
+    ensure_demo_accounts()
+
     if request.user.is_authenticated:
         if is_staff_or_admin(request.user):
             return redirect('admin_dashboard')
@@ -218,13 +311,23 @@ def login_view(request):
             # First try matching username directly
             user = authenticate(request, username=identifier, password=password)
 
-            # If username doesn't match, check if identifier is an email address
-            if user is None and '@' in identifier:
-                try:
-                    user_obj = User.objects.get(email__iexact=identifier)
-                    user = authenticate(request, username=user_obj.username, password=password)
-                except User.DoesNotExist:
-                    user = None
+            # If username doesn't match directly, check by email address
+            if user is None:
+                users_by_email = User.objects.filter(email__iexact=identifier)
+                for u in users_by_email:
+                    auth_u = authenticate(request, username=u.username, password=password)
+                    if auth_u is not None:
+                        user = auth_u
+                        break
+
+            # If still None, check case-insensitive username match
+            if user is None:
+                users_by_username = User.objects.filter(username__iexact=identifier)
+                for u in users_by_username:
+                    auth_u = authenticate(request, username=u.username, password=password)
+                    if auth_u is not None:
+                        user = auth_u
+                        break
 
             # Verify authentication result
             if user is not None:
