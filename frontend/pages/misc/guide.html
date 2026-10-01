@@ -4,12 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CleanLoop Guide | Smart Waste Management</title>
-    <meta name="description" content="Explore the CleanLoop guide to waste reporting, GPS location, pickup requests, complaint tracking, hotspot analytics, waste segregation and the CleanLoop system.">
+    <title>CleanLoop System Guide | Smart Waste Management</title>
+    <meta name="description" content="Explore the official CleanLoop guide to waste reporting, GPS location, doorstep pickup requests, complaint tracking, hotspot analytics, waste segregation and municipal operations.">
     <link rel="canonical" href="https://cleanloop.sarthakml.in/guide/">
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/cleanloop-mark.svg' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/cleanloop-mark.svg' %}">
+
+    <!-- Open Graph / Social Media SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="CleanLoop AI">
+    <meta property="og:title" content="CleanLoop System Guide | Smart Waste Management Platform">
+    <meta property="og:description" content="Complete guide to CleanLoop citizen & municipal operations: waste reporting, GPS tagging, doorstep pickup, AI assistant & hotspot analytics.">
+    <meta property="og:image" content="https://cleanloop.sarthakml.in/static/images/cleanloop-mark.svg">
+    <meta property="og:url" content="https://cleanloop.sarthakml.in/guide/">
+
+    <!-- Twitter Card SEO -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CleanLoop System Guide | Smart Waste Management Platform">
+    <meta name="twitter:description" content="Complete guide to CleanLoop citizen & municipal operations: waste reporting, GPS tagging, doorstep pickup, AI assistant & hotspot analytics.">
+    <meta name="twitter:image" content="https://cleanloop.sarthakml.in/static/images/cleanloop-mark.svg">
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- JSON-LD Structured Data for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "CleanLoop Smart Waste Management Guide",
+      "description": "Complete user guide for CleanLoop citizen AI reporting, doorstep waste pickup requests, complaint tracking, and municipal control operations.",
+      "url": "https://cleanloop.sarthakml.in/guide/",
+      "author": {
+        "@type": "Organization",
+        "name": "CleanLoop AI"
+      }
+    }
+    </script>
     
     <style>
         :root {
@@ -65,25 +98,153 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 2rem;
-            background: var(--white);
+            padding: 0.85rem 2rem;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
         }
 
-        .guide-topbar a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
+        .topbar-brand {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .guide-topbar a:hover {
-            color: var(--primary-dark);
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.25));
+            transition: transform 0.2s ease;
+        }
+        .topbar-brand:hover .brand-logo {
+            transform: scale(1.06);
+        }
+
+        .brand-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+        }
+
+        .brand-sub {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-left: 4px;
+        }
+
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-item {
+            color: var(--text-body);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .badge-link {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff !important;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        }
+        .badge-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Footer */
+        .guide-footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #1e293b;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+        }
+        .footer-brand .footer-desc {
+            margin-top: 10px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #64748b;
+        }
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        .footer-col h4 {
+            color: #f8fafc;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .footer-col a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+            transition: color 0.15s;
+        }
+        .footer-col a:hover {
+            color: #38bdf8;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 2.5rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #10b981;
+            font-weight: 600;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
         }
 
         /* Hero */
@@ -378,13 +539,19 @@
         <div id="progress-bar"></div>
     </div>
 
-    <!-- Topbar -->
-    <div class="guide-topbar">
-        <a href="/">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            Back to CleanLoop
+    <!-- Topbar Header -->
+    <header class="guide-topbar">
+        <a href="/" class="topbar-brand">
+            <img src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop Logo" class="brand-logo">
+            <span class="brand-title">CleanLoop <span class="brand-sub">Guide</span></span>
         </a>
-    </div>
+        <nav class="topbar-nav">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/citizen/" class="nav-item">Report Waste</a>
+            <a href="/pickup/" class="nav-item">Doorstep Pickup</a>
+            <a href="/ai/" class="nav-item badge-link">AI Assistant</a>
+        </nav>
+    </header>
 
     <!-- Hero -->
     <header class="hero">
@@ -737,6 +904,41 @@
     <button id="back-to-top" aria-label="Back to top">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
+
+    <!-- Footer -->
+    <footer class="guide-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="/" class="topbar-brand" style="color:#ffffff;">
+                    <img src="{% static 'images/cleanloop-mark.svg' %}" alt="CleanLoop Logo" class="brand-logo">
+                    <span class="brand-title" style="color:#ffffff;">CleanLoop</span>
+                </a>
+                <p class="footer-desc">AI-powered civic waste management & municipal operations platform for cleaner, greener cities.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Citizen Portal</h4>
+                    <a href="/citizen/">Report Waste Issue</a>
+                    <a href="/pickup/">Book Doorstep Pickup</a>
+                    <a href="/track/">Track Complaint Status</a>
+                    <a href="/ai/">CleanLoop AI Assistant</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Municipal & Admin</h4>
+                    <a href="/admin-dashboard/">Admin Control Center</a>
+                    <a href="/democitizenai/">Citizen AI Demo Flow</a>
+                    <a href="/demoadmin/">Admin AI Demo Flow</a>
+                    <a href="/guide/">System Documentation</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CleanLoop AI Platform. All rights reserved.</p>
+            <div class="status-indicator">
+                <span class="status-dot"></span> System Operational
+            </div>
+        </div>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
