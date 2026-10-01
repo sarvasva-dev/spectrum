@@ -365,6 +365,7 @@ def _pending_complaints():
             "priority": c.get_priority_display(),
             "date": _fmt_date(timezone.localtime(c.created_at)),
             "location": (c.location or c.address or "")[:80],
+            "image_url": c.photo.url if c.photo else None,
         })
 
     return _reply(

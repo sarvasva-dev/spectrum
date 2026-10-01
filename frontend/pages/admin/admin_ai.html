@@ -315,9 +315,14 @@
                 });
                 el.appendChild(grid);
             } else if (card.kind === "complaint" || card.kind === "pickup") {
+                let imgHtml = '';
+                if (card.image_url) {
+                    imgHtml = '<div style="margin-top:10px;"><img src="' + escapeHtml(card.image_url) + '" alt="Complaint Image" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: cover;"></div>';
+                }
                 el.innerHTML = '<div class="card-head"><span class="card-id">' + escapeHtml(card.id) + '</span><b>' + escapeHtml(card.status) + '</b></div>' +
                     '<div class="card-title">' + escapeHtml(card.title) + '</div>' +
-                    '<div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;">📅 ' + escapeHtml(card.date) + (card.location ? ' • 📍 ' + escapeHtml(card.location) : '') + '</div>';
+                    '<div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;">📅 ' + escapeHtml(card.date) + (card.location ? ' • 📍 ' + escapeHtml(card.location) : '') + '</div>' +
+                    imgHtml;
             }
 
             chatWindow.appendChild(el);
